@@ -66,11 +66,14 @@ const contactEcho = keyframes`
 const ContactItem = styled(NavLink)`
   ${mobileItemStyles}
 
-  color: ${({ theme }) => theme.colors.brand.navy};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#ffffff' : '#000000')};
   opacity: 1;
 
   &:hover::before {
-    background: ${({ theme }) => theme.colors.brand.secondary};
+    background: ${({ theme }) =>
+      theme.mode === 'dark'
+        ? '#007A85'
+        : theme.colors.brand.secondary};
   }
 
   &::before {
@@ -80,7 +83,10 @@ const ContactItem = styled(NavLink)`
     width: 3rem;
     height: 3rem;
     border-radius: ${({ theme }) => theme.radii.round};
-    background: ${({ theme }) => theme.colors.brand.primary};
+    /* Dark-teal circle in dark mode; dark.brand.deep is redefined per
+       theme, so the dark-teal background uses an explicit hex. */
+    background: ${({ theme }) =>
+      theme.mode === 'dark' ? '#00585E' : theme.colors.brand.primary};
     content: '';
     transform: translate(-50%, -50%);
     transition: background ${({ theme }) => theme.transitions.fast};
@@ -106,7 +112,9 @@ const ContactItem = styled(NavLink)`
   }
 
   &[aria-current='page']::before {
-    background: ${({ theme }) => theme.colors.brand.secondary};
+    box-shadow:
+      0 0 0 2px ${({ theme }) => theme.colors.surface.default},
+      0 0 0 4px ${({ theme }) => theme.colors.text.accent};
   }
 
   @media (prefers-reduced-motion: reduce) {

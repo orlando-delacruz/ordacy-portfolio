@@ -85,7 +85,7 @@ export const mobileItemStyles = css`
   border: 0;
   border-radius: ${({ theme }) => theme.radii.lg};
   background: transparent;
-  color: ${({ theme }) => theme.colors.text.primary};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#ffffff' : '#000000')};
   font-family: inherit;
   font-size: ${({ theme }) => theme.typography.fontSizes.xs};
   font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
@@ -109,7 +109,11 @@ export const mobileItemStyles = css`
 `
 
 export const mobileItemActiveStyles = css`
-  color: ${({ theme }) => theme.colors.text.accent};
+  /* Active background adapts to the theme; dark.brand.deep is redefined
+     per theme, so the dark-teal background uses an explicit hex. */
+  background: ${({ theme }) =>
+    theme.mode === 'dark' ? '#00585E' : theme.colors.brand.primary};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#ffffff' : '#000000')};
   font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   opacity: 1;
 `

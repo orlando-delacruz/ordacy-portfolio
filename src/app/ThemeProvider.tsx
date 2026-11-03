@@ -8,6 +8,14 @@ import { ThemeTransitionOverlay } from './ThemeTransition'
 
 const STORAGE_KEY = 'ordacy-theme'
 
+function persistThemeChoice(value: ThemeName) {
+  try {
+    localStorage.setItem(STORAGE_KEY, value)
+  } catch {
+    // Storage can be unavailable in private browsing contexts.
+  }
+}
+
 function getInitialTheme(): ThemeName {
   const attribute = document.documentElement.dataset.theme
 
@@ -42,6 +50,7 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     if (transitioningRef.current) return
 
     const to: ThemeName = theme === 'light' ? 'dark' : 'light'
+    persistThemeChoice(to)
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setTheme(to)
@@ -66,12 +75,6 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     root.dataset.theme = theme
     root.style.colorScheme = theme
 
-    try {
-      localStorage.setItem(STORAGE_KEY, theme)
-    } catch {
-      // Persistence is best-effort.
-    }
-
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute(
@@ -81,6 +84,25 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
           : lightTheme.colors.background.default,
       )
   }, [theme])
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+
+    // Follow the OS theme live, but only until the user makes a manual
+    // choice (a saved preference takes priority over system changes).
+    const handleChange = (event: MediaQueryListEvent) => {
+      try {
+        if (localStorage.getItem(STORAGE_KEY) === null) {
+          setTheme(event.matches ? 'dark' : 'light')
+        }
+      } catch {
+        setTheme(event.matches ? 'dark' : 'light')
+      }
+    }
+
+    media.addEventListener('change', handleChange)
+    return () => media.removeEventListener('change', handleChange)
+  }, [])
 
   const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme])
 
