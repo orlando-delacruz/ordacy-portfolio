@@ -4,7 +4,7 @@ Public website for **Ordacy**, a custom software development and digital solutio
 
 The website's primary purpose is **client acquisition and lead generation**: communicating services, explaining how Ordacy helps businesses, presenting pricing, showcasing projects, establishing trust, and encouraging inquiries.
 
-- **Brand positioning:** "Better systems. Smarter business."
+- **Brand positioning:** "Build Better. Grow Further."
 - **Brand description:** Ordacy builds custom digital systems that help businesses manage their operations, serve customers, and grow with greater clarity and control.
 - **Language:** English.
 
