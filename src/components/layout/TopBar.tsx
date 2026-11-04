@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { Moon, PanelLeftClose, PanelLeftOpen, Sun } from 'lucide-react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppTheme } from '@/app/theme-context'
 import { breakpoints } from '@/styles/breakpoints'
 import { MobileMoreMenu } from '@/components/navigation/MobileMoreMenu'
@@ -11,108 +10,7 @@ import {
   secondaryNavItems,
 } from '@/components/navigation/navigation'
 import { BrandLogo, Wordmark } from '@/components/navigation/Wordmark'
-
-const Header = styled.header`
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
-  background: ${({ theme }) => theme.colors.surface.default};
-`
-
-const Inner = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.md};
-  width: 100%;
-  max-width: ${({ theme }) => theme.layout.contentMaxWidth};
-  min-height: 3.5rem;
-  margin-inline: auto;
-  padding: env(safe-area-inset-top) ${({ theme }) => theme.spacing.lg} 0;
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    min-height: 4rem;
-  }
-`
-
-const BrandLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  min-height: 2.75rem;
-  border-radius: ${({ theme }) => theme.radii.sm};
-  text-decoration: none;
-
-  &:hover {
-    color: inherit;
-  }
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    display: none;
-  }
-`
-
-const Title = styled.p`
-  display: none;
-  min-width: 0;
-  overflow: hidden;
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
-  letter-spacing: -0.01em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    display: block;
-  }
-`
-
-const Actions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  margin-left: auto;
-`
-
-const ThemeToggle = styled.button`
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.round};
-  background: ${({ theme }) => theme.colors.surface.subtle};
-  color: ${({ theme }) => theme.colors.text.primary};
-  transition:
-    background ${({ theme }) => theme.transitions.fast},
-    color ${({ theme }) => theme.transitions.fast},
-    transform ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.background.subtle};
-    color: ${({ theme }) => theme.colors.text.accent};
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-`
-
-const MoreButton = styled(ThemeToggle)`
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    display: none;
-  }
-`
-
-const SidebarToggle = styled(ThemeToggle)`
-  display: none;
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    display: grid;
-  }
-`
+import * as S from './styles/top-bar.styled'
 
 type TopBarProps = {
   collapsed: boolean
@@ -158,14 +56,14 @@ export function TopBar({ collapsed, onToggleSidebar }: TopBarProps) {
 
   return (
     <>
-      <Header>
-        <Inner>
-          <BrandLink to="/" aria-label="Ordacy home">
+      <S.Header>
+        <S.Inner>
+          <S.BrandLink to="/" aria-label="Ordacy home">
             <BrandLogo />
             <Wordmark />
-          </BrandLink>
+          </S.BrandLink>
 
-          <SidebarToggle
+          <S.SidebarToggle
             type="button"
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-expanded={!collapsed}
@@ -173,20 +71,20 @@ export function TopBar({ collapsed, onToggleSidebar }: TopBarProps) {
             onClick={onToggleSidebar}
           >
             <SidebarIcon size={20} strokeWidth={2} aria-hidden="true" />
-          </SidebarToggle>
+          </S.SidebarToggle>
 
-          <Title>{getPageTitle(pathname)}</Title>
+          <S.Title>{getPageTitle(pathname)}</S.Title>
 
-          <Actions>
-            <ThemeToggle
+          <S.Actions>
+            <S.ThemeToggle
               type="button"
               aria-label={label}
               title={label}
               onClick={toggleTheme}
             >
               <ThemeIcon size={20} strokeWidth={2} aria-hidden="true" />
-            </ThemeToggle>
-            <MoreButton
+            </S.ThemeToggle>
+            <S.MoreButton
               ref={moreButtonRef}
               type="button"
               aria-label={moreNavItem.label}
@@ -199,10 +97,10 @@ export function TopBar({ collapsed, onToggleSidebar }: TopBarProps) {
               }}
             >
               <MoreIcon size={20} strokeWidth={2} aria-hidden="true" />
-            </MoreButton>
-          </Actions>
-        </Inner>
-      </Header>
+            </S.MoreButton>
+          </S.Actions>
+        </S.Inner>
+      </S.Header>
 
       {moreOpen && (
         <MobileMoreMenu

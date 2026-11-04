@@ -39,13 +39,13 @@ export const PrimaryButton = styled(Link)`
      white text on dark teal in dark mode. The dark-teal shades use explicit
      hex values because brand.deep is redefined per theme. */
   background: ${({ theme }) =>
-    theme.mode === 'dark' ? '#00585E' : theme.colors.brand.primary};
+    theme.mode === 'dark' ? '#007C6C' : theme.colors.brand.primary};
   color: ${({ theme }) =>
     theme.mode === 'dark' ? '#ffffff' : theme.colors.brand.navy};
 
   &:hover {
     background: ${({ theme }) =>
-      theme.mode === 'dark' ? '#00474d' : theme.colors.brand.secondary};
+      theme.mode === 'dark' ? '#006A5C' : theme.colors.brand.secondary};
     color: ${({ theme }) =>
       theme.mode === 'dark' ? '#ffffff' : theme.colors.brand.navy};
   }

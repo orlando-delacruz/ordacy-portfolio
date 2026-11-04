@@ -5,33 +5,11 @@ import { darkTheme, lightTheme } from '@/styles/theme'
 import type { ThemeName } from '@/styles/theme'
 import { ThemeContext } from './theme-context'
 import { ThemeTransitionOverlay } from './ThemeTransition'
-
-const STORAGE_KEY = 'ordacy-theme'
-
-function persistThemeChoice(value: ThemeName) {
-  try {
-    localStorage.setItem(STORAGE_KEY, value)
-  } catch {
-    // Storage can be unavailable in private browsing contexts.
-  }
-}
-
-function getInitialTheme(): ThemeName {
-  const attribute = document.documentElement.dataset.theme
-
-  if (attribute === 'light' || attribute === 'dark') return attribute
-
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === 'light' || saved === 'dark') return saved
-  } catch {
-    // Storage can be unavailable in private browsing contexts.
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light'
-}
+import {
+  getInitialTheme,
+  persistThemeChoice,
+  THEME_STORAGE_KEY,
+} from './themeStorage'
 
 export function AppThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeName>(getInitialTheme)
@@ -92,7 +70,7 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     // choice (a saved preference takes priority over system changes).
     const handleChange = (event: MediaQueryListEvent) => {
       try {
-        if (localStorage.getItem(STORAGE_KEY) === null) {
+        if (localStorage.getItem(THEME_STORAGE_KEY) === null) {
           setTheme(event.matches ? 'dark' : 'light')
         }
       } catch {

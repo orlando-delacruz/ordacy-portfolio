@@ -19,7 +19,8 @@ Verified against `package.json` and the source code:
 | TypeScript | 6 | Type safety (`tsc -b` in build and typecheck) |
 | React Router | 7 | Client-side routing (`createBrowserRouter`) |
 | Styled Components | 6 | Component styling |
-| Lucide React | 1.66+ | Icons |
+| Lucide React | 1.66+ | Icons (most UI) |
+| Phosphor Icons | 2.1+ | Bottom-nav regular/fill icon pairs |
 | Plus Jakarta Sans | Google Fonts | Primary typeface (loaded in `index.html`) |
 
 Package manager: **npm** (`package-lock.json` is committed). No UI library, animation library, state management library, backend SDK, or analytics package is installed.
@@ -63,10 +64,10 @@ ordacy-portfolio/
 │   │   │   ├── MobileBottomNav.tsx
 │   │   │   ├── MobileMoreMenu.tsx  # full-screen secondary navigation
 │   │   │   ├── Wordmark.tsx   # theme-aware logo (BrandLogo) + wordmark
-│   │   │   └── navigation.styles.ts # shared nav item styles
+│   │   │   └── navigation.styled.ts # shared nav item styles
 │   │   └── common/
 │   │       └── PagePlaceholder.tsx  # temporary page scaffold
-│   ├── features/              # one folder per route (all placeholder content today)
+│   ├── features/              # one folder per route
 │   │   ├── home/HomePage.tsx
 │   │   ├── projects/ProjectsPage.tsx
 │   │   ├── testimonials/TestimonialsPage.tsx
@@ -90,7 +91,11 @@ ordacy-portfolio/
 └── package.json
 ```
 
-There is no `utils/` directory, no `.env` files, no `AGENTS.md`, no Vercel config, and no test setup in the repository.
+There is no `utils/` directory, no `.env` files, no Vercel config, and no test setup in the repository.
+
+### Code organization
+
+Components keep their Styled Components in `styles/` folders next to their components (for example `src/features/home/sections/styles/hero.styled.ts`) and import them with `import * as S from './styles/hero.styled'`. Shared style fragments live beside their consumers (for example `src/features/home/components/styles/card.styled.ts`), feature data lives in `*.data.ts`, and reusable hooks live in `use*.ts`.
 
 ## Pages and routes
 
@@ -163,7 +168,7 @@ Toggling the theme plays a ~950ms full-screen overlay in the destination theme c
 
 - **Brand colors:** `#00DAB9` (primary), `#00CDAF` (secondary), `#00585E` (deep), `#00243E` (navy), `#FEFEFE` (white). The dark theme complements these with deep-navy surfaces (`#001A2C`, `#022238`, `#041E31`), near-white text (`#F1F8F7`), and a `#5FE7D4` accent.
 - **Typography:** Plus Jakarta Sans only. Display/body sizes, weights (400–800), and tight/normal/relaxed line heights in `src/styles/typography.ts`.
-- **Icons:** Lucide React only.
+- **Icons:** Lucide React for most UI; Phosphor Icons for the mobile bottom nav's regular/fill pair.
 - **Direction:** modern, clean, professional, minimal, business-oriented, mobile-first, consistent spacing and hierarchy.
 
 ## Responsive layout

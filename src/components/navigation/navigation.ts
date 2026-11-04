@@ -1,4 +1,12 @@
 import {
+  ChatsCircleIcon,
+  CurrencyCircleDollarIcon,
+  FolderSimpleIcon,
+  HouseIcon,
+  PhoneIcon,
+} from '@phosphor-icons/react'
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
+import {
   CircleDollarSign,
   FolderKanban,
   House,
@@ -16,6 +24,10 @@ export type NavigationItem = {
   to: string
   icon: LucideIcon
   end?: boolean
+}
+
+export type MobileNavigationItem = NavigationItem & {
+  mobileIcon: PhosphorIcon
 }
 
 const home = {
@@ -75,12 +87,12 @@ export const primaryNavItems: readonly NavigationItem[] = [
   contact,
 ]
 
-export const mobileNavItems: readonly NavigationItem[] = [
-  home,
-  projects,
-  contact,
-  pricing,
-  testimonials,
+export const mobileNavItems: readonly MobileNavigationItem[] = [
+  { ...home, mobileIcon: HouseIcon },
+  { ...projects, mobileIcon: FolderSimpleIcon },
+  { ...contact, mobileIcon: PhoneIcon },
+  { ...pricing, mobileIcon: CurrencyCircleDollarIcon },
+  { ...testimonials, mobileIcon: ChatsCircleIcon },
 ]
 
 export const secondaryNavItems: readonly NavigationItem[] = [

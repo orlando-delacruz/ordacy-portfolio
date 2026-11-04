@@ -109,11 +109,6 @@ export const mobileItemStyles = css`
 `
 
 export const mobileItemActiveStyles = css`
-  /* Active background adapts to the theme; dark.brand.deep is redefined
-     per theme, so the dark-teal background uses an explicit hex. */
-  background: ${({ theme }) =>
-    theme.mode === 'dark' ? '#00585E' : theme.colors.brand.primary};
-  color: ${({ theme }) => (theme.mode === 'dark' ? '#ffffff' : '#000000')};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.text.accent};
   opacity: 1;
 `
