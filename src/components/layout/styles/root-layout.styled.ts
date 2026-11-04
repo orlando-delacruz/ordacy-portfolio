@@ -60,7 +60,8 @@ export const MainInner = styled.div`
   margin-inline: auto;
   padding: ${({ theme }) => theme.spacing.xl}
     ${({ theme }) => theme.spacing.lg};
-  padding-bottom: calc(8rem + env(safe-area-inset-bottom));
+  /* Clears the floating bottom nav (~5rem incl. its 1rem offset) plus a little air. */
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
 
   @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
     padding-bottom: ${({ theme }) => theme.spacing.xl};

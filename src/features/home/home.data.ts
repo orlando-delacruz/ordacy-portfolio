@@ -1,7 +1,6 @@
 import {
   Building2,
   CalendarCheck,
-  ClipboardCheck,
   ClipboardList,
   Clock,
   Code,
@@ -9,6 +8,7 @@ import {
   FileText,
   Globe,
   Inbox,
+  KeyRound,
   LayoutDashboard,
   Layers,
   MessagesSquare,
@@ -17,6 +17,8 @@ import {
   Rocket,
   Search,
   Users,
+  Wallet,
+  Workflow,
   Wrench,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -187,38 +189,23 @@ export const plans: readonly Plan[] = [
   },
 ]
 
-export type PricingNote = {
-  icon: LucideIcon
-  title: string
-  description: string
+export type ProjectShot = {
+  src: string
+  alt: string
 }
-
-export const pricingNotes: readonly PricingNote[] = [
-  {
-    icon: ClipboardCheck,
-    title: 'Scoped to fit',
-    description: 'Starting prices are a guide. Your final quote follows scoping.',
-  },
-  {
-    icon: Clock,
-    title: 'Timeline per project',
-    description: 'We confirm the timeline individually for every scope.',
-  },
-  {
-    icon: Wrench,
-    title: 'Optional maintenance',
-    description: 'Ongoing maintenance is optional and quoted separately.',
-  },
-]
 
 export type ShowcaseProject = {
   id: string
   title: string
+  /** Shown in the card's category badge. */
+  icon: LucideIcon
   category: string
   summary: string
   details: string
   features: readonly string[]
-  image: { src: string; alt: string }
+  image: ProjectShot
+  /** Extra screenshots shown as thumbnails under the main image in the details dialog. */
+  screenshots: readonly ProjectShot[]
   /** Live site for the "Visit website" button. */
   url: string
 }
@@ -231,10 +218,19 @@ const PLACEHOLDER_URL = 'https://example.com'
 const unsplash = (id: string) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=70`
 
+// Placeholder screenshots (picsum seeds, deterministic). Replace with real
+// product screenshots per project before launch; `image` stays the thumbnail.
+const shots = (seed: string, title: string) =>
+  [1, 2, 3].map((index) => ({
+    src: `https://picsum.photos/seed/${seed}-${index}/1200/750`,
+    alt: `${title} screenshot ${index}.`,
+  }))
+
 export const showcaseProjects: readonly ShowcaseProject[] = [
   {
     id: 'clinic-booking',
     title: 'Clinic Booking System',
+    icon: CalendarCheck,
     category: 'Booking and Scheduling',
     summary:
       'Online appointments, staff schedules, and patient reminders in one place.',
@@ -250,11 +246,13 @@ export const showcaseProjects: readonly ShowcaseProject[] = [
       src: unsplash('photo-1576091160550-2173dba999ef'),
       alt: 'Hands typing on a laptop next to a stethoscope on a desk.',
     },
+    screenshots: shots('clinic-booking', 'Clinic Booking System'),
     url: PLACEHOLDER_URL,
   },
   {
     id: 'inventory-sales',
     title: 'Inventory and Sales Tracker',
+    icon: Package,
     category: 'Inventory and Sales',
     summary:
       'Stock levels, product records, and daily sales tracked in real time.',
@@ -270,11 +268,13 @@ export const showcaseProjects: readonly ShowcaseProject[] = [
       src: unsplash('photo-1586528116311-ad8dd3c8310d'),
       alt: 'A warehouse with rows of shelves stacked with boxes and crates.',
     },
+    screenshots: shots('inventory-sales', 'Inventory and Sales Tracker'),
     url: PLACEHOLDER_URL,
   },
   {
     id: 'operations-dashboard',
     title: 'Operations Dashboard',
+    icon: LayoutDashboard,
     category: 'Dashboards and Admin Tools',
     summary:
       'Key business numbers and team activity on a single admin screen.',
@@ -290,11 +290,13 @@ export const showcaseProjects: readonly ShowcaseProject[] = [
       src: unsplash('photo-1551288049-bebda4e38f71'),
       alt: 'A laptop screen showing analytics charts and graphs.',
     },
+    screenshots: shots('operations-dashboard', 'Operations Dashboard'),
     url: PLACEHOLDER_URL,
   },
   {
     id: 'retail-crm',
     title: 'Retail Customer CRM',
+    icon: Users,
     category: 'CRM and Customer Management',
     summary:
       'Customer profiles, purchase history, and follow-ups for a retail team.',
@@ -310,11 +312,13 @@ export const showcaseProjects: readonly ShowcaseProject[] = [
       src: unsplash('photo-1556742049-0cfed4f6a45d'),
       alt: 'A shop assistant serving a customer who pays with a phone at the counter.',
     },
+    screenshots: shots('retail-crm', 'Retail Customer CRM'),
     url: PLACEHOLDER_URL,
   },
   {
     id: 'coworking-website',
     title: 'Coworking Space Website',
+    icon: Globe,
     category: 'Websites and Web Apps',
     summary:
       'A fast, mobile-first website with membership plans and tour bookings.',
@@ -330,11 +334,13 @@ export const showcaseProjects: readonly ShowcaseProject[] = [
       src: unsplash('photo-1522202176988-66273c2fd55f'),
       alt: 'Three people working on laptops and talking at a shared table.',
     },
+    screenshots: shots('coworking-website', 'Coworking Space Website'),
     url: PLACEHOLDER_URL,
   },
   {
     id: 'business-management',
     title: 'Business Management System',
+    icon: Building2,
     category: 'Business Management',
     summary:
       'Tasks, approvals, and team records unified in one internal system.',
@@ -350,7 +356,91 @@ export const showcaseProjects: readonly ShowcaseProject[] = [
       src: unsplash('photo-1553877522-43269d4ea984'),
       alt: 'A team member presenting on a laptop to colleagues in an office.',
     },
+    screenshots: shots('business-management', 'Business Management System'),
     url: PLACEHOLDER_URL,
+  },
+]
+
+export type Testimonial = {
+  id: string
+  /** The client's own words. Keep to ~2–4 sentences so cards stay even. */
+  quote: string
+  name: string
+  /** Role at the company, e.g. "Operations Manager". */
+  role: string
+  company: string
+  /** 1–5. Rendered as stars; keep whole numbers. */
+  rating: number
+  /** 1–2 letters shown in the avatar when there is no photo. */
+  initials: string
+}
+
+// PLACEHOLDER CONTENT, replace before launch. These testimonials are
+// illustrative, NOT real client feedback, and every name/company is invented.
+// Publishing them as-is would present fabricated endorsements as genuine.
+// Per README content rules, only publish real testimonials collected with the
+// client's permission. Swap in approved quotes (and their real attribution)
+// before this section goes live.
+export const testimonials: readonly Testimonial[] = [
+  {
+    id: 'placeholder-1',
+    quote:
+      'The booking system they built replaced three spreadsheets and a shared inbox. Our front desk now sees every appointment in one place, and no-shows have dropped noticeably.',
+    name: 'Placeholder Name',
+    role: 'Operations Manager',
+    company: 'Example Clinic',
+    rating: 5,
+    initials: 'PN',
+  },
+  {
+    id: 'placeholder-2',
+    quote:
+      'We went from guessing our stock levels to knowing them in real time. The inventory dashboard flags low items before they run out, which has saved us more than one lost sale.',
+    name: 'Placeholder Name',
+    role: 'Owner',
+    company: 'Example Retail',
+    rating: 5,
+    initials: 'PN',
+  },
+  {
+    id: 'placeholder-3',
+    quote:
+      'They took the time to understand how we actually work before writing a line of code. The result fits our process instead of forcing us to fit theirs.',
+    name: 'Placeholder Name',
+    role: 'Managing Director',
+    company: 'Example Services Co.',
+    rating: 5,
+    initials: 'PN',
+  },
+  {
+    id: 'placeholder-4',
+    quote:
+      'Our team used to lose hours each week to manual reporting. The admin dashboard pulls everything into one screen, so decisions happen faster and with better information.',
+    name: 'Placeholder Name',
+    role: 'Head of Operations',
+    company: 'Example Group',
+    rating: 5,
+    initials: 'PN',
+  },
+  {
+    id: 'placeholder-5',
+    quote:
+      'Clear communication from discovery through handover. Timelines were realistic, updates were regular, and the finished system worked exactly as scoped.',
+    name: 'Placeholder Name',
+    role: 'Founder',
+    company: 'Example Studio',
+    rating: 5,
+    initials: 'PN',
+  },
+  {
+    id: 'placeholder-6',
+    quote:
+      'The CRM they delivered keeps every customer interaction in one place. Follow-ups no longer slip through the cracks, and the whole team can pick up where anyone left off.',
+    name: 'Placeholder Name',
+    role: 'Sales Lead',
+    company: 'Example Agency',
+    rating: 5,
+    initials: 'PN',
   },
 ]
 
@@ -388,47 +478,63 @@ export const steps: readonly Step[] = [
 ]
 
 export type Faq = {
+  icon: LucideIcon
   question: string
   answer: string
+  /** Shown in the home page FAQ section (keep to five). */
+  featured?: boolean
 }
 
 export const faqs: readonly Faq[] = [
   {
+    icon: Building2,
+    featured: true,
     question: 'What types of businesses do you work with?',
     answer:
       'We work with startups and businesses that need custom websites, web applications, or digital systems to support their operations and goals.',
   },
   {
+    icon: Workflow,
+    featured: true,
     question: 'Can you build a system based on our existing workflow?',
     answer:
       'Yes. We first understand your current processes and requirements, then determine an appropriate solution based on your business needs and agreed project scope.',
   },
   {
+    icon: Wallet,
+    featured: true,
     question: 'How much does a project cost?',
     answer:
       'Project pricing depends on the type of solution, features, complexity, and overall scope. Our pricing section provides starting prices, while custom requirements are quoted individually.',
   },
   {
+    icon: Clock,
+    featured: true,
     question: 'How long does development take?',
     answer:
       'Development time depends on project requirements, complexity, and scope. We provide an estimated timeline during the proposal stage.',
   },
   {
+    icon: Wrench,
     question: 'Do you provide maintenance after launch?',
     answer:
       'Maintenance is optional and can be arranged separately based on your requirements.',
   },
   {
+    icon: KeyRound,
     question: 'Who owns the completed project?',
     answer:
       'Ownership of agreed custom deliverables is transferred to the client after full payment, subject to the agreed terms and applicable third-party licenses.',
   },
   {
+    icon: Rocket,
+    featured: true,
     question: 'How do we start a project?',
     answer:
       'You can submit your project details through our contact form. We will use the information to understand your requirements and discuss the next steps.',
   },
   {
+    icon: Globe,
     question: 'Do you work with international clients?',
     answer:
       'Yes. Ordacy is open to working with both Philippine and international clients.',

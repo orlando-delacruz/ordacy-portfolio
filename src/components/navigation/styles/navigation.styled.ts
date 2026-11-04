@@ -51,7 +51,7 @@ export const desktopItemStyles = css<{ $collapsed: boolean }>`
   color: ${({ theme }) => theme.colors.text.primary};
   font-family: inherit;
   font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   line-height: ${({ theme }) => theme.typography.lineHeights.normal};
   text-align: left;
   text-decoration: none;
@@ -80,7 +80,7 @@ export const desktopItemActiveStyles = css`
   background: ${({ theme }) => theme.colors.background.subtle};
   box-shadow: ${({ theme }) => theme.shadows.sm};
   color: ${({ theme }) => theme.colors.text.accent};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
 `
 
 export const mobileItemStyles = css`
@@ -99,7 +99,7 @@ export const mobileItemStyles = css`
   color: ${({ theme }) => (theme.mode === 'dark' ? '#ffffff' : '#000000')};
   font-family: inherit;
   font-size: ${({ theme }) => theme.typography.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
   opacity: 0.7;
   text-decoration: none;
@@ -119,6 +119,6 @@ export const mobileItemStyles = css`
 
 export const mobileItemActiveStyles = css`
   color: ${({ theme }) => theme.colors.text.accent};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   opacity: 1;
 `

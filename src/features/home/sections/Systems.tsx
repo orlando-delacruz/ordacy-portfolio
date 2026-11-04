@@ -9,6 +9,7 @@ import type { KeyboardEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { useTheme } from 'styled-components'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { useRevealOnce } from '@/hooks/useRevealOnce'
 import { Section } from '../components/Section'
 import { problems, services } from '../home.data'
 import * as S from './styles/systems.styled'
@@ -19,7 +20,7 @@ const tabs = [
   {
     id: 'problems',
     label: 'Problem',
-    description: 'What holds businesses back.',
+    description: 'What holds businesses back?',
     relatedLabel: 'How Ordacy helps',
     items: problems,
     tone: 'problem',
@@ -28,7 +29,7 @@ const tabs = [
   {
     id: 'solutions',
     label: 'Solution',
-    description: 'What Ordacy builds.',
+    description: 'What Ordacy builds?',
     relatedLabel: 'Problems it solves',
     items: services,
     tone: 'solution',
@@ -104,9 +105,7 @@ function SystemTabs({ active, onChange, idPrefix, inline }: SystemTabsProps) {
           onClick={() => onChange(tab.id)}
           onKeyDown={handleKeyDown}
         >
-          {inline && (
-            <tab.TabIcon size={18} strokeWidth={2} aria-hidden="true" />
-          )}
+          <tab.TabIcon size={18} strokeWidth={2} aria-hidden="true" />
           {tab.label}
         </S.Tab>
       ))}
@@ -131,7 +130,7 @@ function Accordion({ tab, openIndex, onToggle }: AccordionProps) {
         const baseId = `systems-${tab.id}-${index}`
 
         return (
-          <S.AccordionItem key={item.title}>
+          <S.AccordionItem key={item.title} $index={index}>
             <S.AccordionHeading>
               <S.AccordionButton
                 type="button"
@@ -246,8 +245,6 @@ function DesktopExplorer() {
     itemRefs.current[tabId][index]?.focus()
   }
 
-  const activeTab = tabs.find((tab) => tab.id === active) ?? tabs[0]
-
   return (
     <>
       <S.ExplorerToolbar>
@@ -257,7 +254,6 @@ function DesktopExplorer() {
           idPrefix="systems-d"
           inline
         />
-        <S.ExplorerCaption>{activeTab.description}</S.ExplorerCaption>
       </S.ExplorerToolbar>
 
       {tabs.map((tab) => {
@@ -275,6 +271,7 @@ function DesktopExplorer() {
             aria-labelledby={`systems-d-tab-${tab.id}`}
             hidden={active !== tab.id}
           >
+            <S.ExplorerCaption $tone={tab.tone}>{tab.description}</S.ExplorerCaption>
             <S.ItemList
               role="tablist"
               aria-orientation="vertical"
@@ -297,6 +294,7 @@ function DesktopExplorer() {
                     tabIndex={isSelected ? 0 : -1}
                     $selected={isSelected}
                     $tone={tab.tone}
+                    $index={entryIndex}
                     onClick={() => select(tab.id, entryIndex)}
                     onKeyDown={(event) => handleItemKeyDown(event, tab)}
                   >
@@ -321,7 +319,14 @@ function DesktopExplorer() {
             </S.ItemList>
 
             <S.Detail role="tabpanel" id={detailId}>
-              <S.DetailWatermark $tone={tab.tone} aria-hidden="true">
+              <S.DetailRing $tone={tab.tone} aria-hidden="true" />
+              <S.DetailDots aria-hidden="true" />
+              {/* Keyed so the watermark spins in again on every selection. */}
+              <S.DetailWatermark
+                key={`${tab.id}-${item.title}`}
+                $tone={tab.tone}
+                aria-hidden="true"
+              >
                 <Icon size={200} strokeWidth={1.25} />
               </S.DetailWatermark>
               {/* Keyed so the fade-in replays on every selection. */}
@@ -374,14 +379,14 @@ function DesktopExplorer() {
                 )}
 
                 <S.DetailAction>
-                  <S.SecondaryButton to="/contact">
+                  <S.PrimaryButton to="/contact">
                     <MessagesSquare
                       size={18}
                       strokeWidth={2}
                       aria-hidden="true"
                     />
                     Discuss your project
-                  </S.SecondaryButton>
+                  </S.PrimaryButton>
                 </S.DetailAction>
               </S.DetailBody>
             </S.Detail>
@@ -395,6 +400,8 @@ function DesktopExplorer() {
 export function Systems() {
   const theme = useTheme()
   const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.lg})`)
+  // Rows and panels slide in the first time the section scrolls into view.
+  const [stageRef, revealed] = useRevealOnce<HTMLDivElement>(0.15)
 
   return (
     <Section
@@ -402,7 +409,9 @@ export function Systems() {
       title="What We Address."
       description="Problems solved, systems built."
     >
-      {isDesktop ? <DesktopExplorer /> : <MobileTabs />}
+      <S.Stage ref={stageRef} data-revealed={revealed || undefined}>
+        {isDesktop ? <DesktopExplorer /> : <MobileTabs />}
+      </S.Stage>
     </Section>
   )
 }

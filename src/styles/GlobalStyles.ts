@@ -91,6 +91,40 @@ export const GlobalStyles = createGlobalStyle`
     outline-offset: 3px;
   }
 
+  /*
+   * Scroll reveal (see useScrollReveal): [data-reveal] blocks fade up as they
+   * enter the viewport. Uses the "translate" property so it never overrides an
+   * element's own transform animations. data-reveal="1".."3" staggers siblings.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      opacity: 0;
+      translate: 0 1.5rem;
+      transition:
+        opacity 700ms ease-out,
+        translate 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    [data-reveal='1'] {
+      transition-delay: 100ms;
+    }
+
+    [data-reveal='2'] {
+      transition-delay: 200ms;
+    }
+
+    [data-reveal='3'] {
+      transition-delay: 300ms;
+    }
+
+    /* "none", not "0 0", so revealed blocks don't keep a containing block
+       for fixed/sticky descendants. */
+    [data-reveal][data-revealed] {
+      opacity: 1;
+      translate: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

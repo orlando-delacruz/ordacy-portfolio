@@ -8,6 +8,36 @@ import * as S from './styles/hero.styled'
 
 type LightboxContent = 'cover' | 'avatar' | null
 
+// Abstract cover artwork: rings, a bar, sparkles, and two floating mock UI cards.
+function CoverArt() {
+  return (
+    <>
+      <S.CoverRingLarge />
+      <S.CoverRingSmall />
+      <S.CoverBar />
+      <S.Sparkle $top="22%" $left="38%" $delay={0} />
+      <S.Sparkle $top="68%" $left="56%" $delay={1.2} />
+      <S.Sparkle $top="30%" $left="78%" $delay={2.4} />
+      <S.MockCard $variant="chart">
+        <S.MockLine $width="45%" />
+        <S.MockBars>
+          {[40, 70, 55, 90, 65].map((height, index) => (
+            <S.MockBar key={index} $height={height} $index={index} />
+          ))}
+        </S.MockBars>
+      </S.MockCard>
+      <S.MockCard $variant="list">
+        {[0, 1, 2].map((row) => (
+          <S.MockRow key={row}>
+            <S.MockDot />
+            <S.MockLine $width={row === 1 ? '55%' : '75%'} />
+          </S.MockRow>
+        ))}
+      </S.MockCard>
+    </>
+  )
+}
+
 export function Hero() {
   const { theme } = useAppTheme()
   const [lightbox, setLightbox] = useState<LightboxContent>(null)
@@ -33,9 +63,7 @@ export function Hero() {
           onClick={openLightbox('cover')}
         >
           <S.Cover aria-hidden="true">
-            <S.CoverRingLarge aria-hidden="true" />
-            <S.CoverRingSmall aria-hidden="true" />
-            <S.CoverBar aria-hidden="true" />
+            <CoverArt />
           </S.Cover>
         </S.CoverButton>
       </S.CoverBleed>
@@ -107,27 +135,17 @@ export function Hero() {
 
       {lightbox && (
         <Lightbox
+          bare
           title={lightbox === 'cover' ? 'Cover image' : 'Profile image'}
           onClose={() => setLightbox(null)}
           returnFocusTo={trigger}
         >
           {lightbox === 'cover' ? (
-            <div>
-              <S.LightboxCover aria-hidden="true">
-                <S.CoverRingLarge aria-hidden="true" />
-                <S.CoverRingSmall aria-hidden="true" />
-                <S.CoverBar aria-hidden="true" />
-              </S.LightboxCover>
-              <S.Caption>
-                Cover artwork preview. A full-size cover photo can be added
-                here when available.
-              </S.Caption>
-            </div>
+            <S.LightboxCover role="img" aria-label="Ordacy cover artwork">
+              <CoverArt />
+            </S.LightboxCover>
           ) : (
-            <div>
-              <S.LightboxImage src={logo} alt="Ordacy logo at full size" />
-              <S.Caption>Ordacy logo.</S.Caption>
-            </div>
+            <S.LightboxImage src={logo} alt="Ordacy logo" />
           )}
         </Lightbox>
       )}

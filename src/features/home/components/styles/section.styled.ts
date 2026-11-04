@@ -8,11 +8,24 @@ export const Wrapper = styled.section`
   }
 `
 
-export const Header = styled.div`
+export const Header = styled.div<{ $withAction?: boolean }>`
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+
+  ${({ $withAction, theme }) =>
+    $withAction &&
+    `
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: ${theme.spacing.md};
+  `}
+`
+
+export const HeaderText = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing.sm};
+  min-width: 0;
   max-width: 44rem;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
 `
 
 export const Title = styled.h2`

@@ -1,19 +1,173 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
+import { SecondaryButton } from '../../components/styles/buttons.styled'
 
 export {
   PrimaryAnchor,
   SecondaryButton,
 } from '../../components/styles/buttons.styled'
 
+/*
+ * Motion: the first time the carousel is seen (data-revealed, see Projects.tsx)
+ * the cards fan out from the centre. The active card slowly zooms its photo,
+ * a light sweeps across it, and its title, summary and buttons rise in each
+ * time it becomes active. Behind the stage a glow pulses, rings turn and small
+ * icon tiles float. Durations are choreography-specific, so they don't use
+ * theme.transitions. Reduced motion shows the final, still state.
+ */
+const noMotionPref = '@media (prefers-reduced-motion: no-preference)'
+
+const rise = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
+const shineSweep = keyframes`
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  25%, 100% {
+    transform: translateX(350%) skewX(-20deg);
+  }
+`
+
+const glowPulse = keyframes`
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+`
+
+const spin = keyframes`
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+`
+
+const bob = keyframes`
+  0%, 100% {
+    transform: translateY(0) rotate(var(--tilt));
+  }
+  50% {
+    transform: translateY(-8px) rotate(var(--tilt));
+  }
+`
+
 /* ---------- 3D looping carousel ---------- */
 
 export const Carousel = styled.div`
   position: relative;
+  isolation: isolate;
   border-radius: ${({ theme }) => theme.radii.lg};
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.border.focus};
     outline-offset: 4px;
+  }
+`
+
+/* ---------- Decorative backdrop (aria-hidden, behind the stage) ---------- */
+
+export const Decor = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+`
+
+// Soft brand light pooled behind the active card.
+export const Glow = styled.span`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(36rem, 90%);
+  height: 26rem;
+  border-radius: ${({ theme }) => theme.radii.round};
+  background: radial-gradient(
+    closest-side,
+    ${({ theme }) =>
+      `color-mix(in srgb, ${theme.colors.brand.primary} 22%, transparent)`},
+    transparent
+  );
+  transform: translate(-50%, -50%);
+
+  ${noMotionPref} {
+    animation: ${glowPulse} 7s ease-in-out infinite;
+  }
+`
+
+// Concentric rings centred on the stage; the small dashed one turns.
+export const Ring = styled.span<{ $size: 'large' | 'small' }>`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: ${({ $size }) => ($size === 'large' ? '38rem' : '26rem')};
+  aspect-ratio: 1;
+  border: 1px ${({ $size }) => ($size === 'large' ? 'solid' : 'dashed')}
+    ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.round};
+  transform: translate(-50%, -50%);
+
+  ${noMotionPref} {
+    animation: ${spin} ${({ $size }) => ($size === 'large' ? '90s' : '50s')}
+      linear infinite ${({ $size }) => ($size === 'large' ? 'normal' : 'reverse')};
+  }
+`
+
+const iconSpots = {
+  topLeft: css`
+    --tilt: -8deg;
+    top: 8%;
+    left: 4%;
+  `,
+  topRight: css`
+    --tilt: 6deg;
+    top: 14%;
+    right: 5%;
+  `,
+  bottomLeft: css`
+    --tilt: 10deg;
+    bottom: 22%;
+    left: 9%;
+  `,
+} as const
+
+// Small floating tiles with build-related icons. Desktop only (phones are too narrow).
+export const FloatingIcon = styled.span<{ $spot: keyof typeof iconSpots }>`
+  position: absolute;
+  display: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: ${({ theme }) => theme.colors.surface.default};
+  box-shadow: ${({ theme }) => theme.shadows.md};
+  color: ${({ theme }) => theme.colors.text.accent};
+  transform: rotate(var(--tilt));
+  ${({ $spot }) => iconSpots[$spot]}
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    display: grid;
+  }
+
+  ${noMotionPref} {
+    animation: ${bob} ${({ $spot }) => ($spot === 'topRight' ? '7s' : '5.5s')}
+      ease-in-out ${({ $spot }) => ($spot === 'bottomLeft' ? '-2s' : '0s')}
+      infinite;
   }
 `
 
@@ -64,13 +218,14 @@ export const Slide = styled.div<{ $offset: number; $instant: boolean }>`
   position: relative;
   grid-area: 1 / 1;
   justify-self: center;
-  width: min(38%, 20rem);
+  width: min(58%, 22rem);
   z-index: ${({ $offset }) => 10 - Math.abs($offset)};
   /* Mobile/tablet: three whole cards (centre + one each side). */
   opacity: ${({ $offset }) => (Math.abs($offset) <= 1 ? 1 : 0)};
   pointer-events: ${({ $offset }) => (Math.abs($offset) <= 1 ? 'auto' : 'none')};
   cursor: ${({ $offset }) => ($offset === 0 ? 'auto' : 'pointer')};
-  transform: ${({ $offset }) => slideTransform($offset, [106, 200], 160, 30)};
+  /* Steep tilt turns the side cards into narrow panels so the centre card can be wide. */
+  transform: ${({ $offset }) => slideTransform($offset, [76, 152], 120, 66)};
   transition: ${({ $instant, theme }) =>
     $instant
       ? 'none'
@@ -97,6 +252,15 @@ export const Slide = styled.div<{ $offset: number; $instant: boolean }>`
     transition: opacity ${({ theme }) => theme.transitions.slow};
   }
 
+  /* Before the carousel is revealed, every card waits stacked at the centre;
+     the normal transform transition then fans them out to their places. */
+  ${noMotionPref} {
+    ${Carousel}:not([data-revealed]) & {
+      opacity: 0;
+      transform: translateZ(-240px) scale(0.85);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     transition: opacity ${({ theme }) => theme.transitions.fast};
   }
@@ -104,10 +268,12 @@ export const Slide = styled.div<{ $offset: number; $instant: boolean }>`
 
 /*
  * Image-led card: the photo fills the card and the text sits on a navy scrim
- * at the bottom. Square on desktop, slightly taller (4:5) on phones so the
- * text still fits. Brand tokens are identical in both themes, so the overlay
- * reads the same in light and dark mode.
+ * at the bottom. Taller portrait (3:5) on phones so the badge, two-line
+ * summary and one-row actions fit; square on desktop. Brand tokens are
+ * identical in both themes, so the overlay reads the same in light and
+ * dark mode.
  */
+// data-active (set in Projects.tsx) lets the image, shine and overlay react to the active card.
 export const Card = styled.article`
   /* Card contents size themselves to the card's own width (container queries). */
   container-type: inline-size;
@@ -115,7 +281,8 @@ export const Card = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  aspect-ratio: 4 / 5;
+  /* Taller portrait on mobile/tablet, square on desktop. */
+  aspect-ratio: 3 / 5;
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.lg};
@@ -133,17 +300,49 @@ export const CardImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+
+  /* Slow "Ken Burns" zoom while the card is active; eases back when it leaves. */
+  ${noMotionPref} {
+    transition: transform 1.2s ease-out;
+
+    ${Card}[data-active] & {
+      transform: scale(1.08);
+      transition: transform 8s ease-out;
+    }
+  }
+`
+
+// Diagonal light that sweeps across the active card every few seconds.
+export const Shine = styled.span`
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, ${({ theme }) => theme.colors.brand.white} 18%, transparent),
+    transparent
+  );
+  transform: translateX(-150%) skewX(-20deg);
+  pointer-events: none;
+
+  ${noMotionPref} {
+    ${Card}[data-active] & {
+      animation: ${shineSweep} 6s ease-in-out 400ms infinite;
+    }
+  }
 `
 
 export const Scrim = styled.span`
   position: absolute;
   inset: 0;
-  /* Dark only behind the text; the top half of the photo stays clear. */
+  /* Darker wash behind the text so title/summary stay readable on bright photos. */
   background: linear-gradient(
     to top,
-    color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} 92%, transparent) 0%,
-    color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} 65%, transparent) 30%,
-    transparent 60%
+    color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} 96%, transparent) 0%,
+    color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} 88%, transparent) 38%,
+    color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} 60%, transparent) 62%,
+    transparent 85%
   );
   pointer-events: none;
 `
@@ -151,9 +350,7 @@ export const Scrim = styled.span`
 /*
  * Card content scales with the card's own width (cqi = 1% of it), so the same
  * card works at ~150px (three across on a phone) and ~300px (desktop centre).
- * Below WIDE_CARD the summary hides and button labels shorten.
  */
-const WIDE_CARD = '15rem'
 
 export const Overlay = styled.div`
   position: relative;
@@ -167,6 +364,25 @@ export const Overlay = styled.div`
     ${({ theme }) => theme.spacing.lg}
   );
   color: ${({ theme }) => theme.colors.brand.white};
+
+  /* Title, summary and buttons rise in each time the card becomes active. */
+  ${noMotionPref} {
+    ${Card}[data-active] & > * {
+      animation: ${rise} 500ms ease-out backwards;
+    }
+
+    ${Card}[data-active] & > :nth-child(1) {
+      animation-delay: 150ms;
+    }
+
+    ${Card}[data-active] & > :nth-child(2) {
+      animation-delay: 250ms;
+    }
+
+    ${Card}[data-active] & > :nth-child(3) {
+      animation-delay: 350ms;
+    }
+  }
 `
 
 export const Image = styled.img`
@@ -186,29 +402,61 @@ export const Category = styled.span`
   top: var(--inset);
   left: var(--inset);
   z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
   max-width: calc(100% - 2 * var(--inset));
   overflow: hidden;
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
   text-overflow: ellipsis;
+  text-transform: uppercase;
   white-space: nowrap;
+  letter-spacing: 0.08em;
+  line-height: 1;
   border: 1px solid
-    color-mix(in srgb, ${({ theme }) => theme.colors.brand.white} 30%, transparent);
+    color-mix(in srgb, ${({ theme }) => theme.colors.brand.white} 35%, transparent);
   border-radius: ${({ theme }) => theme.radii.pill};
-  background: color-mix(
-    in srgb,
-    ${({ theme }) => theme.colors.brand.navy} 55%,
-    transparent
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} 78%, transparent),
+    color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} 62%, transparent)
   );
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
   color: ${({ theme }) => theme.colors.brand.white};
-  font-size: ${({ theme }) => theme.typography.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  font-size: clamp(
+    calc(${({ theme }) => theme.typography.fontSizes.xs} * 0.85),
+    4.5cqi,
+    ${({ theme }) => theme.typography.fontSizes.xs}
+  );
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
-  /* Too cramped to read on narrow cards; the Details dialog still shows it. */
-  @container (max-width: ${WIDE_CARD}) {
-    display: none;
+  /* Category icon in brand teal with a soft glow. */
+  & > svg {
+    flex: none;
+    color: ${({ theme }) => theme.colors.brand.primary};
+    filter: drop-shadow(0 0 4px ${({ theme }) => theme.colors.brand.primary});
   }
+
+  /* Narrow cards: tighten tracking/padding so long labels fit instead of overflowing. */
+  @container (max-width: 14rem) {
+    gap: calc(${({ theme }) => theme.spacing.xs} / 2);
+    padding: ${({ theme }) => theme.spacing.xs};
+    letter-spacing: 0.04em;
+
+    & > svg {
+      width: 10px;
+      height: 10px;
+    }
+  }
+`
+
+export const CategoryLabel = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 export const Title = styled.h3`
@@ -231,24 +479,22 @@ export const Summary = styled.p`
   overflow: hidden;
   color: color-mix(
     in srgb,
-    ${({ theme }) => theme.colors.brand.white} 78%,
+    ${({ theme }) => theme.colors.brand.white} 88%,
     transparent
   );
   font-size: ${({ theme }) => theme.typography.fontSizes.sm};
   line-height: ${({ theme }) => theme.typography.lineHeights.normal};
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-
-  @container (max-width: ${WIDE_CARD}) {
-    display: none;
-  }
 `
 
-// Always one row: the primary link stretches, Details stays compact.
+// Always one row. Mobile-first: Visit stretches long while Details is
+// icon-only; on desktop both share the width with full labels.
 const actionHeight = 'clamp(2.25rem, 14cqi, 2.75rem)'
 
 export const CardActions = styled.div`
   display: flex;
+  flex-wrap: nowrap;
   gap: clamp(${({ theme }) => theme.spacing.xs}, 3cqi, ${({ theme }) => theme.spacing.sm});
   width: 100%;
   margin-top: clamp(${({ theme }) => theme.spacing.xs}, 3cqi, ${({ theme }) => theme.spacing.sm});
@@ -257,46 +503,63 @@ export const CardActions = styled.div`
     flex: 1;
     min-width: 0;
     min-height: ${actionHeight};
-    padding-inline: clamp(${({ theme }) => theme.spacing.sm}, 5cqi, ${({ theme }) => theme.spacing.md});
+    padding-inline: clamp(${({ theme }) => theme.spacing.xs}, 4cqi, ${({ theme }) => theme.spacing.md});
     font-size: clamp(
       ${({ theme }) => theme.typography.fontSizes.xs},
       5cqi,
       ${({ theme }) => theme.typography.fontSizes.sm}
     );
   }
+
+  & svg {
+    flex: none;
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    & > a,
+    & > button {
+      flex: 1 1 0;
+    }
+  }
 `
 
-// Full label on wide cards, short label on narrow ones (only one is ever displayed).
-export const LabelWide = styled.span`
-  @container (max-width: ${WIDE_CARD}) {
+// Short "Visit" label: desktop only (mobile shows the full "Visit Website").
+export const VisitShort = styled.span`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    display: inline;
+  }
+`
+
+// Full "Visit Website" label: mobile only.
+export const VisitFull = styled.span`
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
     display: none;
   }
 `
 
-export const LabelNarrow = styled.span`
+// "Details" text: desktop only (mobile shows the icon alone).
+export const DetailsLabel = styled.span`
   display: none;
 
-  @container (max-width: ${WIDE_CARD}) {
-    display: inline-flex;
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    display: inline;
   }
 `
 
 // Frosted button that stays legible on the dark card scrim in both themes.
-// Text on wide cards; icon-only square on narrow ones (accessible name via SrOnly).
+// Mobile: icon-only square so Visit stretches long; desktop: icon + label.
 export const DetailsButton = styled.button`
-  /* Contains the visually hidden label text. */
-  position: relative;
   display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
+  gap: ${({ theme }) => theme.spacing.xs};
   min-width: ${actionHeight};
   min-height: ${actionHeight};
-  padding: 0 ${({ theme }) => theme.spacing.md};
-
-  @container (max-width: ${WIDE_CARD}) {
-    padding: 0;
-  }
+  padding: 0;
+  white-space: nowrap;
   border: 1px solid
     color-mix(in srgb, ${({ theme }) => theme.colors.brand.white} 35%, transparent);
   border-radius: ${({ theme }) => theme.radii.md};
@@ -312,7 +575,7 @@ export const DetailsButton = styled.button`
     5cqi,
     ${({ theme }) => theme.typography.fontSizes.sm}
   );
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   cursor: pointer;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -330,9 +593,14 @@ export const DetailsButton = styled.button`
     outline: 2px solid ${({ theme }) => theme.colors.brand.primary};
     outline-offset: 2px;
   }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    flex: 1 1 0;
+    padding: 0 ${({ theme }) => theme.spacing.md};
+  }
 `
 
-// Lightbox action row: buttons wrap and fill the width on narrow screens.
+// Details dialog action row: wraps to two rows and fills the width on narrow screens.
 export const DetailActions = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -381,43 +649,33 @@ export const ArrowButton = styled.button`
     border-color: ${({ theme }) => theme.colors.text.accent};
     color: ${({ theme }) => theme.colors.text.accent};
   }
-`
 
-export const Dots = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
-`
-
-// 24px hit area around a small visual dot; the active dot stretches into a pill.
-export const Dot = styled.button<{ $active: boolean }>`
-  display: grid;
-  place-items: center;
-  width: ${({ $active }) => ($active ? '2.25rem' : '1.5rem')};
-  height: 1.5rem;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  transition: width ${({ theme }) => theme.transitions.base};
-
-  &::before {
-    width: 100%;
-    max-width: ${({ $active }) => ($active ? '1.75rem' : '0.5rem')};
-    height: 0.5rem;
-    border-radius: ${({ theme }) => theme.radii.pill};
-    background: ${({ $active, theme }) =>
-      $active ? theme.colors.text.accent : theme.colors.border.default};
-    content: '';
-    transition:
-      max-width ${({ theme }) => theme.transitions.base},
-      background ${({ theme }) => theme.transitions.base};
+  /* Chevron nudges toward its direction on hover. */
+  svg {
+    transition: transform ${({ theme }) => theme.transitions.base};
   }
 
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.border.focus};
-    outline-offset: 2px;
-    border-radius: ${({ theme }) => theme.radii.pill};
+  ${noMotionPref} {
+    &:first-child:hover svg {
+      transform: translateX(-2px);
+    }
+
+    &:last-child:hover svg {
+      transform: translateX(2px);
+    }
+  }
+`
+
+export const ViewAllArrow = styled.span`
+  display: inline-grid;
+  transition: transform ${({ theme }) => theme.transitions.base};
+`
+
+export const ViewAllButton = styled(SecondaryButton)`
+  ${noMotionPref} {
+    &:hover ${ViewAllArrow} {
+      transform: translateX(3px);
+    }
   }
 `
 
@@ -458,6 +716,49 @@ export const DetailMedia = styled.div`
   aspect-ratio: 16 / 10;
   border-radius: ${({ theme }) => theme.radii.md};
   background: ${({ theme }) => theme.colors.background.subtle};
+`
+
+export const DetailGallery = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.sm};
+  min-width: 0;
+`
+
+export const DetailThumbs = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  gap: ${({ theme }) => theme.spacing.sm};
+  overflow-x: auto;
+  padding-bottom: ${({ theme }) => theme.spacing.xs};
+`
+
+export const DetailThumb = styled.button<{ $active: boolean }>`
+  flex: 0 0 auto;
+  width: 6rem;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 2px solid
+    ${({ theme, $active }) =>
+      $active ? theme.colors.text.accent : theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.sm};
+  background: ${({ theme }) => theme.colors.background.subtle};
+  opacity: ${({ $active }) => ($active ? 1 : 0.7)};
+  cursor: pointer;
+  transition:
+    opacity ${({ theme }) => theme.transitions.fast},
+    border-color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.text.accent};
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.border.focus};
+    outline-offset: 2px;
+  }
 `
 
 export const DetailContent = styled.div`

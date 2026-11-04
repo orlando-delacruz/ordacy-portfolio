@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { useDialogFocusTrap } from '@/hooks/useDialogFocusTrap'
@@ -11,6 +11,8 @@ type LightboxProps = {
   returnFocusTo: HTMLButtonElement | null
   children: ReactNode
   closeLabel?: string
+  /** Image-only view: no card or visible title, just the content and a floating close button. */
+  bare?: boolean
 }
 
 export function Lightbox({
@@ -19,6 +21,7 @@ export function Lightbox({
   returnFocusTo,
   children,
   closeLabel = 'Close image viewer',
+  bare = false,
 }: LightboxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -93,27 +96,53 @@ export function Lightbox({
     }
   }, [returnFocusTo])
 
+  const closeButton = (
+    <S.CloseButton
+      ref={closeButtonRef}
+      type="button"
+      aria-label={closeLabel}
+      $bare={bare}
+      onClick={requestClose}
+    >
+      <X size={bare ? 22 : 20} strokeWidth={2} aria-hidden="true" />
+    </S.CloseButton>
+  )
+
+  // Clicks on the dialog itself (not its content) count as backdrop clicks.
+  const handleBackdropClick = (event: MouseEvent) => {
+    if (event.target === event.currentTarget) requestClose()
+  }
+
+  if (bare) {
+    return createPortal(
+      <S.BareDialog
+        ref={dialogRef}
+        aria-label={title}
+        $closing={closing}
+        data-closing={closing || undefined}
+        onClose={onClose}
+        onClick={handleBackdropClick}
+        onKeyDown={trapFocus}
+      >
+        {closeButton}
+        <S.BareBody onClick={handleBackdropClick}>{children}</S.BareBody>
+      </S.BareDialog>,
+      document.body,
+    )
+  }
+
   return createPortal(
     <S.Dialog
       ref={dialogRef}
       aria-labelledby="lightbox-title"
       $closing={closing}
       onClose={onClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
+      onClick={handleBackdropClick}
       onKeyDown={trapFocus}
     >
       <S.Header>
         <S.Title id="lightbox-title">{title}</S.Title>
-        <S.CloseButton
-          ref={closeButtonRef}
-          type="button"
-          aria-label={closeLabel}
-          onClick={requestClose}
-        >
-          <X size={20} strokeWidth={2} aria-hidden="true" />
-        </S.CloseButton>
+        {closeButton}
       </S.Header>
       <S.Body>{children}</S.Body>
     </S.Dialog>,

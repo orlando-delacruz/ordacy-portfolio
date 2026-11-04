@@ -2,9 +2,95 @@ import { ChevronDown, ChevronRight } from 'lucide-react'
 import styled, { keyframes } from 'styled-components'
 import { IconBadgeCompact } from '../../components/styles/icon-badge.styled'
 
-export { SecondaryButton } from '../../components/styles/buttons.styled'
+export { PrimaryButton } from '../../components/styles/buttons.styled'
 
 export type Tone = 'problem' | 'solution'
+
+/*
+ * Motion: the first time the section scrolls into view (data-revealed on Stage,
+ * see Systems.tsx) list rows slide in one by one and the detail panel eases in.
+ * Selecting an item pops its icon and spins the detail watermark in; the panel's
+ * ring and dots drift slowly. Durations are choreography-specific, so they don't
+ * use theme.transitions. Reduced motion shows the final, still state.
+ */
+const noMotionPref = '@media (prefers-reduced-motion: no-preference)'
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`
+
+const rise = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
+const panelIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(1rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+`
+
+const iconPop = keyframes`
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  40% {
+    transform: scale(1.2) rotate(-10deg);
+  }
+  70% {
+    transform: scale(0.95) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+`
+
+const watermarkIn = keyframes`
+  from {
+    opacity: 0;
+    transform: rotate(-25deg) scale(0.8);
+  }
+  to {
+    opacity: 0.06;
+    transform: rotate(0deg) scale(1);
+  }
+`
+
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+const bob = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+`
+
+// Wraps the mobile and desktop views; carries data-revealed for the reveal sequence.
+export const Stage = styled.div``
 
 // Mobile keeps the neutral look; desktop colors each side by meaning.
 export const Badge = styled(IconBadgeCompact)<{ $tone: Tone }>`
@@ -14,7 +100,10 @@ export const Badge = styled(IconBadgeCompact)<{ $tone: Tone }>`
       : theme.colors.text.accent};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    color: ${({ $tone, theme }) => theme.colors[$tone].accent};
+    color: ${({ $tone, theme }) =>
+      $tone === 'problem' && theme.mode === 'dark'
+        ? theme.colors.brand.primary
+        : theme.colors[$tone].accent};
   }
 `
 
@@ -22,15 +111,32 @@ export const Badge = styled(IconBadgeCompact)<{ $tone: Tone }>`
 
 export const ExplorerToolbar = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  flex-direction: column;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing.sm};
 `
 
-export const ExplorerCaption = styled.p`
+export const ExplorerCaption = styled.p<{ $tone: Tone }>`
+  grid-column: 1 / -1;
   margin: 0;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.md};
+  color: ${({ $tone, theme }) =>
+    $tone === 'problem' && theme.mode === 'dark'
+      ? theme.colors.brand.primary
+      : theme.colors[$tone].accent};
+  font-size: ${({ theme }) => theme.typography.fontSizes.lg};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: -0.01em;
+  text-align: center;
+
+  &::after {
+    display: block;
+    width: 3rem;
+    height: 0.25rem;
+    margin: ${({ theme }) => theme.spacing.sm} auto 0;
+    border-radius: ${({ theme }) => theme.radii.pill};
+    background: currentColor;
+    content: '';
+  }
 `
 
 export const Explorer = styled.div`
@@ -55,7 +161,27 @@ export const ItemList = styled.div`
   background: ${({ theme }) => theme.colors.background.subtle};
 `
 
-export const ItemButton = styled.button<{ $selected: boolean; $tone: Tone }>`
+export const ItemButton = styled.button<{
+  $selected: boolean
+  $tone: Tone
+  $index: number
+}>`
+  ${noMotionPref} {
+    opacity: 0;
+
+    ${Stage}[data-revealed] & {
+      opacity: 1;
+      animation: ${slideIn} 450ms ease-out ${({ $index }) => 100 + $index * 70}ms
+        backwards;
+    }
+
+    /* Re-runs whenever a row becomes the selected one. */
+    ${Badge} svg {
+      animation: ${({ $selected }) => ($selected ? iconPop : 'none')} 500ms
+        ease-out;
+    }
+  }
+
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
@@ -74,7 +200,7 @@ export const ItemButton = styled.button<{ $selected: boolean; $tone: Tone }>`
   ${Badge} {
     background: ${({ $selected, $tone, theme }) =>
       $selected
-        ? `color-mix(in srgb, ${theme.colors[$tone].accent} 14%, ${theme.colors.surface.default})`
+        ? `color-mix(in srgb, ${$tone === 'problem' ? theme.colors.brand.primary : theme.colors[$tone].accent} 14%, ${theme.colors.surface.default})`
         : theme.colors.surface.default};
     transition: background ${({ theme }) => theme.transitions.fast};
   }
@@ -108,7 +234,7 @@ export const ItemText = styled.span`
 
 export const ItemTitle = styled.span`
   font-size: ${({ theme }) => theme.typography.fontSizes.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: -0.01em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
 `
@@ -118,7 +244,7 @@ export const ItemPreview = styled.span`
   overflow: hidden;
   color: ${({ theme }) => theme.colors.text.secondary};
   font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.regular};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
   line-height: ${({ theme }) => theme.typography.lineHeights.normal};
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -128,16 +254,73 @@ export const ItemArrow = styled(ChevronRight)<{ $selected: boolean }>`
   flex-shrink: 0;
   color: ${({ theme }) => theme.colors.text.secondary};
   opacity: ${({ $selected }) => ($selected ? 1 : 0)};
-  transition: opacity ${({ theme }) => theme.transitions.fast};
+  transform: translateX(${({ $selected }) => ($selected ? '0' : '-0.375rem')});
+  transition:
+    opacity ${({ theme }) => theme.transitions.fast},
+    transform ${({ theme }) => theme.transitions.base};
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
 `
 
 export const Detail = styled.div`
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   padding: ${({ theme }) => theme.spacing.xl} ${({ theme }) => theme.spacing['2xl']};
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.lg};
   background: ${({ theme }) => theme.colors.surface.default};
+
+  ${noMotionPref} {
+    opacity: 0;
+
+    ${Stage}[data-revealed] & {
+      opacity: 1;
+      animation: ${panelIn} 600ms ease-out 250ms backwards;
+    }
+  }
+`
+
+// Dashed ring circling the watermark in the top-right corner; turns slowly.
+export const DetailRing = styled.span<{ $tone: Tone }>`
+  position: absolute;
+  top: -6rem;
+  right: -6rem;
+  z-index: -1;
+  width: 20rem;
+  height: 20rem;
+  border: 1px dashed
+    ${({ $tone, theme }) =>
+      `color-mix(in srgb, ${theme.colors[$tone].accent} 25%, transparent)`};
+  border-radius: ${({ theme }) => theme.radii.round};
+  pointer-events: none;
+
+  ${noMotionPref} {
+    animation: ${spin} 60s linear infinite;
+  }
+`
+
+// Dot pattern fading in from the bottom-right corner.
+export const DetailDots = styled.span`
+  position: absolute;
+  right: ${({ theme }) => theme.spacing.lg};
+  bottom: ${({ theme }) => theme.spacing.lg};
+  z-index: -1;
+  width: 8rem;
+  height: 5rem;
+  background-image: radial-gradient(
+    ${({ theme }) => theme.colors.border.default} 1.5px,
+    transparent 1.5px
+  );
+  background-size: 0.875rem 0.875rem;
+  mask-image: linear-gradient(to top left, black, transparent 80%);
+  pointer-events: none;
+
+  ${noMotionPref} {
+    animation: ${bob} 6s ease-in-out infinite;
+  }
 `
 
 // Oversized faint copy of the item's icon in the corner, purely decorative depth.
@@ -145,9 +328,14 @@ export const DetailWatermark = styled.span<{ $tone: Tone }>`
   position: absolute;
   top: -3rem;
   right: -3rem;
+  z-index: -1;
   color: ${({ $tone, theme }) => theme.colors[$tone].accent};
   opacity: 0.06;
   pointer-events: none;
+
+  ${noMotionPref} {
+    animation: ${watermarkIn} 700ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  }
 `
 
 const fadeIn = keyframes`
@@ -176,11 +364,14 @@ export const DetailIcon = styled.span<{ $tone: Tone }>`
   height: 4rem;
   border-radius: ${({ theme }) => theme.radii.lg};
   background: ${({ $tone, theme }) =>
-    `color-mix(in srgb, ${theme.colors[$tone].accent} 14%, ${theme.colors.surface.default})`};
+    `color-mix(in srgb, ${$tone === 'problem' ? theme.colors.brand.primary : theme.colors[$tone].accent} 14%, ${theme.colors.surface.default})`};
   box-shadow: inset 0 0 0 1px
     ${({ $tone, theme }) =>
       `color-mix(in srgb, ${theme.colors[$tone].accent} 30%, transparent)`};
-  color: ${({ $tone, theme }) => theme.colors[$tone].accent};
+  color: ${({ $tone, theme }) =>
+    $tone === 'problem' && theme.mode === 'dark'
+      ? theme.colors.brand.primary
+      : theme.colors[$tone].accent};
 `
 
 export const DetailTitle = styled.h3`
@@ -239,7 +430,7 @@ export const RelatedButton = styled.button`
   color: ${({ theme }) => theme.colors.text.primary};
   font-family: inherit;
   font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
   text-align: left;
   cursor: pointer;
@@ -283,8 +474,11 @@ export const RelatedIcon = styled(IconBadgeCompact)<{ $tone: Tone }>`
   width: 2.25rem;
   height: 2.25rem;
   background: ${({ $tone, theme }) =>
-    `color-mix(in srgb, ${theme.colors[$tone].accent} 14%, ${theme.colors.surface.default})`};
-  color: ${({ $tone, theme }) => theme.colors[$tone].accent};
+    `color-mix(in srgb, ${$tone === 'problem' ? theme.colors.brand.primary : theme.colors[$tone].accent} 14%, ${theme.colors.surface.default})`};
+  color: ${({ $tone, theme }) =>
+    $tone === 'problem' && theme.mode === 'dark'
+      ? theme.colors.brand.primary
+      : theme.colors[$tone].accent};
 `
 
 /* ---------- Mobile tabs + accordion ---------- */
@@ -328,6 +522,22 @@ export const Tab = styled.button<{ $active: boolean; $tone: Tone }>`
   svg {
     color: ${({ $active, $tone, theme }) =>
       $active ? theme.colors[$tone].accent : 'currentColor'};
+
+    /* Desktop: icons stay in the theme family (no gray); activity reads via opacity. */
+    @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+      color: ${({ $tone, theme }) =>
+        $tone === 'problem' && theme.mode === 'dark'
+          ? theme.colors.brand.primary
+          : theme.colors[$tone].accent};
+      opacity: ${({ $active }) => ($active ? 1 : 0.55)};
+    }
+  }
+
+  /* The newly active tab's icon pops. */
+  ${noMotionPref} {
+    svg {
+      animation: ${({ $active }) => ($active ? iconPop : 'none')} 500ms ease-out;
+    }
   }
 
   border: 0;
@@ -339,7 +549,7 @@ export const Tab = styled.button<{ $active: boolean; $tone: Tone }>`
     $active ? theme.colors.text.primary : theme.colors.text.secondary};
   font-family: inherit;
   font-size: ${({ theme }) => theme.typography.fontSizes.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   transition:
     background ${({ theme }) => theme.transitions.fast},
     color ${({ theme }) => theme.transitions.fast};
@@ -361,9 +571,19 @@ export const AccordionList = styled.ul`
   list-style: none;
 `
 
-export const AccordionItem = styled.li`
+export const AccordionItem = styled.li<{ $index: number }>`
   & + & {
     border-top: 1px solid ${({ theme }) => theme.colors.border.default};
+  }
+
+  ${noMotionPref} {
+    opacity: 0;
+
+    ${Stage}[data-revealed] & {
+      opacity: 1;
+      animation: ${rise} 450ms ease-out ${({ $index }) => 100 + $index * 70}ms
+        backwards;
+    }
   }
 `
 
@@ -399,7 +619,7 @@ export const AccordionTitle = styled.span`
   flex: 1;
   min-width: 0;
   font-size: ${({ theme }) => theme.typography.fontSizes.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: -0.01em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
 `

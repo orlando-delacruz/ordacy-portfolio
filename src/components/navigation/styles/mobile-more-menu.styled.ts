@@ -113,7 +113,7 @@ export const ItemLink = styled(NavLink)`
   border-radius: ${({ theme }) => theme.radii.md};
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: ${({ theme }) => theme.typography.fontSizes.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   text-decoration: none;
   transition:
     background ${({ theme }) => theme.transitions.fast},
@@ -127,7 +127,7 @@ export const ItemLink = styled(NavLink)`
   &[aria-current='page'] {
     background: ${({ theme }) => theme.colors.background.subtle};
     color: ${({ theme }) => theme.colors.text.accent};
-    font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+    font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   }
 `
 

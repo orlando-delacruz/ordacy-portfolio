@@ -73,6 +73,89 @@ export const Dialog = styled.dialog<{ $closing: boolean }>`
   }
 `
 
+const zoomIn = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`
+
+const zoomOut = keyframes`
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+`
+
+// Image-only viewer: a transparent full-screen dialog over a blurred backdrop.
+// Clicking anywhere outside the image closes it (see Lightbox.tsx).
+export const BareDialog = styled.dialog<{ $closing: boolean }>`
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: ${({ theme }) => theme.spacing['3xl']} ${({ theme }) => theme.spacing.md};
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+
+  &[open] {
+    display: grid;
+  }
+
+  &::backdrop {
+    background: rgba(0, 20, 32, 0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    animation: ${backdropIn} 220ms ease-out;
+  }
+
+  ${({ $closing }) =>
+    $closing &&
+    css`
+      &::backdrop {
+        opacity: 0;
+        transition: opacity ${CLOSE_MS}ms ease-in;
+      }
+    `}
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing['3xl']};
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::backdrop {
+      animation: none;
+    }
+  }
+`
+
+export const BareBody = styled.div`
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  animation: ${zoomIn} 260ms cubic-bezier(0.2, 0.9, 0.3, 1.1);
+
+  ${BareDialog}[data-closing] & {
+    animation: ${zoomOut} ${CLOSE_MS}ms ease-in forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`
+
 export const Header = styled.div`
   display: flex;
   align-items: center;
@@ -89,7 +172,7 @@ export const Title = styled.h2`
   font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
 `
 
-export const CloseButton = styled.button`
+export const CloseButton = styled.button<{ $bare?: boolean }>`
   display: grid;
   place-items: center;
   width: 2.75rem;
@@ -112,6 +195,29 @@ export const CloseButton = styled.button`
   &:active {
     transform: scale(0.96);
   }
+
+  /* Bare viewer: floats in the viewport corner, light-on-dark over the blur. */
+  ${({ $bare, theme }) =>
+    $bare &&
+    css`
+      position: fixed;
+      top: ${theme.spacing.md};
+      right: ${theme.spacing.md};
+      z-index: 1;
+      border-color: rgba(254, 254, 254, 0.3);
+      background: rgba(254, 254, 254, 0.14);
+      color: ${theme.colors.brand.white};
+
+      &:hover {
+        background: rgba(254, 254, 254, 0.26);
+        color: ${theme.colors.brand.white};
+      }
+
+      &:focus-visible {
+        outline: 2px solid ${theme.colors.brand.white};
+        outline-offset: 2px;
+      }
+    `}
 `
 
 export const Body = styled.div`

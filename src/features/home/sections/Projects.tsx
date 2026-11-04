@@ -1,13 +1,19 @@
 import {
-  ArrowUpRight,
+  ArrowRight,
   Check,
   ChevronLeft,
   ChevronRight,
+  Code,
+  FolderKanban,
+  Globe,
   Info,
+  Layers,
   MessagesSquare,
+  Sparkles,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { KeyboardEvent, MouseEvent, PointerEvent } from 'react'
+import { useRevealOnce } from '@/hooks/useRevealOnce'
 import { Lightbox } from '../components/Lightbox'
 import { Section } from '../components/Section'
 import type { ShowcaseProject } from '../home.data'
@@ -33,8 +39,11 @@ export function Projects() {
   })
   const [details, setDetails] = useState<ShowcaseProject | null>(null)
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null)
+  const [selectedShot, setSelectedShot] = useState(0)
   const pointerStart = useRef<number | null>(null)
   const swiped = useRef(false)
+  // Cards fan out from the centre the first time the carousel scrolls into view.
+  const [carouselRef, revealed] = useRevealOnce<HTMLDivElement>(0.2)
 
   const goTo = (index: number) =>
     setPosition((current) => ({
@@ -67,10 +76,14 @@ export function Projects() {
   const openDetails =
     (project: ShowcaseProject) => (event: MouseEvent<HTMLButtonElement>) => {
       setTrigger(event.currentTarget)
+      setSelectedShot(0)
       setDetails(project)
     }
 
   const current = showcaseProjects[active]
+  // Gallery starts with the thumbnail, followed by the extra screenshots.
+  const gallery = details ? [details.image, ...details.screenshots] : []
+  const activeShot = details ? (gallery[selectedShot] ?? details.image) : null
 
   return (
     <Section
@@ -79,12 +92,29 @@ export function Projects() {
       description="Selected work, shared with permission."
     >
       <S.Carousel
+        ref={carouselRef}
+        data-revealed={revealed || undefined}
         role="region"
         aria-roledescription="carousel"
         aria-label="Featured projects"
         tabIndex={0}
         onKeyDown={handleKeyDown}
       >
+        <S.Decor aria-hidden="true">
+          <S.Glow />
+          <S.Ring $size="large" />
+          <S.Ring $size="small" />
+          <S.FloatingIcon $spot="topLeft">
+            <Code size={18} strokeWidth={2} />
+          </S.FloatingIcon>
+          <S.FloatingIcon $spot="topRight">
+            <Layers size={18} strokeWidth={2} />
+          </S.FloatingIcon>
+          <S.FloatingIcon $spot="bottomLeft">
+            <Sparkles size={16} strokeWidth={2} />
+          </S.FloatingIcon>
+        </S.Decor>
+
         <S.Stage
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
@@ -102,6 +132,7 @@ export function Projects() {
             const wrapped =
               Math.abs(offset - loopOffset(index, previous)) > 1
             const isActive = offset === 0
+            const ProjectIcon = project.icon
 
             return (
               <S.Slide
@@ -114,7 +145,7 @@ export function Projects() {
                 $instant={wrapped}
                 onClick={isActive ? undefined : () => goTo(index)}
               >
-                <S.Card inert={!isActive}>
+                <S.Card inert={!isActive} data-active={isActive || undefined}>
                   <S.CardImage
                     src={project.image.src}
                     alt={project.image.alt}
@@ -125,22 +156,25 @@ export function Projects() {
                     draggable={false}
                   />
                   <S.Scrim />
-                  <S.Category>{project.category}</S.Category>
+                  <S.Shine aria-hidden="true" />
+                  <S.Category>
+                    <ProjectIcon size={12} strokeWidth={2.5} aria-hidden="true" />
+                    <S.CategoryLabel>{project.category}</S.CategoryLabel>
+                  </S.Category>
 
                   <S.Overlay>
                     <S.Title>{project.title}</S.Title>
                     <S.Summary>{project.summary}</S.Summary>
                     <S.CardActions>
-                      {/* Labels shorten on narrow cards; aria-labels keep the full name and start with the visible words. */}
                       <S.PrimaryAnchor
                         href={project.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Visit website: ${project.title} (opens in a new tab)`}
                       >
-                        <S.LabelWide>Visit website</S.LabelWide>
-                        <S.LabelNarrow>Visit</S.LabelNarrow>
-                        <ArrowUpRight size={16} strokeWidth={2} aria-hidden="true" />
+                        <Globe size={16} strokeWidth={2} aria-hidden="true" />
+                        <S.VisitShort>Visit</S.VisitShort>
+                        <S.VisitFull>Visit Website</S.VisitFull>
                       </S.PrimaryAnchor>
                       <S.DetailsButton
                         type="button"
@@ -148,10 +182,8 @@ export function Projects() {
                         aria-label={`Details: ${project.title}`}
                         onClick={openDetails(project)}
                       >
-                        <S.LabelWide>Details</S.LabelWide>
-                        <S.LabelNarrow>
-                          <Info size={18} strokeWidth={2} aria-hidden="true" />
-                        </S.LabelNarrow>
+                        <Info size={16} strokeWidth={2} aria-hidden="true" />
+                        <S.DetailsLabel>Details</S.DetailsLabel>
                       </S.DetailsButton>
                     </S.CardActions>
                   </S.Overlay>
@@ -170,19 +202,6 @@ export function Projects() {
             <ChevronLeft size={20} strokeWidth={2} aria-hidden="true" />
           </S.ArrowButton>
 
-          <S.Dots>
-            {showcaseProjects.map((project, index) => (
-              <S.Dot
-                key={project.id}
-                type="button"
-                aria-label={`Show project ${index + 1}: ${project.title}`}
-                aria-current={index === active}
-                $active={index === active}
-                onClick={() => goTo(index)}
-              />
-            ))}
-          </S.Dots>
-
           <S.ArrowButton
             type="button"
             aria-label="Next project"
@@ -198,7 +217,13 @@ export function Projects() {
       </S.Carousel>
 
       <S.Actions>
-        <S.SecondaryButton to="/projects">View All Projects</S.SecondaryButton>
+        <S.ViewAllButton to="/projects">
+          <FolderKanban size={18} strokeWidth={2} aria-hidden="true" />
+          View All Projects
+          <S.ViewAllArrow aria-hidden="true">
+            <ArrowRight size={16} strokeWidth={2.25} />
+          </S.ViewAllArrow>
+        </S.ViewAllButton>
       </S.Actions>
 
       {details && (
@@ -209,18 +234,48 @@ export function Projects() {
           returnFocusTo={trigger}
         >
           <S.Detail>
-            <S.DetailMedia>
-              <S.Image
-                src={details.image.src}
-                alt={details.image.alt}
-                width={1200}
-                height={750}
-              />
-            </S.DetailMedia>
+            <S.DetailGallery>
+              <S.DetailMedia>
+                {activeShot && (
+                  <S.Image
+                    key={activeShot.src}
+                    src={activeShot.src}
+                    alt={activeShot.alt}
+                    width={1200}
+                    height={750}
+                  />
+                )}
+              </S.DetailMedia>
+
+              {gallery.length > 0 && (
+                <S.DetailThumbs role="group" aria-label="Project images">
+                  {gallery.map((shot, index) => (
+                    <S.DetailThumb
+                      key={shot.src}
+                      type="button"
+                      $active={index === selectedShot}
+                      aria-pressed={index === selectedShot}
+                      aria-label={`View image ${index + 1}: ${shot.alt}`}
+                      onClick={() => setSelectedShot(index)}
+                    >
+                      <S.Image
+                        src={shot.src}
+                        alt=""
+                        width={400}
+                        height={250}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </S.DetailThumb>
+                  ))}
+                </S.DetailThumbs>
+              )}
+            </S.DetailGallery>
 
             <S.DetailContent>
               <S.DetailCategory>{details.category}</S.DetailCategory>
-              <S.DetailText>{details.details}</S.DetailText>
+              {/* Same description as the project card. */}
+              <S.DetailText>{details.summary}</S.DetailText>
 
               <S.FeatureHeading>What it includes</S.FeatureHeading>
               <S.FeatureList>
@@ -240,13 +295,13 @@ export function Projects() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
+                  <Globe size={18} strokeWidth={2} aria-hidden="true" />
                   Visit website
-                  <ArrowUpRight size={18} strokeWidth={2} aria-hidden="true" />
                   <S.SrOnly> (opens in a new tab)</S.SrOnly>
                 </S.PrimaryAnchor>
                 <S.SecondaryButton to="/contact">
                   <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
-                  Discuss a similar project
+                  Discuss Same Project
                 </S.SecondaryButton>
               </S.DetailActions>
             </S.DetailContent>

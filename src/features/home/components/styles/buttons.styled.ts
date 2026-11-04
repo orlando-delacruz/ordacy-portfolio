@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-const baseStyles = css`
+export const baseStyles = css`
   /* Contains any visually hidden (absolute) text inside the button. */
   position: relative;
   display: inline-flex;
@@ -13,7 +13,7 @@ const baseStyles = css`
     ${({ theme }) => theme.spacing.xl};
   border-radius: ${({ theme }) => theme.radii.md};
   font-size: ${({ theme }) => theme.typography.fontSizes.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   line-height: ${({ theme }) => theme.typography.lineHeights.normal};
   text-decoration: none;
   white-space: nowrap;
@@ -56,7 +56,7 @@ const primaryStyles = css`
 const secondaryStyles = css`
   ${baseStyles}
   border: 1px solid ${({ theme }) => theme.colors.border.default};
-  background: transparent;
+  background: ${({ theme }) => theme.colors.background.subtle};
   color: ${({ theme }) => theme.colors.text.primary};
   font-family: inherit;
   cursor: pointer;

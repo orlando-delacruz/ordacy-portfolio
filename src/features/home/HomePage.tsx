@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { Faq } from './sections/Faq'
 import { FinalCta } from './sections/FinalCta'
 import { Hero } from './sections/Hero'
@@ -15,6 +16,8 @@ export function HomePage() {
   const { hash } = useLocation()
 
   useHomePageMeta()
+  // Section headings, descriptions and content fade up as they scroll into view.
+  useScrollReveal()
 
   useEffect(() => {
     if (!hash) return
