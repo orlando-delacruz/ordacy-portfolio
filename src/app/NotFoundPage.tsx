@@ -5,9 +5,7 @@ export function NotFoundPage() {
     <S.Section aria-labelledby="not-found-title">
       <S.Code>404</S.Code>
       <S.Title id="not-found-title">Page not found</S.Title>
-      <S.Description>
-        The page you are looking for does not exist or has moved.
-      </S.Description>
+      <S.Description>This page no longer exists.</S.Description>
       <S.HomeLink to="/">Back to home</S.HomeLink>
     </S.Section>
   )

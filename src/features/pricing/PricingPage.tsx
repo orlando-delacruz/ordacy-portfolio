@@ -4,7 +4,7 @@ export function PricingPage() {
   return (
     <PagePlaceholder
       title="Pricing"
-      description="Temporary route placeholder for Ordacy service pricing."
+      description="Pricing details coming soon."
     />
   )
 }

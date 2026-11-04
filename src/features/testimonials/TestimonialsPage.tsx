@@ -4,7 +4,7 @@ export function TestimonialsPage() {
   return (
     <PagePlaceholder
       title="Testimonials"
-      description="Genuine client testimonials will be published here when available."
+      description="Genuine testimonials coming soon."
     />
   )
 }

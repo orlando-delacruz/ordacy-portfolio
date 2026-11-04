@@ -6,8 +6,8 @@ export function Testimonials() {
   return (
     <Section
       id="testimonials"
-      title="What Clients Say About Working With Us."
-      description="Trust is built through clear communication, thoughtful solutions, and reliable collaboration."
+      title="What Clients Say."
+      description="Real feedback, published with permission."
     >
       <S.EmptyState>
         <MessagesSquare size={24} strokeWidth={2} aria-hidden="true" />

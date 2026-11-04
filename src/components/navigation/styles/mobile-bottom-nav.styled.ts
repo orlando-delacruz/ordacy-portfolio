@@ -10,14 +10,14 @@ export const Nav = styled.nav<{ $hidden: boolean }>`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   width: min(
-    26rem,
+    28rem,
     calc(
       100vw - 2rem - env(safe-area-inset-left) -
         env(safe-area-inset-right)
     )
   );
   padding: ${({ theme }) => theme.spacing.sm}
-    ${({ theme }) => theme.spacing.sm};
+    ${({ theme }) => theme.spacing.md};
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.pill};
   background: ${({ theme }) => theme.colors.surface.default};
@@ -34,11 +34,38 @@ export const Nav = styled.nav<{ $hidden: boolean }>`
   }
 `
 
+// Icon sits in a small pill that fills in for the active page (and tints on hover).
+export const IconPill = styled.span`
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 1.75rem;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  background: transparent;
+  transition: background ${({ theme }) => theme.transitions.fast};
+`
+
+export const Label = styled.span`
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
 export const Item = styled(NavLink)`
   ${nav.mobileItemStyles}
 
+  &:hover ${IconPill} {
+    background: ${({ theme }) => theme.colors.surface.subtle};
+  }
+
   &[aria-current='page'] {
     ${nav.mobileItemActiveStyles}
+  }
+
+  &[aria-current='page'] ${IconPill} {
+    background: ${({ theme }) => theme.colors.background.subtle};
+    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.colors.border.default};
   }
 `
 

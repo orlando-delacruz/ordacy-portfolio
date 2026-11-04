@@ -4,7 +4,7 @@ export function AboutUsPage() {
   return (
     <PagePlaceholder
       title="About Us"
-      description="Ordacy is a business-focused digital solutions studio providing practical digital solutions for growing businesses."
+      description="Digital solutions for growing businesses."
     />
   )
 }

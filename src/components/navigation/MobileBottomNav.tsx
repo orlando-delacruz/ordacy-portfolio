@@ -46,18 +46,18 @@ export function MobileBottomNav() {
         }
 
         return (
-          <S.Item
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            aria-label={item.label}
-          >
+          <S.Item key={item.to} to={item.to} end={item.end}>
             {({ isActive }) => (
-              <Icon
-                size={22}
-                weight={isActive ? 'fill' : 'regular'}
-                aria-hidden="true"
-              />
+              <>
+                <S.IconPill>
+                  <Icon
+                    size={22}
+                    weight={isActive ? 'fill' : 'regular'}
+                    aria-hidden="true"
+                  />
+                </S.IconPill>
+                <S.Label>{item.mobileLabel ?? item.label}</S.Label>
+              </>
             )}
           </S.Item>
         )

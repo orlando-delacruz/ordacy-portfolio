@@ -28,6 +28,8 @@ export type NavigationItem = {
 
 export type MobileNavigationItem = NavigationItem & {
   mobileIcon: PhosphorIcon
+  /** Shorter visible label for the bottom bar, where each slot is ~1/5 of a phone width. */
+  mobileLabel?: string
 }
 
 const home = {
@@ -92,7 +94,7 @@ export const mobileNavItems: readonly MobileNavigationItem[] = [
   { ...projects, mobileIcon: FolderSimpleIcon },
   { ...contact, mobileIcon: PhoneIcon },
   { ...pricing, mobileIcon: CurrencyCircleDollarIcon },
-  { ...testimonials, mobileIcon: ChatsCircleIcon },
+  { ...testimonials, mobileIcon: ChatsCircleIcon, mobileLabel: 'Reviews' },
 ]
 
 export const secondaryNavItems: readonly NavigationItem[] = [

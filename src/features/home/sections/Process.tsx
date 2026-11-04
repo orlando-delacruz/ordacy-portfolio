@@ -6,8 +6,8 @@ export function Process() {
   return (
     <Section
       id="process"
-      title="From Business Challenge to Working Solution."
-      description="A clear development process helps keep your project organized, aligned, and moving toward the right outcome."
+      title="Challenge to Solution."
+      description="A clear path to launch."
     >
       <S.Timeline>
         {steps.map((step, index) => {

@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 const baseStyles = css`
+  /* Contains any visually hidden (absolute) text inside the button. */
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -32,7 +34,7 @@ const baseStyles = css`
   }
 `
 
-export const PrimaryButton = styled(Link)`
+const primaryStyles = css`
   ${baseStyles}
   border: 1px solid transparent;
   /* Theme-adaptive primary action: dark text on light teal in light mode,
@@ -51,14 +53,29 @@ export const PrimaryButton = styled(Link)`
   }
 `
 
-export const SecondaryButton = styled(Link)`
+const secondaryStyles = css`
   ${baseStyles}
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   background: transparent;
   color: ${({ theme }) => theme.colors.text.primary};
+  font-family: inherit;
+  cursor: pointer;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.text.accent};
     color: ${({ theme }) => theme.colors.text.accent};
   }
+`
+
+export const PrimaryButton = styled(Link)`
+  ${primaryStyles}
+`
+
+export const SecondaryButton = styled(Link)`
+  ${secondaryStyles}
+`
+
+/** Same look as PrimaryButton, for external links (plain <a>). */
+export const PrimaryAnchor = styled.a`
+  ${primaryStyles}
 `

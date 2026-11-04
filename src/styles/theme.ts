@@ -60,6 +60,13 @@ const lightColors = {
     default: '#D6E9E6',
     focus: '#00585E',
   },
+  // Small accent cues only: brand navy for problems, brand teal for solutions.
+  problem: {
+    accent: '#00243E',
+  },
+  solution: {
+    accent: '#00585E',
+  },
 }
 
 const darkColors: typeof lightColors = {
@@ -88,6 +95,12 @@ const darkColors: typeof lightColors = {
   border: {
     default: '#16445C',
     focus: '#5FE7D4',
+  },
+  problem: {
+    accent: '#A8C5C6',
+  },
+  solution: {
+    accent: '#5FE7D4',
   },
 }
 

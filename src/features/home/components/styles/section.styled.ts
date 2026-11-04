@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 
 export const Wrapper = styled.section`
-  padding-block: ${({ theme }) => theme.spacing['2xl']};
+  padding-block: ${({ theme }) => theme.spacing.lg};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding-block: ${({ theme }) => theme.spacing['3xl']};
+    padding-block: ${({ theme }) => theme.spacing.xl};
   }
 `
 

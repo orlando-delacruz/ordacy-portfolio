@@ -4,11 +4,10 @@ import { Faq } from './sections/Faq'
 import { FinalCta } from './sections/FinalCta'
 import { Hero } from './sections/Hero'
 import { Pricing } from './sections/Pricing'
-import { Problems } from './sections/Problems'
 import { Process } from './sections/Process'
 import { Projects } from './sections/Projects'
-import { Services } from './sections/Services'
 import { SiteFooter } from './sections/SiteFooter'
+import { Systems } from './sections/Systems'
 import { Testimonials } from './sections/Testimonials'
 import { useHomePageMeta } from './useHomePageMeta'
 
@@ -25,8 +24,7 @@ export function HomePage() {
   return (
     <>
       <Hero />
-      <Problems />
-      <Services />
+      <Systems />
       <Pricing />
       <Projects />
       <Testimonials />

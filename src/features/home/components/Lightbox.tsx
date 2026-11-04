@@ -10,6 +10,7 @@ type LightboxProps = {
   onClose: () => void
   returnFocusTo: HTMLButtonElement | null
   children: ReactNode
+  closeLabel?: string
 }
 
 export function Lightbox({
@@ -17,6 +18,7 @@ export function Lightbox({
   onClose,
   returnFocusTo,
   children,
+  closeLabel = 'Close image viewer',
 }: LightboxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -107,7 +109,7 @@ export function Lightbox({
         <S.CloseButton
           ref={closeButtonRef}
           type="button"
-          aria-label="Close image viewer"
+          aria-label={closeLabel}
           onClick={requestClose}
         >
           <X size={20} strokeWidth={2} aria-hidden="true" />

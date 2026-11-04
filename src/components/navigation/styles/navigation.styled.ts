@@ -45,7 +45,7 @@ export const desktopItemStyles = css<{ $collapsed: boolean }>`
   width: 100%;
   min-height: 3rem;
   padding: ${({ theme }) => theme.spacing.sm};
-  border: 0;
+  border: 1px solid transparent;
   border-radius: ${({ theme }) => theme.radii.md};
   background: transparent;
   color: ${({ theme }) => theme.colors.text.primary};
@@ -65,10 +65,20 @@ export const desktopItemStyles = css<{ $collapsed: boolean }>`
   }
 
   ${({ $collapsed }) => $collapsed && compactTooltipStyles}
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    /* Expanded items get breathing room on the left; collapsed items keep
+       symmetric padding so the icon stays centered in the rail. */
+    padding-left: ${({ $collapsed, theme }) =>
+      $collapsed ? theme.spacing.sm : '1.5rem'};
+  }
 `
 
 export const desktopItemActiveStyles = css`
+  border-color: ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.pill};
   background: ${({ theme }) => theme.colors.background.subtle};
+  box-shadow: ${({ theme }) => theme.shadows.sm};
   color: ${({ theme }) => theme.colors.text.accent};
   font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
 `
@@ -76,11 +86,12 @@ export const desktopItemActiveStyles = css`
 export const mobileItemStyles = css`
   position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: ${({ theme }) => theme.spacing.xs};
   min-width: 0;
-  min-height: 3rem;
+  min-height: 3.5rem;
   padding: 0;
   border: 0;
   border-radius: ${({ theme }) => theme.radii.lg};
@@ -93,12 +104,10 @@ export const mobileItemStyles = css`
   opacity: 0.7;
   text-decoration: none;
   transition:
-    background ${({ theme }) => theme.transitions.fast},
     color ${({ theme }) => theme.transitions.fast},
     opacity ${({ theme }) => theme.transitions.fast};
 
   &:hover {
-    background: ${({ theme }) => theme.colors.background.subtle};
     opacity: 1;
   }
 
@@ -110,5 +119,6 @@ export const mobileItemStyles = css`
 
 export const mobileItemActiveStyles = css`
   color: ${({ theme }) => theme.colors.text.accent};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   opacity: 1;
 `

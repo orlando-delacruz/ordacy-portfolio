@@ -9,8 +9,8 @@ export function Faq() {
   return (
     <Section
       id="faqs"
-      title="Questions Before Getting Started?"
-      description="Here are answers to common questions about our services, project process, pricing, and working arrangements."
+      title="Common Questions, Answered."
+      description="Answers before you commit."
     >
       <S.List>
         {faqs.map((faq, index) => {
