@@ -26,7 +26,7 @@ There is no test runner. Verify changes with `typecheck` + `lint`, and check the
 
 ```
 src/
-  app/           # App, router, ThemeProvider, theme-context, themeStorage, ThemeTransition, NotFoundPage
+  app/           # App, router, ThemeProvider, theme-context, ThemeTransition, NotFoundPage
   components/
     common/      # PagePlaceholder (used by every page not built yet)
     layout/      # RootLayout, TopBar
@@ -61,8 +61,8 @@ Only the home page is built. All other routes render `PagePlaceholder`. Home is 
 ## Theme
 
 - `ThemeProvider.tsx` (`AppThemeProvider`) holds theme state. Components read/toggle it with `useAppTheme()` from `src/app/theme-context.ts`. Inside styled components, use the `theme` prop.
-- Persistence lives in `themeStorage.ts` (localStorage key `ordacy-theme`). Fallback is `prefers-color-scheme`. The OS theme is followed live until the user picks one.
-- `index.html` has an inline pre-hydration script and `<style>` that set `data-theme` and background before React mounts. It duplicates the storage key and the background colors (`#FEFEFE` / `#001A2C`). Update it if those change in `theme.ts` or `themeStorage.ts`.
+- Every visit starts in light mode. No persistence and no `prefers-color-scheme` following; the toggle only switches theme for the current visit.
+- `index.html` hard-codes `data-theme="light"` on `<html>` and has a pre-hydration `<style>` with the background colors (`#FEFEFE` / `#001A2C`). Update it if those change in `theme.ts`.
 - `ThemeTransition.tsx` plays the timer-driven toggle overlay (theme commits at 420ms, overlay removed at 980ms). Reduced motion switches instantly.
 
 ## Navigation

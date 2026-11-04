@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<!-- The site always starts in light mode (see src/app/ThemeProvider.tsx). -->
+<html lang="en" data-theme="light" style="color-scheme: light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -9,27 +10,6 @@
       content="Ordacy provides practical digital solutions for growing businesses."
     />
     <meta name="theme-color" content="#FEFEFE" />
-    <script>
-      ;(() => {
-        try {
-          const saved = localStorage.getItem('ordacy-theme')
-          const theme =
-            saved === 'light' || saved === 'dark'
-              ? saved
-              : window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light'
-
-          document.documentElement.dataset.theme = theme
-          document.documentElement.style.colorScheme = theme
-          document
-            .querySelector('meta[name="theme-color"]')
-            ?.setAttribute('content', theme === 'dark' ? '#001A2C' : '#FEFEFE')
-        } catch {
-          document.documentElement.dataset.theme = 'light'
-        }
-      })()
-    </script>
     <style>
       /* Pre-hydration background; keep in sync with src/styles/theme.ts. */
       html {

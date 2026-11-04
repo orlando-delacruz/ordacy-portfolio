@@ -18,7 +18,7 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 - `src/features/<route>/` — one folder per page. Home is fully built under `src/features/home/` (`sections/`, shared `components/`, copy/data in `home.data.ts`); every other page route still renders `PagePlaceholder` (the 404 is custom).
 - `src/styles/theme.ts` — design tokens; `src/types/styled.d.ts` — styled-components theme typing.
 - `RootLayout` owns the shell (sidebar, Top Bar, mobile bottom nav, skip link, content width). Pages render content only.
-- Shared logic: `src/hooks` (`useDialogFocusTrap` for any modal dialog, `useMediaQuery`, `useScrollDirection`), `useHomePageMeta` (`src/features/home`), theme persistence in `src/app/themeStorage.ts` (key must stay in sync with `index.html`, see below).
+- Shared logic: `src/hooks` (`useDialogFocusTrap` for any modal dialog, `useMediaQuery`, `useScrollDirection`), `useHomePageMeta` (`src/features/home`). Theme state lives in `src/app/ThemeProvider.tsx` (always starts light, see below).
 
 `README.md`'s status sections predate the homepage build: it still claims all pages are placeholders and that there is no Git repository. Trust `src/` and `package.json` over it.
 
@@ -54,7 +54,7 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 
 ## Theme pre-hydration
 
-`index.html` inlines theme detection before React mounts using the `ordacy-theme` localStorage key and hardcoded background colors. If you change the key or default background tokens, update `index.html` **and** `src/app/themeStorage.ts` together to avoid a theme flash.
+The site always starts in light mode (no saved preference, no OS following). `index.html` hard-codes `data-theme="light"` and the pre-hydration background colors. If you change the default background tokens in `theme.ts`, update `index.html` too to avoid a flash.
 
 ## Imports, TypeScript, and style
 

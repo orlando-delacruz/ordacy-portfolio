@@ -5,14 +5,11 @@ import { darkTheme, lightTheme } from '@/styles/theme'
 import type { ThemeName } from '@/styles/theme'
 import { ThemeContext } from './theme-context'
 import { ThemeTransitionOverlay } from './ThemeTransition'
-import {
-  getInitialTheme,
-  persistThemeChoice,
-  THEME_STORAGE_KEY,
-} from './themeStorage'
 
+// Every visit starts in light mode: no saved preference, no OS following.
+// The toggle switches theme for the current visit only.
 export function AppThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeName>(getInitialTheme)
+  const [theme, setTheme] = useState<ThemeName>('light')
   const [transitionTo, setTransitionTo] = useState<ThemeName | null>(null)
   const transitioningRef = useRef(false)
   const timersRef = useRef<number[]>([])
@@ -28,7 +25,6 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     if (transitioningRef.current) return
 
     const to: ThemeName = theme === 'light' ? 'dark' : 'light'
-    persistThemeChoice(to)
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setTheme(to)
@@ -62,25 +58,6 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
           : lightTheme.colors.background.default,
       )
   }, [theme])
-
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)')
-
-    // Follow the OS theme live, but only until the user makes a manual
-    // choice (a saved preference takes priority over system changes).
-    const handleChange = (event: MediaQueryListEvent) => {
-      try {
-        if (localStorage.getItem(THEME_STORAGE_KEY) === null) {
-          setTheme(event.matches ? 'dark' : 'light')
-        }
-      } catch {
-        setTheme(event.matches ? 'dark' : 'light')
-      }
-    }
-
-    media.addEventListener('change', handleChange)
-    return () => media.removeEventListener('change', handleChange)
-  }, [])
 
   const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme])
 
