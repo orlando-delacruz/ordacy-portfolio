@@ -1,7 +1,8 @@
 import { useRevealOnce } from '@/hooks/useRevealOnce'
-import { Section } from '../components/Section'
+import { Section } from '@/components/ui/Section'
 import { steps } from '../home.data'
 import * as S from './styles/process.styled'
+import { sectionCopy } from '@/data'
 
 export function Process() {
   // Plays the step sequence once, the first time the timeline scrolls into view.
@@ -10,8 +11,7 @@ export function Process() {
   return (
     <Section
       id="process"
-      title="Challenge to Solution."
-      description="A clear path to launch."
+      {...sectionCopy('home', 'process')}
     >
       <S.Timeline ref={timelineRef} data-revealed={revealed || undefined}>
         {steps.map((step, index) => {

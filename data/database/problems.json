@@ -1,0 +1,57 @@
+[
+  {
+    "id": "manual-processes",
+    "icon": "ClipboardList",
+    "title": "Manual Processes",
+    "description": "Repetitive tasks, spreadsheets, and manual coordination can slow down everyday operations.",
+    "solvedBy": [
+      "Custom Business Management Systems",
+      "Internal Dashboards and Admin Tools"
+    ],
+    "displayOrder": 1
+  },
+  {
+    "id": "disconnected-tools",
+    "icon": "Layers",
+    "title": "Disconnected Tools",
+    "description": "Important business information scattered across different platforms makes workflows harder to manage.",
+    "solvedBy": [
+      "Custom Business Management Systems",
+      "CRM and Customer Management Systems"
+    ],
+    "displayOrder": 2
+  },
+  {
+    "id": "limited-visibility",
+    "icon": "Eye",
+    "title": "Limited Visibility",
+    "description": "Without centralized information, monitoring business activities and making informed decisions becomes difficult.",
+    "solvedBy": [
+      "Internal Dashboards and Admin Tools",
+      "Inventory and Sales Systems"
+    ],
+    "displayOrder": 3
+  },
+  {
+    "id": "inefficient-customer-management",
+    "icon": "Inbox",
+    "title": "Inefficient Customer Management",
+    "description": "Managing inquiries, appointments, customer records, and follow-ups manually can become overwhelming.",
+    "solvedBy": [
+      "CRM and Customer Management Systems",
+      "Booking and Scheduling Systems"
+    ],
+    "displayOrder": 4
+  },
+  {
+    "id": "lack-of-business-specific-tools",
+    "icon": "Puzzle",
+    "title": "Lack of Business-Specific Tools",
+    "description": "Generic software may not support the unique processes and requirements of every business.",
+    "solvedBy": [
+      "Custom Business Management Systems",
+      "Custom Websites and Web Applications"
+    ],
+    "displayOrder": 5
+  }
+]

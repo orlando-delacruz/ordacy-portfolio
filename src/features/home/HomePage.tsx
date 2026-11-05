@@ -10,12 +10,15 @@ import { Projects } from './sections/Projects'
 import { SiteFooter } from './sections/SiteFooter'
 import { Systems } from './sections/Systems'
 import { Testimonials } from './sections/Testimonials'
-import { useHomePageMeta } from './useHomePageMeta'
+import { seo } from '@/data'
+import { organizationJsonLd, usePageMeta } from '@/hooks/usePageMeta'
+
+const structuredData = organizationJsonLd()
 
 export function HomePage() {
   const { hash } = useLocation()
 
-  useHomePageMeta()
+  usePageMeta({ ...seo.home, structuredData })
   // Section headings, descriptions and content fade up as they scroll into view.
   useScrollReveal()
 
@@ -32,7 +35,7 @@ export function HomePage() {
       <Projects />
       <Testimonials />
       <Process />
-      <Faq />
+      <Faq expandable />
       <FinalCta />
       <SiteFooter />
     </>

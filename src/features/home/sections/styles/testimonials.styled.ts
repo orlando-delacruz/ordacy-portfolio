@@ -1,7 +1,7 @@
 import { Quote } from 'lucide-react'
 import styled, { keyframes } from 'styled-components'
 
-export { SecondaryButton } from '../../components/styles/buttons.styled'
+export { SecondaryButton } from '@/components/ui/styles/buttons.styled'
 
 /* ---------- Infinite horizontal marquee ---------- */
 

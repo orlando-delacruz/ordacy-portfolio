@@ -1,0 +1,128 @@
+[
+  {
+    "id": "custom-business-management-systems",
+    "icon": "Building2",
+    "title": "Custom Business Management Systems",
+    "description": "Centralize your business operations with systems designed around your workflows, processes, and management needs.",
+    "displayOrder": 1,
+    "isPublished": true,
+    "problem": "Operations spread across spreadsheets, chat threads, and paper forms make it hard to see what is happening and who is responsible for what.",
+    "capabilities": [
+      "Records and workflows modeled on how your team works",
+      "Role-based access for staff and managers",
+      "Task assignments, approvals, and activity history",
+      "Reports and exports for day-to-day decisions"
+    ],
+    "useCases": [
+      "Service businesses tracking jobs from request to completion",
+      "Teams routing approvals that currently live in email",
+      "Companies replacing several disconnected tools with one system"
+    ],
+    "audience": "Businesses whose processes have outgrown spreadsheets or off-the-shelf software."
+  },
+  {
+    "id": "booking-and-scheduling-systems",
+    "icon": "CalendarCheck",
+    "title": "Booking and Scheduling Systems",
+    "description": "Manage appointments, reservations, schedules, and customer bookings through an organized digital platform.",
+    "displayOrder": 2,
+    "isPublished": true,
+    "problem": "Bookings taken by phone and private messages lead to double bookings, missed appointments, and staff time spent coordinating schedules.",
+    "capabilities": [
+      "Online booking for services and open time slots",
+      "Staff, room, and resource calendars",
+      "Rescheduling and cancellation handling",
+      "Booking confirmation and reminder workflows"
+    ],
+    "useCases": [
+      "Clinics and wellness practices managing appointments",
+      "Salons, studios, and tutorial centers booking sessions",
+      "Rental and event businesses managing availability"
+    ],
+    "audience": "Appointment-based businesses and teams that share schedules."
+  },
+  {
+    "id": "internal-dashboards-and-admin-tools",
+    "icon": "LayoutDashboard",
+    "title": "Internal Dashboards and Admin Tools",
+    "description": "Manage information, monitor business activities, and handle everyday operations through dedicated administrative tools.",
+    "displayOrder": 3,
+    "isPublished": true,
+    "problem": "Key figures are buried in spreadsheets and exports, so managers wait for reports instead of seeing activity as it happens.",
+    "capabilities": [
+      "Summary views of the figures your team relies on",
+      "Filters by date, team, location, or status",
+      "Admin screens for managing records and users",
+      "Access levels for different roles"
+    ],
+    "useCases": [
+      "Operations teams monitoring daily activity",
+      "Managers tracking the status of jobs or projects",
+      "Admin teams maintaining internal records"
+    ],
+    "audience": "Managers and teams who need a clear, current view of operations."
+  },
+  {
+    "id": "inventory-and-sales-systems",
+    "icon": "Package",
+    "title": "Inventory and Sales Systems",
+    "description": "Organize products, inventory records, sales transactions, and essential business information.",
+    "displayOrder": 4,
+    "isPublished": true,
+    "problem": "Stock counts that do not match sales records lead to shortages, overstock, and hours spent reconciling numbers by hand.",
+    "capabilities": [
+      "Product catalog and stock records",
+      "Deliveries, sales, and stock adjustments in one history",
+      "Low-stock flags before items run out",
+      "Sales logging and summaries"
+    ],
+    "useCases": [
+      "Retail stores tracking stock across counters or branches",
+      "Distributors recording deliveries and orders",
+      "Businesses that sell both in-store and online"
+    ],
+    "audience": "Retailers, distributors, and any business that holds stock."
+  },
+  {
+    "id": "custom-websites-and-web-applications",
+    "icon": "Globe",
+    "title": "Custom Websites and Web Applications",
+    "description": "Build a professional online presence or web application designed around your business objectives.",
+    "displayOrder": 5,
+    "isPublished": true,
+    "problem": "A website that is hard to update or does not explain what you offer makes it harder for customers to understand your business and get in touch.",
+    "capabilities": [
+      "Responsive, mobile-first design",
+      "Clear service, pricing, and contact pages",
+      "Inquiry forms that capture the details you need",
+      "Web applications built around a specific customer or team workflow"
+    ],
+    "useCases": [
+      "Businesses launching or replacing their website",
+      "Service providers that need a clear inquiry path",
+      "Startups building a web application for their product"
+    ],
+    "audience": "Startups and businesses establishing or improving their online presence."
+  },
+  {
+    "id": "crm-and-customer-management-systems",
+    "icon": "Users",
+    "title": "CRM and Customer Management Systems",
+    "description": "Organize customer information, inquiries, interactions, and follow-up workflows.",
+    "displayOrder": 6,
+    "isPublished": true,
+    "problem": "Customer details and follow-ups kept in notebooks or personal inboxes are easy to lose, especially as the team grows.",
+    "capabilities": [
+      "One record per customer with contact details and history",
+      "Inquiry and interaction tracking",
+      "Follow-up tasks and reminders",
+      "Shared views for sales and customer service teams"
+    ],
+    "useCases": [
+      "Sales teams tracking leads and follow-ups",
+      "Service businesses managing repeat customers",
+      "Customer service teams working from one shared history"
+    ],
+    "audience": "Teams that manage ongoing customer relationships."
+  }
+]

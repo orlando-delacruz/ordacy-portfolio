@@ -5,11 +5,18 @@ import { darkTheme, lightTheme } from '@/styles/theme'
 import type { ThemeName } from '@/styles/theme'
 import { ThemeContext } from './theme-context'
 import { ThemeTransitionOverlay } from './ThemeTransition'
+import {
+  getSavedTheme,
+  getSystemTheme,
+  persistThemeChoice,
+} from './themeStorage'
 
-// Every visit starts in light mode: no saved preference, no OS following.
-// The toggle switches theme for the current visit only.
+// Theme = saved manual choice, else the OS theme (followed live while no
+// manual choice exists). index.html applies the same rule before hydration.
 export function AppThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeName>('light')
+  const [theme, setTheme] = useState<ThemeName>(
+    () => getSavedTheme() ?? getSystemTheme(),
+  )
   const [transitionTo, setTransitionTo] = useState<ThemeName | null>(null)
   const transitioningRef = useRef(false)
   const timersRef = useRef<number[]>([])
@@ -21,10 +28,20 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     [],
   )
 
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = () => {
+      if (!getSavedTheme()) setTheme(query.matches ? 'dark' : 'light')
+    }
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
+
   const toggleTheme = useCallback(() => {
     if (transitioningRef.current) return
 
     const to: ThemeName = theme === 'light' ? 'dark' : 'light'
+    persistThemeChoice(to)
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setTheme(to)

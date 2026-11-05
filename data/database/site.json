@@ -1,0 +1,31 @@
+{
+  "_note": "Static stand-in for a future backend. Fields marked pending are unconfirmed business facts: the UI must not render them until a real value is set.",
+  "name": "Ordacy",
+  "tagline": "Build Better. Grow Further.",
+  "description": "Ordacy builds custom digital systems that help businesses manage their operations, serve customers, and grow with greater clarity and control.",
+  "siteUrl": "https://ordacy.com",
+  "siteUrlPending": true,
+  "contact": {
+    "email": {
+      "value": null,
+      "pending": true
+    },
+    "phone": {
+      "value": null,
+      "pending": true
+    },
+    "location": {
+      "value": null,
+      "pending": true
+    },
+    "responseTime": {
+      "value": null,
+      "pending": true
+    }
+  },
+  "markets": [
+    "Philippines",
+    "International"
+  ],
+  "footerTagline": "Build Better. Grow Further. Custom digital systems that help businesses manage operations, serve customers, and grow with greater clarity and control."
+}

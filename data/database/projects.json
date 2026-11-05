@@ -1,0 +1,254 @@
+[
+  {
+    "id": "business-management",
+    "slug": "business-management",
+    "title": "Service Operations Platform",
+    "type": "concept-demo",
+    "icon": "Building2",
+    "category": "Business Management",
+    "summary": "Job requests, assignments, approvals, and records in one internal system.",
+    "details": "A concept for a facilities services company with field teams. Office staff log requests, assign jobs, and track approvals, and managers see every job from request to sign-off in one place.",
+    "challenge": "Requests arrive by phone, email, and chat. Assignments live in a spreadsheet, approvals in email threads, and no one has a full picture of which jobs are open, late, or waiting on sign-off.",
+    "solution": "A single job record that moves through clear stages, with assignments, approval steps, and a full activity history. Staff work from a board of open jobs; managers filter by team, status, or due date.",
+    "features": [
+      "Job board by status",
+      "Assignments and due dates",
+      "Approval workflow",
+      "Activity history per job"
+    ],
+    "image": {
+      "src": "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=70",
+      "alt": "A team member presenting on a laptop to colleagues in an office."
+    },
+    "screenshots": [
+      {
+        "src": "/projects/business-management/screen-1.svg",
+        "alt": "Job board screen from the concept."
+      },
+      {
+        "src": "/projects/business-management/screen-2.svg",
+        "alt": "Job record screen from the concept."
+      },
+      {
+        "src": "/projects/business-management/screen-3.svg",
+        "alt": "Team workload screen from the concept."
+      }
+    ],
+    "url": null,
+    "isSample": false,
+    "isPublished": true,
+    "displayOrder": 1,
+    "createdAt": "2026-11-04T00:00:00.000Z",
+    "updatedAt": "2026-11-04T00:00:00.000Z"
+  },
+  {
+    "id": "clinic-booking",
+    "slug": "clinic-booking",
+    "title": "Clinic Booking System",
+    "type": "concept-demo",
+    "icon": "CalendarCheck",
+    "category": "Booking and Scheduling",
+    "summary": "Online appointments, staff schedules, and patient reminders in one place.",
+    "details": "A concept for a small multi-practitioner clinic. Patients book an open slot online, staff manage daily schedules from one calendar, and the front desk sees every appointment at a glance.",
+    "challenge": "Appointments are booked through calls and private messages and written in a logbook. Double bookings happen, reminders depend on someone remembering, and the front desk spends much of the day coordinating.",
+    "solution": "Online booking tied to each practitioner's real availability, a shared calendar for the front desk, and a reminder workflow before each visit. Rescheduling updates the calendar immediately.",
+    "features": [
+      "Online booking by service",
+      "Practitioner calendars",
+      "Rescheduling and cancellations",
+      "Appointment reminders"
+    ],
+    "image": {
+      "src": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=70",
+      "alt": "Hands typing on a laptop next to a stethoscope on a desk."
+    },
+    "screenshots": [
+      {
+        "src": "/projects/clinic-booking/screen-1.svg",
+        "alt": "Weekly calendar screen from the concept."
+      },
+      {
+        "src": "/projects/clinic-booking/screen-2.svg",
+        "alt": "Appointment list screen from the concept."
+      },
+      {
+        "src": "/projects/clinic-booking/screen-3.svg",
+        "alt": "Booking details screen from the concept."
+      }
+    ],
+    "url": null,
+    "isSample": false,
+    "isPublished": true,
+    "displayOrder": 2,
+    "createdAt": "2026-11-04T00:00:00.000Z",
+    "updatedAt": "2026-11-04T00:00:00.000Z"
+  },
+  {
+    "id": "inventory-sales",
+    "slug": "inventory-sales",
+    "title": "Inventory and Sales Tracker",
+    "type": "concept-demo",
+    "icon": "Package",
+    "category": "Inventory and Sales",
+    "summary": "Stock levels, product records, and daily sales tracked in one system.",
+    "details": "A concept for a growing retailer with a stockroom and two counters. Every product has one record, stock updates as sales and deliveries are logged, and low-stock items are flagged early.",
+    "challenge": "Stock is counted by hand into two spreadsheets that rarely match. Items run out before anyone notices, and month-end reconciliation takes most of a weekend.",
+    "solution": "One product catalog where every delivery, sale, and adjustment is recorded against the item. Stock levels are always current, and items below their reorder point appear on a daily list.",
+    "features": [
+      "Product catalog",
+      "Stock movements history",
+      "Low-stock alerts",
+      "Daily sales summary"
+    ],
+    "image": {
+      "src": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=70",
+      "alt": "A warehouse with rows of shelves stacked with boxes and crates."
+    },
+    "screenshots": [
+      {
+        "src": "/projects/inventory-sales/screen-1.svg",
+        "alt": "Stock list screen from the concept."
+      },
+      {
+        "src": "/projects/inventory-sales/screen-2.svg",
+        "alt": "Sales overview screen from the concept."
+      },
+      {
+        "src": "/projects/inventory-sales/screen-3.svg",
+        "alt": "Product record screen from the concept."
+      }
+    ],
+    "url": null,
+    "isSample": false,
+    "isPublished": true,
+    "displayOrder": 3,
+    "createdAt": "2026-11-04T00:00:00.000Z",
+    "updatedAt": "2026-11-04T00:00:00.000Z"
+  },
+  {
+    "id": "retail-crm",
+    "slug": "retail-crm",
+    "title": "Customer Relationship Hub",
+    "type": "concept-demo",
+    "icon": "Users",
+    "category": "CRM and Customer Management",
+    "summary": "Customer profiles, purchase history, and follow-ups for a retail team.",
+    "details": "A concept for a specialty retailer with repeat customers. Staff look up a customer at the counter, see past purchases and notes, and schedule follow-ups so no inquiry is forgotten.",
+    "challenge": "Customer details are kept in notebooks and personal phones. When a staff member is away, follow-ups are missed and returning customers have to repeat themselves.",
+    "solution": "One profile per customer with contact details, purchase history, and every interaction. Follow-up tasks are assigned to the team, with a pipeline view of open inquiries.",
+    "features": [
+      "Customer profiles",
+      "Purchase history",
+      "Follow-up tasks",
+      "Inquiry pipeline"
+    ],
+    "image": {
+      "src": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=70",
+      "alt": "A shop assistant serving a customer who pays with a phone at the counter."
+    },
+    "screenshots": [
+      {
+        "src": "/projects/retail-crm/screen-1.svg",
+        "alt": "Customer profile screen from the concept."
+      },
+      {
+        "src": "/projects/retail-crm/screen-2.svg",
+        "alt": "Customer list screen from the concept."
+      },
+      {
+        "src": "/projects/retail-crm/screen-3.svg",
+        "alt": "Follow-up pipeline screen from the concept."
+      }
+    ],
+    "url": null,
+    "isSample": false,
+    "isPublished": true,
+    "displayOrder": 4,
+    "createdAt": "2026-11-04T00:00:00.000Z",
+    "updatedAt": "2026-11-04T00:00:00.000Z"
+  },
+  {
+    "id": "operations-dashboard",
+    "slug": "operations-dashboard",
+    "title": "Operations Dashboard",
+    "type": "concept-demo",
+    "icon": "LayoutDashboard",
+    "category": "Dashboards and Admin Tools",
+    "summary": "Key business figures and team activity on a single admin screen.",
+    "details": "A concept for a delivery business with several dispatch teams. Managers check the day's key figures, filter by date range or team, and spot trends without exporting spreadsheets.",
+    "challenge": "Daily figures are compiled by hand from several sources and shared as a report the next morning, so problems are noticed a day late.",
+    "solution": "A dashboard that brings activity into one view: summary figures, trends over time, and a breakdown by team and status, with filters and role-based access.",
+    "features": [
+      "Summary figures",
+      "Date-range filters",
+      "Trend and status charts",
+      "Role-based access"
+    ],
+    "image": {
+      "src": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=70",
+      "alt": "A laptop screen showing analytics charts and graphs."
+    },
+    "screenshots": [
+      {
+        "src": "/projects/operations-dashboard/screen-1.svg",
+        "alt": "Overview screen from the concept."
+      },
+      {
+        "src": "/projects/operations-dashboard/screen-2.svg",
+        "alt": "Status breakdown screen from the concept."
+      },
+      {
+        "src": "/projects/operations-dashboard/screen-3.svg",
+        "alt": "Activity log screen from the concept."
+      }
+    ],
+    "url": null,
+    "isSample": false,
+    "isPublished": true,
+    "displayOrder": 5,
+    "createdAt": "2026-11-04T00:00:00.000Z",
+    "updatedAt": "2026-11-04T00:00:00.000Z"
+  },
+  {
+    "id": "coworking-website",
+    "slug": "coworking-website",
+    "title": "Coworking Space Website",
+    "type": "concept-demo",
+    "icon": "Globe",
+    "category": "Websites and Web Apps",
+    "summary": "A fast, mobile-first website with membership plans and tour bookings.",
+    "details": "A concept for an independent coworking space. Visitors compare membership plans, see the space, and book a tour from a site built to load quickly on any phone.",
+    "challenge": "The space is promoted only through social media posts. Prospective members cannot easily compare plans or book a visit, so inquiries arrive as scattered messages.",
+    "solution": "A clear website with plan comparisons, a photo-led tour of the space, and a tour booking form. Content is easy for the team to update without a developer.",
+    "features": [
+      "Membership plan comparison",
+      "Tour booking",
+      "Mobile-first design",
+      "Easy content updates"
+    ],
+    "image": {
+      "src": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=70",
+      "alt": "Three people working on laptops and talking at a shared table."
+    },
+    "screenshots": [
+      {
+        "src": "/projects/coworking-website/screen-1.svg",
+        "alt": "Home page screen from the concept."
+      },
+      {
+        "src": "/projects/coworking-website/screen-2.svg",
+        "alt": "Membership plans screen from the concept."
+      },
+      {
+        "src": "/projects/coworking-website/screen-3.svg",
+        "alt": "Tour booking screen from the concept."
+      }
+    ],
+    "url": null,
+    "isSample": false,
+    "isPublished": true,
+    "displayOrder": 6,
+    "createdAt": "2026-11-04T00:00:00.000Z",
+    "updatedAt": "2026-11-04T00:00:00.000Z"
+  }
+]

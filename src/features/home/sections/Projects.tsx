@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  Check,
   ChevronLeft,
   ChevronRight,
   Code,
@@ -14,13 +13,16 @@ import {
 import { useRef, useState } from 'react'
 import type { KeyboardEvent, MouseEvent, PointerEvent } from 'react'
 import { useRevealOnce } from '@/hooks/useRevealOnce'
-import { Lightbox } from '../components/Lightbox'
-import { Section } from '../components/Section'
+import { Section } from '@/components/ui/Section'
+import * as E from '@/components/ui/styles/empty-state.styled'
 import type { ShowcaseProject } from '../home.data'
 import { showcaseProjects } from '../home.data'
+import { ProjectDetails } from './ProjectDetails'
 import * as S from './styles/projects.styled'
+import { getSection, sectionCopy } from '@/data'
 
 const count = showcaseProjects.length
+const empty = getSection('projects', 'empty')
 const SWIPE_THRESHOLD = 40
 
 /** Signed shortest distance from `active` to `index` around the loop. */
@@ -31,7 +33,28 @@ function loopOffset(index: number, active: number) {
   return offset
 }
 
+// Only real, published projects appear. With none, show an intentional state
+// instead of an empty carousel.
 export function Projects() {
+  if (count === 0) {
+    return (
+      <Section id="work" {...sectionCopy('home', 'work')}>
+        <E.EmptyState>
+          <E.EmptyTitle>{empty.title}</E.EmptyTitle>
+          <E.EmptyText>{empty.description}</E.EmptyText>
+          <S.SecondaryButton to="/contact">
+            <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
+            Discuss your project
+          </S.SecondaryButton>
+        </E.EmptyState>
+      </Section>
+    )
+  }
+
+  return <ProjectsCarousel />
+}
+
+function ProjectsCarousel() {
   // `previous` lets each card tell when it wrapped around the loop, so it can snap instead of sliding.
   const [{ active, previous }, setPosition] = useState({
     active: 0,
@@ -39,7 +62,6 @@ export function Projects() {
   })
   const [details, setDetails] = useState<ShowcaseProject | null>(null)
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null)
-  const [selectedShot, setSelectedShot] = useState(0)
   const pointerStart = useRef<number | null>(null)
   const swiped = useRef(false)
   // Cards fan out from the centre the first time the carousel scrolls into view.
@@ -76,20 +98,15 @@ export function Projects() {
   const openDetails =
     (project: ShowcaseProject) => (event: MouseEvent<HTMLButtonElement>) => {
       setTrigger(event.currentTarget)
-      setSelectedShot(0)
       setDetails(project)
     }
 
   const current = showcaseProjects[active]
-  // Gallery starts with the thumbnail, followed by the extra screenshots.
-  const gallery = details ? [details.image, ...details.screenshots] : []
-  const activeShot = details ? (gallery[selectedShot] ?? details.image) : null
 
   return (
     <Section
       id="work"
-      title="Real Business Solutions."
-      description="Selected work, shared with permission."
+      {...sectionCopy('home', 'work')}
     >
       <S.Carousel
         ref={carouselRef}
@@ -159,23 +176,27 @@ export function Projects() {
                   <S.Shine aria-hidden="true" />
                   <S.Category>
                     <ProjectIcon size={12} strokeWidth={2.5} aria-hidden="true" />
-                    <S.CategoryLabel>{project.category}</S.CategoryLabel>
+                    <S.CategoryLabel>
+                      {project.type === 'concept-demo' ? `Concept · ${project.category}` : project.category}
+                    </S.CategoryLabel>
                   </S.Category>
 
                   <S.Overlay>
                     <S.Title>{project.title}</S.Title>
                     <S.Summary>{project.summary}</S.Summary>
                     <S.CardActions>
-                      <S.PrimaryAnchor
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Visit website: ${project.title} (opens in a new tab)`}
-                      >
-                        <Globe size={16} strokeWidth={2} aria-hidden="true" />
-                        <S.VisitShort>Visit</S.VisitShort>
-                        <S.VisitFull>Visit Website</S.VisitFull>
-                      </S.PrimaryAnchor>
+                      {project.url && (
+                        <S.PrimaryAnchor
+                          href={project.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Visit website: ${project.title} (opens in a new tab)`}
+                        >
+                          <Globe size={16} strokeWidth={2} aria-hidden="true" />
+                          <S.VisitShort>Visit</S.VisitShort>
+                          <S.VisitFull>Visit Website</S.VisitFull>
+                        </S.PrimaryAnchor>
+                      )}
                       <S.DetailsButton
                         type="button"
                         aria-haspopup="dialog"
@@ -227,86 +248,12 @@ export function Projects() {
       </S.Actions>
 
       {details && (
-        <Lightbox
-          title={details.title}
-          closeLabel="Close project details"
+        <ProjectDetails
+          key={details.id}
+          project={details}
           onClose={() => setDetails(null)}
           returnFocusTo={trigger}
-        >
-          <S.Detail>
-            <S.DetailGallery>
-              <S.DetailMedia>
-                {activeShot && (
-                  <S.Image
-                    key={activeShot.src}
-                    src={activeShot.src}
-                    alt={activeShot.alt}
-                    width={1200}
-                    height={750}
-                  />
-                )}
-              </S.DetailMedia>
-
-              {gallery.length > 0 && (
-                <S.DetailThumbs role="group" aria-label="Project images">
-                  {gallery.map((shot, index) => (
-                    <S.DetailThumb
-                      key={shot.src}
-                      type="button"
-                      $active={index === selectedShot}
-                      aria-pressed={index === selectedShot}
-                      aria-label={`View image ${index + 1}: ${shot.alt}`}
-                      onClick={() => setSelectedShot(index)}
-                    >
-                      <S.Image
-                        src={shot.src}
-                        alt=""
-                        width={400}
-                        height={250}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </S.DetailThumb>
-                  ))}
-                </S.DetailThumbs>
-              )}
-            </S.DetailGallery>
-
-            <S.DetailContent>
-              <S.DetailCategory>{details.category}</S.DetailCategory>
-              {/* Same description as the project card. */}
-              <S.DetailText>{details.summary}</S.DetailText>
-
-              <S.FeatureHeading>What it includes</S.FeatureHeading>
-              <S.FeatureList>
-                {details.features.map((feature) => (
-                  <S.FeatureItem key={feature}>
-                    <S.FeatureIcon>
-                      <Check size={14} strokeWidth={3} aria-hidden="true" />
-                    </S.FeatureIcon>
-                    {feature}
-                  </S.FeatureItem>
-                ))}
-              </S.FeatureList>
-
-              <S.DetailActions>
-                <S.PrimaryAnchor
-                  href={details.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Globe size={18} strokeWidth={2} aria-hidden="true" />
-                  Visit website
-                  <S.SrOnly> (opens in a new tab)</S.SrOnly>
-                </S.PrimaryAnchor>
-                <S.SecondaryButton to="/contact">
-                  <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
-                  Discuss Same Project
-                </S.SecondaryButton>
-              </S.DetailActions>
-            </S.DetailContent>
-          </S.Detail>
-        </Lightbox>
+        />
       )}
     </Section>
   )

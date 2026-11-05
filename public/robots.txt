@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+# Demo admin interface; no public content.
+Disallow: /admin
+
+# TODO before launch: replace with the confirmed production domain.
+Sitemap: https://ordacy.com/sitemap.xml

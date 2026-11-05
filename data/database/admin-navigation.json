@@ -1,0 +1,97 @@
+[
+  {
+    "id": "overview",
+    "label": "Overview",
+    "items": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "path": "/admin",
+        "icon": "LayoutDashboard",
+        "description": "Inquiry activity and content at a glance."
+      },
+      {
+        "id": "inquiries",
+        "label": "Inquiries",
+        "path": "/admin/inquiries",
+        "icon": "Inbox",
+        "description": "Review project inquiries and update their status."
+      }
+    ]
+  },
+  {
+    "id": "content",
+    "label": "Content",
+    "items": [
+      {
+        "id": "content",
+        "label": "Website Content",
+        "path": "/admin/content",
+        "icon": "FileText",
+        "description": "Page headings, introductions, and footer copy for the public site."
+      },
+      {
+        "id": "projects",
+        "label": "Projects",
+        "path": "/admin/projects",
+        "icon": "FolderKanban",
+        "description": "Client projects and concept demos shown on the site."
+      },
+      {
+        "id": "testimonials",
+        "label": "Testimonials",
+        "path": "/admin/testimonials",
+        "icon": "MessageSquareQuote",
+        "description": "Client feedback. Only approved entries are published."
+      },
+      {
+        "id": "services",
+        "label": "Services",
+        "path": "/admin/services",
+        "icon": "Layers",
+        "description": "The services listed on the homepage and About page."
+      },
+      {
+        "id": "pricing",
+        "label": "Pricing",
+        "path": "/admin/pricing",
+        "icon": "Wallet",
+        "description": "Starter, Growth, and Custom plans in PHP and USD."
+      },
+      {
+        "id": "faqs",
+        "label": "FAQs",
+        "path": "/admin/faqs",
+        "icon": "CircleHelp",
+        "description": "Questions shown on the homepage and Pricing page."
+      },
+      {
+        "id": "gallery",
+        "label": "Gallery",
+        "path": "/admin/gallery",
+        "icon": "Images",
+        "description": "Images and their alt text."
+      }
+    ]
+  },
+  {
+    "id": "configuration",
+    "label": "Configuration",
+    "items": [
+      {
+        "id": "seo",
+        "label": "SEO Settings",
+        "path": "/admin/seo",
+        "icon": "Search",
+        "description": "Titles, descriptions, and sharing metadata for each public page."
+      },
+      {
+        "id": "settings",
+        "label": "Settings",
+        "path": "/admin/settings",
+        "icon": "Settings",
+        "description": "Site details, storage, and the status of integrations."
+      }
+    ]
+  }
+]

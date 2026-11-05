@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
-import { baseStyles } from '../../components/styles/buttons.styled'
+import { baseStyles } from '@/components/ui/styles/buttons.styled'
 
 /*
  * Motion: the first time the banner is seen (data-revealed, see FinalCta.tsx)

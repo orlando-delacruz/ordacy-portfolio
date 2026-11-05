@@ -1,10 +1,6 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import { legal, seo } from '@/data'
+import { LegalPage } from './LegalPage'
 
 export function TermsOfServicePage() {
-  return (
-    <PagePlaceholder
-      title="Terms and Conditions"
-      description="Terms details coming soon."
-    />
-  )
+  return <LegalPage seo={seo.terms} document={legal.terms} />
 }

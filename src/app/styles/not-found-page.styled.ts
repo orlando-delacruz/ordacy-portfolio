@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 export {
@@ -7,13 +6,14 @@ export {
   PageSection as Section,
   PageTitle as Title,
 } from '@/components/common/styles/page.styled'
+export {
+  PrimaryButton as PrimaryLink,
+  SecondaryButton as SecondaryLink,
+} from '@/components/ui/styles/buttons.styled'
 
-export const HomeLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
+export const Links = styled.nav`
+  display: flex;
+  flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing.sm};
-  justify-self: start;
-  margin-top: ${({ theme }) => theme.spacing.sm};
-  color: ${({ theme }) => theme.colors.brand.deep};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  margin-top: ${({ theme }) => theme.spacing.md};
 `

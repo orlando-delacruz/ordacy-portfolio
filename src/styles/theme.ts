@@ -67,6 +67,16 @@ const lightColors = {
   solution: {
     accent: '#00585E',
   },
+  danger: {
+    text: '#B42318',
+  },
+  // Admin status badges (inquiries, publishing). Text colors meet 4.5:1 on surfaces.
+  status: {
+    info: '#00585E',
+    warning: '#8A5300',
+    success: '#1E6B3A',
+    neutral: '#4A6670',
+  },
 }
 
 const darkColors: typeof lightColors = {
@@ -101,6 +111,15 @@ const darkColors: typeof lightColors = {
   },
   solution: {
     accent: '#5FE7D4',
+  },
+  danger: {
+    text: '#FF9A8F',
+  },
+  status: {
+    info: '#5FE7D4',
+    warning: '#F5C26B',
+    success: '#7FD99A',
+    neutral: '#A8C5C6',
   },
 }
 

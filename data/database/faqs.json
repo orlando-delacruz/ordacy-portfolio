@@ -1,0 +1,200 @@
+[
+  {
+    "id": "what-services-do-you-offer",
+    "icon": "Layers",
+    "category": "Services",
+    "question": "What services does Ordacy offer?",
+    "answer": "We build custom business management systems, booking and scheduling systems, internal dashboards and admin tools, inventory and sales systems, custom websites and web applications, and CRM and customer management systems.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 1,
+    "isPublished": true
+  },
+  {
+    "id": "what-types-of-businesses-do-you-work-with",
+    "icon": "Building2",
+    "category": "Services",
+    "question": "What types of businesses do you work with?",
+    "answer": "We work with startups and businesses that need custom websites, web applications, or digital systems to support their operations and goals.",
+    "featured": true,
+    "pricingPage": false,
+    "displayOrder": 2,
+    "isPublished": true
+  },
+  {
+    "id": "can-you-build-a-system-based-on-our-existing-workflow",
+    "icon": "Workflow",
+    "category": "Services",
+    "question": "Can you build a system based on our existing workflow?",
+    "answer": "Yes. We first understand your current processes and requirements, then determine an appropriate solution based on your business needs and agreed project scope.",
+    "featured": true,
+    "pricingPage": false,
+    "displayOrder": 3,
+    "isPublished": true
+  },
+  {
+    "id": "is-a-custom-system-right-for-us",
+    "icon": "Lightbulb",
+    "category": "Services",
+    "question": "How do we know if a custom system is right for us?",
+    "answer": "Custom development is worth considering when off-the-shelf tools do not fit how you work, when your team juggles several disconnected tools, or when you need something specific to your business. Discovery is where we work out together whether a custom solution fits your needs.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 4,
+    "isPublished": true
+  },
+  {
+    "id": "how-much-does-a-project-cost",
+    "icon": "Wallet",
+    "category": "Pricing and payment",
+    "question": "How much does a project cost?",
+    "answer": "Project pricing depends on the type of solution, features, complexity, and overall scope. Our pricing section provides starting prices, while custom requirements are quoted individually.",
+    "featured": true,
+    "pricingPage": true,
+    "displayOrder": 5,
+    "isPublished": true
+  },
+  {
+    "id": "are-starting-prices-final",
+    "icon": "FileText",
+    "category": "Pricing and payment",
+    "question": "Are the starting prices final?",
+    "answer": "No. Starting prices are estimates for typical projects. The final price depends on your requirements and scope, and is confirmed in the proposal before any work begins.",
+    "featured": false,
+    "pricingPage": true,
+    "displayOrder": 6,
+    "isPublished": true
+  },
+  {
+    "id": "what-are-your-payment-terms",
+    "icon": "Wallet",
+    "category": "Pricing and payment",
+    "question": "What are your payment terms?",
+    "answer": "Our standard terms are 50% upfront and 50% before final handover. Larger projects may follow a different payment schedule, agreed in writing.",
+    "featured": false,
+    "pricingPage": true,
+    "displayOrder": 7,
+    "isPublished": true
+  },
+  {
+    "id": "how-long-does-development-take",
+    "icon": "Clock",
+    "category": "Process and timeline",
+    "question": "How long does development take?",
+    "answer": "Development time depends on project requirements, complexity, and scope. We provide an estimated timeline during the proposal stage and confirm it for each project.",
+    "featured": true,
+    "pricingPage": true,
+    "displayOrder": 8,
+    "isPublished": true
+  },
+  {
+    "id": "what-happens-in-discovery-and-proposal",
+    "icon": "Search",
+    "category": "Process and timeline",
+    "question": "What happens during discovery and the proposal?",
+    "answer": "In discovery we learn about your business, current processes, challenges, and goals. We then prepare a proposal that defines the solution, features, scope, timeline, and investment for you to review before anything is agreed.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 9,
+    "isPublished": true
+  },
+  {
+    "id": "how-are-revisions-handled",
+    "icon": "ClipboardList",
+    "category": "Process and timeline",
+    "question": "How are changes and revisions handled?",
+    "answer": "Adjustments within the agreed scope are handled during design and development. Requests outside the agreed scope, such as new features, are discussed with you and scoped and quoted separately.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 10,
+    "isPublished": true
+  },
+  {
+    "id": "how-do-we-communicate",
+    "icon": "MessagesSquare",
+    "category": "Process and timeline",
+    "question": "How will we communicate during the project?",
+    "answer": "Communication channels and how often you receive progress updates are agreed at the start of each project, so you always know where things stand at each stage.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 11,
+    "isPublished": true
+  },
+  {
+    "id": "who-owns-the-completed-project",
+    "icon": "KeyRound",
+    "category": "Ownership and hosting",
+    "question": "Who owns the completed project?",
+    "answer": "Ownership of agreed custom deliverables is transferred to the client after full payment, subject to the agreed terms and applicable third-party licenses.",
+    "featured": false,
+    "pricingPage": true,
+    "displayOrder": 12,
+    "isPublished": true
+  },
+  {
+    "id": "do-we-receive-the-source-code",
+    "icon": "Code",
+    "category": "Ownership and hosting",
+    "question": "Do we receive the source code?",
+    "answer": "Source code delivery is specified in your project agreement. Pre-existing and third-party components keep their original licensing.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 13,
+    "isPublished": true
+  },
+  {
+    "id": "who-handles-hosting-and-deployment",
+    "icon": "Globe",
+    "category": "Ownership and hosting",
+    "question": "Who handles hosting and deployment?",
+    "answer": "We recommend that your hosting, domain, and related accounts are owned by you, and we help with setup and deployment. Recurring service costs are paid by the client unless agreed otherwise.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 14,
+    "isPublished": true
+  },
+  {
+    "id": "do-you-provide-maintenance-after-launch",
+    "icon": "Wrench",
+    "category": "Support",
+    "question": "Do you provide maintenance after launch?",
+    "answer": "Maintenance is optional and can be arranged separately based on your requirements. It is quoted on its own, outside the project price.",
+    "featured": false,
+    "pricingPage": true,
+    "displayOrder": 15,
+    "isPublished": true
+  },
+  {
+    "id": "is-there-a-warranty",
+    "icon": "ShieldCheck",
+    "category": "Support",
+    "question": "Is there a warranty?",
+    "answer": "Yes. Our standard warranty covers 30 days after launch or handover, for reproducible issues where the delivered system does not work as specified. It does not cover new features, scope changes, modifications made by others, misuse, or third-party service outages.",
+    "featured": false,
+    "pricingPage": true,
+    "displayOrder": 16,
+    "isPublished": true
+  },
+  {
+    "id": "do-you-work-with-international-clients",
+    "icon": "Globe",
+    "category": "Getting started",
+    "question": "Do you work with international clients?",
+    "answer": "Yes. Ordacy works with both Philippine and international clients, and prices are available in PHP and USD.",
+    "featured": false,
+    "pricingPage": false,
+    "displayOrder": 17,
+    "isPublished": true
+  },
+  {
+    "id": "how-do-we-start-a-project",
+    "icon": "Rocket",
+    "category": "Getting started",
+    "question": "How do we start a project?",
+    "answer": "You can submit your project details through our contact form. We will use the information to understand your requirements and discuss the next steps.",
+    "featured": true,
+    "pricingPage": false,
+    "displayOrder": 18,
+    "isPublished": true
+  }
+]

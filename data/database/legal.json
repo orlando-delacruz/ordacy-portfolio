@@ -1,0 +1,148 @@
+{
+  "_note": "Website legal copy. Reflects the site as built; review with a legal professional before relying on it.",
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "This policy explains what information Ordacy collects through this website, why we collect it, and the choices you have. We handle personal information in line with the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).",
+    "updated": "2026-11-05",
+    "sections": [
+      {
+        "id": "information-you-provide",
+        "title": "Information you provide",
+        "paragraphs": [
+          "When you send an inquiry through the contact form, we collect the details you choose to share:"
+        ],
+        "items": [
+          "Your full name and email address",
+          "Your business or company name, if you provide it",
+          "The project type and budget range you select",
+          "Your project details",
+          "Your target launch date, if you provide it"
+        ]
+      },
+      {
+        "id": "information-collected-automatically",
+        "title": "Information collected automatically",
+        "paragraphs": [
+          "This website loads its typeface (Plus Jakarta Sans) from Google Fonts. When your browser requests the font files, Google may receive your IP address and basic browser information, as described in Google's own privacy policy.",
+          "Your light or dark theme choice is saved in your browser's local storage on your device so the site can remember it.",
+          "This website does not use analytics or advertising cookies."
+        ]
+      },
+      {
+        "id": "how-we-use-information",
+        "title": "How we use information",
+        "paragraphs": [
+          "We use the information you send through the contact form to understand your requirements, respond to your inquiry, and discuss a potential project. We do not use it for unrelated purposes, and we do not sell it."
+        ]
+      },
+      {
+        "id": "sharing",
+        "title": "Sharing your information",
+        "paragraphs": [
+          "We may use service providers, such as hosting and email providers, to operate this website and handle inquiries. They may process your information only to provide those services to us."
+        ]
+      },
+      {
+        "id": "retention",
+        "title": "How long we keep information",
+        "paragraphs": [
+          "We keep inquiry information only for as long as we need it to respond to you and manage a potential engagement, or as required by law."
+        ]
+      },
+      {
+        "id": "your-rights",
+        "title": "Your rights",
+        "paragraphs": [
+          "Under the Data Privacy Act of 2012, you have the right to be informed about how your personal information is processed, to access it, to correct it, to object to its processing, and to request its erasure or blocking, subject to applicable law.",
+          "To exercise these rights, contact us through the contact page."
+        ]
+      },
+      {
+        "id": "security",
+        "title": "Security",
+        "paragraphs": [
+          "We take reasonable measures to protect the information you share with us. No method of transmission or storage is completely secure, so we cannot guarantee absolute security."
+        ]
+      },
+      {
+        "id": "changes",
+        "title": "Changes to this policy",
+        "paragraphs": [
+          "We may update this policy as the website or our practices change. The date above shows when it was last updated."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "intro": "These terms apply to your use of the Ordacy website. By using the site, you agree to them.",
+    "updated": "2026-11-05",
+    "sections": [
+      {
+        "id": "use-of-the-website",
+        "title": "Use of the website",
+        "paragraphs": [
+          "You may use this website for lawful purposes only. Do not attempt to disrupt the site, access it without permission, or submit false or harmful content through the contact form."
+        ]
+      },
+      {
+        "id": "information-on-this-site",
+        "title": "Information on this site",
+        "paragraphs": [
+          "The content on this website is general information about our services. It is not an offer or a binding quotation.",
+          "Starting prices are estimates. The final price, scope, and timeline for any project are confirmed in a written proposal before work begins.",
+          "Projects shown on this website are concept projects based on realistic business scenarios. They are not presented as completed client engagements."
+        ]
+      },
+      {
+        "id": "project-agreements",
+        "title": "Project agreements",
+        "paragraphs": [
+          "Services are provided under a written agreement for each project. Unless that agreement says otherwise, these standard terms apply:"
+        ],
+        "items": [
+          "Payment is 50% upfront and 50% before final handover. Larger projects may follow a different schedule agreed in writing.",
+          "Ownership of agreed custom deliverables transfers to the client after full payment. Source code delivery is specified in the agreement, and pre-existing or third-party components keep their original licensing.",
+          "Hosting, domains, and related accounts are preferably owned by the client. Recurring service costs are paid by the client unless agreed otherwise.",
+          "Maintenance is optional and quoted separately.",
+          "A 30-day warranty after launch or handover covers reproducible issues where the delivered system does not work as specified. It excludes new features, scope changes, modifications by others, misuse, and third-party service outages."
+        ]
+      },
+      {
+        "id": "intellectual-property",
+        "title": "Intellectual property",
+        "paragraphs": [
+          "The Ordacy name, logo, and the content and design of this website belong to Ordacy. Do not copy or reuse them without permission."
+        ]
+      },
+      {
+        "id": "external-links",
+        "title": "External links",
+        "paragraphs": [
+          "This website may link to other websites. We do not control them and are not responsible for their content or practices."
+        ]
+      },
+      {
+        "id": "availability-and-liability",
+        "title": "Availability and liability",
+        "paragraphs": [
+          "We aim to keep this website accurate and available, but we cannot guarantee it will always be error-free or uninterrupted. To the extent the law allows, Ordacy is not liable for losses that result from using this website."
+        ]
+      },
+      {
+        "id": "governing-law",
+        "title": "Governing law",
+        "paragraphs": [
+          "These terms are governed by the laws of the Republic of the Philippines."
+        ]
+      },
+      {
+        "id": "changes",
+        "title": "Changes to these terms",
+        "paragraphs": [
+          "We may update these terms as the website changes. The date above shows when they were last updated. Continued use of the site means you accept the updated terms."
+        ]
+      }
+    ]
+  }
+}

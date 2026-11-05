@@ -10,6 +10,7 @@ import {
 import { Fragment } from 'react'
 import { useRevealOnce } from '@/hooks/useRevealOnce'
 import * as S from './styles/final-cta.styled'
+import { getSection } from '@/data'
 
 // Mirrors the Process section's steps, condensed for the banner.
 const nextSteps = [
@@ -17,6 +18,8 @@ const nextSteps = [
   { icon: FileText, label: 'Get a proposal' },
   { icon: Rocket, label: 'We build it' },
 ] as const
+
+const copy = getSection('home', 'final-cta')
 
 export function FinalCta() {
   // Shapes drift in and the steps light up in order the first time the banner is seen.
@@ -43,13 +46,10 @@ export function FinalCta() {
         <S.Copy>
           <S.Eyebrow>
             <Handshake size={16} strokeWidth={2} aria-hidden="true" />
-            Let's work together
+            {copy.eyebrow}
           </S.Eyebrow>
-          <S.Title id="final-cta-title">Build Better Together.</S.Title>
-          <S.Description>
-            Tell us about your project, and we'll propose a solution that fits
-            how your business works.
-          </S.Description>
+          <S.Title id="final-cta-title">{copy.title}</S.Title>
+          <S.Description>{copy.description}</S.Description>
 
           <S.Steps aria-label="What happens next">
             {nextSteps.map((step, index) => {

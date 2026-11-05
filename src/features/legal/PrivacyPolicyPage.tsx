@@ -1,10 +1,6 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import { legal, seo } from '@/data'
+import { LegalPage } from './LegalPage'
 
 export function PrivacyPolicyPage() {
-  return (
-    <PagePlaceholder
-      title="Privacy Policy"
-      description="Privacy details coming soon."
-    />
-  )
+  return <LegalPage seo={seo.privacy} document={legal.privacy} />
 }

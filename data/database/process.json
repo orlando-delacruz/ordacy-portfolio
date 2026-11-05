@@ -1,0 +1,30 @@
+[
+  {
+    "id": "discovery",
+    "icon": "Search",
+    "title": "Discovery",
+    "description": "We learn about your business, current processes, challenges, and goals.",
+    "displayOrder": 1
+  },
+  {
+    "id": "proposal-and-scope",
+    "icon": "FileText",
+    "title": "Proposal and Scope",
+    "description": "We define the proposed solution, features, project scope, timeline, and investment.",
+    "displayOrder": 2
+  },
+  {
+    "id": "design-and-development",
+    "icon": "Code",
+    "title": "Design and Development",
+    "description": "We design and build the solution based on the approved requirements.",
+    "displayOrder": 3
+  },
+  {
+    "id": "testing-and-handover",
+    "icon": "Rocket",
+    "title": "Testing and Handover",
+    "description": "We review functionality, address agreed issues, and prepare the completed project for handover.",
+    "displayOrder": 4
+  }
+]

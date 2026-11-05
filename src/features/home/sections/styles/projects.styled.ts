@@ -1,10 +1,10 @@
 import styled, { css, keyframes } from 'styled-components'
-import { SecondaryButton } from '../../components/styles/buttons.styled'
+import { SecondaryButton } from '@/components/ui/styles/buttons.styled'
 
 export {
   PrimaryAnchor,
   SecondaryButton,
-} from '../../components/styles/buttons.styled'
+} from '@/components/ui/styles/buttons.styled'
 
 /*
  * Motion: the first time the carousel is seen (data-revealed, see Projects.tsx)

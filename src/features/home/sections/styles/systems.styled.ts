@@ -1,8 +1,8 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import styled, { keyframes } from 'styled-components'
-import { IconBadgeCompact } from '../../components/styles/icon-badge.styled'
+import { IconBadgeCompact } from '@/components/ui/styles/icon-badge.styled'
 
-export { PrimaryButton } from '../../components/styles/buttons.styled'
+export { PrimaryButton } from '@/components/ui/styles/buttons.styled'
 
 export type Tone = 'problem' | 'solution'
 

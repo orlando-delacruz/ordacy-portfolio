@@ -1,6 +1,9 @@
 import styled, { keyframes } from 'styled-components'
 
-export { SecondaryButton } from '../../components/styles/buttons.styled'
+export {
+  SecondaryAction as ShowAll,
+  SecondaryButton,
+} from '@/components/ui/styles/buttons.styled'
 
 /*
  * Motion: items rise in with a stagger the first time the list scrolls into view
@@ -242,4 +245,14 @@ export const AsideText = styled.p`
   color: ${({ theme }) => theme.colors.text.secondary};
   font-size: ${({ theme }) => theme.typography.fontSizes.md};
   line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
+`
+
+// Category label shown above the first question of each group in the full list.
+export const Category = styled.p`
+  margin: ${({ theme }) => theme.spacing.md} 0 ${({ theme }) => theme.spacing.xs};
+  color: ${({ theme }) => theme.colors.text.accent};
+  font-size: ${({ theme }) => theme.typography.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 `

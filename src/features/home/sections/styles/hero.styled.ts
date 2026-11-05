@@ -1,6 +1,5 @@
-import { BadgeCheck } from 'lucide-react'
 import styled, { css, keyframes } from 'styled-components'
-import { PrimaryButton, SecondaryButton } from '../../components/styles/buttons.styled'
+import { PrimaryButton, SecondaryButton } from '@/components/ui/styles/buttons.styled'
 
 /*
  * Motion: on page load the avatar pops in and the name, stats and actions rise
@@ -90,32 +89,6 @@ const barGrow = keyframes`
   }
   to {
     transform: scaleY(1);
-  }
-`
-
-const likePop = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  35% {
-    transform: scale(1.3) rotate(-12deg);
-  }
-  65% {
-    transform: scale(0.92) rotate(4deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
-`
-
-const likeBurst = keyframes`
-  from {
-    opacity: 0.6;
-    transform: scale(0.6);
-  }
-  to {
-    opacity: 0;
-    transform: scale(1.6);
   }
 `
 
@@ -569,75 +542,6 @@ export const ContactButton = styled(PrimaryButton)`
 
 export const ProjectsButton = styled(SecondaryButton)`
   ${heroButtonSizing}
-`
-
-export const VerifiedBadge = styled(BadgeCheck)`
-  /* Solid blue seal: fill and edge stroke match the brand blue, so only
-     the center check reads white. The seal is the first path, the check
-     the last, since Lucide strokes both with currentColor. */
-  color: #1877f2;
-  fill: #1877f2;
-  flex-shrink: 0;
-
-  & path:last-child {
-    stroke: #fff;
-  }
-`
-
-export const LikeButton = styled.button<{ $liked: boolean }>`
-  display: inline-grid;
-  place-items: center;
-  /* && beats Actions' "& > *" flex-grow so the button stays square. */
-  && {
-    flex: 0 0 auto;
-  }
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
-  border: 1px solid
-    ${({ $liked, theme }) =>
-      $liked ? theme.colors.text.accent : theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: transparent;
-  color: ${({ $liked, theme }) =>
-    $liked ? theme.colors.text.accent : theme.colors.text.primary};
-  cursor: pointer;
-  transition:
-    border-color ${({ theme }) => theme.transitions.fast},
-    color ${({ theme }) => theme.transitions.fast},
-    transform ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.text.accent};
-    color: ${({ theme }) => theme.colors.text.accent};
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-
-  /* Liking pops the thumb and sends out a ring; re-runs on every like. */
-  position: relative;
-
-  &::after {
-    position: absolute;
-    inset: -1px;
-    border: 2px solid ${({ theme }) => theme.colors.text.accent};
-    border-radius: inherit;
-    opacity: 0;
-    pointer-events: none;
-    content: '';
-  }
-
-  ${noMotionPref} {
-    svg {
-      animation: ${({ $liked }) => ($liked ? likePop : 'none')} 500ms ease-out;
-    }
-
-    &::after {
-      animation: ${({ $liked }) => ($liked ? likeBurst : 'none')} 550ms ease-out;
-    }
-  }
 `
 
 // Full-view images for the bare lightbox: as large as the viewport allows.

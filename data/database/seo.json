@@ -1,0 +1,92 @@
+{
+  "home": {
+    "path": "/",
+    "title": "Ordacy | Custom Business Systems, Websites & Digital Solutions",
+    "description": "Ordacy builds custom business systems, websites, dashboards, and digital solutions that help businesses simplify operations and work smarter.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "projects": {
+    "path": "/projects",
+    "title": "Projects | Ordacy",
+    "description": "Concept projects showing how Ordacy approaches business systems, booking tools, dashboards, CRMs, and websites.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "testimonials": {
+    "path": "/testimonials",
+    "title": "Working With Ordacy | Client Testimonials",
+    "description": "How Ordacy works with clients, from the first conversation to handover, and feedback shared by clients with their permission.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "pricing": {
+    "path": "/pricing",
+    "title": "Pricing | Ordacy",
+    "description": "Starting prices for websites and business systems from Ordacy, in PHP and USD. Complex builds are quoted individually.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "contact": {
+    "path": "/contact",
+    "title": "Contact Ordacy | Start a Project",
+    "description": "Tell Ordacy about your business and the system or website you need. Share your project details to discuss next steps.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "about": {
+    "path": "/about-us",
+    "title": "About Ordacy | Build Better. Grow Further.",
+    "description": "Learn how Ordacy helps startups and businesses in the Philippines and abroad with custom digital systems and websites.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "privacy": {
+    "path": "/privacy-policy",
+    "title": "Privacy Policy | Ordacy",
+    "description": "How Ordacy handles information you share through this website.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "terms": {
+    "path": "/terms-of-service",
+    "title": "Terms and Conditions | Ordacy",
+    "description": "The terms for using the Ordacy website.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
+  "notFound": {
+    "path": "*",
+    "title": "Page not found | Ordacy",
+    "description": "The page you are looking for does not exist.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": true
+  }
+}

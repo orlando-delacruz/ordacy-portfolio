@@ -15,18 +15,25 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 
 - `src/app/router.tsx` — all routes; `src/app/App.tsx` wires providers.
 - `src/components/navigation/navigation.ts` — single source of truth for nav labels, paths, icons, and Top Bar page titles.
-- `src/features/<route>/` — one folder per page. Home is fully built under `src/features/home/` (`sections/`, shared `components/`, copy/data in `home.data.ts`); every other page route still renders `PagePlaceholder` (the 404 is custom).
+- `src/features/<route>/` — one folder per page. All pages are built; Home lives under `src/features/home/` (`sections/`, shared `components/`, copy/data in `home.data.ts`); content comes from `data/database/*.json` via `@/data`; shared UI is in `src/components/ui`.
 - `src/styles/theme.ts` — design tokens; `src/types/styled.d.ts` — styled-components theme typing.
 - `RootLayout` owns the shell (sidebar, Top Bar, mobile bottom nav, skip link, content width). Pages render content only.
 - Shared logic: `src/hooks` (`useDialogFocusTrap` for any modal dialog, `useMediaQuery`, `useScrollDirection`), `useHomePageMeta` (`src/features/home`). Theme state lives in `src/app/ThemeProvider.tsx` (always starts light, see below).
 
 `README.md`'s status sections predate the homepage build: it still claims all pages are placeholders and that there is no Git repository. Trust `src/` and `package.json` over it.
 
+## Admin (CMS frontend, no backend yet)
+
+- `/admin/*` lives in `src/features/admin/` with its own shell (not `RootLayout`); routes are lazy children in `router.tsx`, nav config in `data/database/admin-navigation.json`.
+- All content and records live in `data/database/*.json`. Admin UI reads and writes only through `src/services` (async; local store persisted to localStorage). Public pages read `@/data`, which overlays the same saved edits (`src/data/storage.ts`), so both views share one data model. Never put content or mock records in JSX.
+- No auth exists: keep noindex and robots `Disallow: /admin`; no "Demo mode" wording, but never claim authentication, a database, email, or uploads are connected (Settings lists them as "Not configured"). Edits are browser-local only.
+- Illustrative records carry `isSample: true`, show a "Sample" badge, and can never be published; keep that lock and the public `isSample` filters.
+
 ## Routing and content
 
 - Add a route in **both** `router.tsx` and `navigation.ts`. Top Bar titles, sidebar/mobile nav, and footer all derive from `navigation.ts`; an unlisted route makes the Top Bar show "Page not found". Bottom-nav entries additionally require a Phosphor `mobileIcon` (`MobileNavigationItem`).
 - Homepage `/#<id>` links rely on `HomePage`'s hash-scroll effect. New homepage sections should use `Section` with an `id` (e.g. `services`, `pricing`, `work`, `faqs`).
-- Only `HomePage` updates `document.title` and page/OG meta tags; every other route keeps the static `index.html` metadata.
+- Every page calls `usePageMeta(seo.<page>)` for title, description, OG, canonical and noindex.
 - Content integrity: only genuine testimonials and permissioned projects; never invent quotes, client results, or case studies. The home Projects carousel and Testimonials marquee still run on placeholder data marked as such in `home.data.ts` (picsum screenshots included — swap in real assets before launch).
 
 ## Buttons and labels (user mandates — don't regress these)
@@ -54,7 +61,7 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 
 ## Theme pre-hydration
 
-The site always starts in light mode (no saved preference, no OS following). `index.html` hard-codes `data-theme="light"` and the pre-hydration background colors. If you change the default background tokens in `theme.ts`, update `index.html` too to avoid a flash.
+Theme is the saved manual choice, else the OS theme (followed live). `index.html` has the pre-hydration script and background colors. If you change the default background tokens in `theme.ts`, update `index.html` too to avoid a flash.
 
 ## Imports, TypeScript, and style
 
@@ -66,4 +73,4 @@ The site always starts in light mode (no saved preference, no OS following). `in
 
 ## Deployment
 
-No deployment config exists. If deploying the Vite SPA to Vercel, add a rewrite of all paths to `/index.html`, otherwise nested routes 404 on refresh.
+`vercel.json` rewrites all paths to `/index.html`.

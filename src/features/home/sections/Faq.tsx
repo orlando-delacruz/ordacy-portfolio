@@ -1,45 +1,67 @@
-import { MessagesSquare, Plus } from 'lucide-react'
+import { ChevronDown, ChevronUp, MessagesSquare, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useRevealOnce } from '@/hooks/useRevealOnce'
-import * as Sec from '../components/styles/section.styled'
+import * as Sec from '@/components/ui/styles/section.styled'
+import type { Faq as FaqItem } from '../home.data'
 import { faqs } from '../home.data'
 import * as S from './styles/faq.styled'
+import { getSection } from '@/data'
 
-// The home page shows only the featured questions (five, flagged in home.data.ts).
+// The home page shows only the featured questions (five, flagged in the data).
 const featuredFaqs = faqs.filter((faq) => faq.featured)
+const homeFaqs = getSection('home', 'faqs')
 
-export function Faq() {
+type FaqProps = {
+  id?: string
+  title?: string
+  description?: string
+  items?: readonly FaqItem[]
+  /** Adds a "Show all questions" toggle that reveals every published FAQ. */
+  expandable?: boolean
+}
+
+export function Faq({
+  id = 'faqs',
+  title = homeFaqs.title,
+  description = homeFaqs.description ?? '',
+  items = featuredFaqs,
+  expandable = false,
+}: FaqProps) {
+  const [showAll, setShowAll] = useState(false)
+  const visible = showAll ? faqs : items
+  const canExpand = expandable && faqs.length > items.length
   // All questions start closed.
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   // Questions rise in one after another the first time the list scrolls into view.
   const [listRef, revealed] = useRevealOnce<HTMLDivElement>(0.15)
 
   return (
-    <Sec.Wrapper id="faqs" aria-labelledby="faqs-title">
+    <Sec.Wrapper id={id} aria-labelledby={`${id}-title`}>
       <S.Layout>
         <S.Intro>
-          <Sec.Title id="faqs-title" data-reveal="">
-            Common Questions, Answered.
+          <Sec.Title id={`${id}-title`} data-reveal="">
+            {title}
           </Sec.Title>
-          <Sec.Description data-reveal="1">
-            Answers before you commit.
-          </Sec.Description>
+          <Sec.Description data-reveal="1">{description}</Sec.Description>
         </S.Intro>
 
         {/* No page-wide data-reveal here: the list's own reveal staggers its items. */}
         <S.List ref={listRef} data-revealed={revealed || undefined}>
-          {featuredFaqs.map((faq, index) => {
+          {visible.map((faq, index) => {
             const open = openIndex === index
             const Icon = faq.icon
 
             return (
-              <S.Item key={faq.question} $index={index}>
+              <S.Item key={faq.id} $index={showAll ? 0 : index}>
+                {showAll && faq.category !== visible[index - 1]?.category && (
+                  <S.Category>{faq.category}</S.Category>
+                )}
                 <S.ItemHeading>
                   <S.Question
                     type="button"
                     aria-expanded={open}
-                    aria-controls={`faq-answer-${index}`}
-                    id={`faq-question-${index}`}
+                    aria-controls={`${id}-answer-${index}`}
+                    id={`${id}-question-${index}`}
                     onClick={() => setOpenIndex(open ? null : index)}
                   >
                     <S.QuestionIcon $open={open} aria-hidden="true">
@@ -54,8 +76,8 @@ export function Faq() {
                 <S.Panel
                   $open={open}
                   role="region"
-                  id={`faq-answer-${index}`}
-                  aria-labelledby={`faq-question-${index}`}
+                  id={`${id}-answer-${index}`}
+                  aria-labelledby={`${id}-question-${index}`}
                 >
                   <S.Clip>
                     <S.Answer $open={open}>{faq.answer}</S.Answer>
@@ -67,6 +89,23 @@ export function Faq() {
         </S.List>
 
         <S.Aside data-reveal="2">
+          {canExpand && (
+            <S.ShowAll
+              type="button"
+              aria-expanded={showAll}
+              onClick={() => {
+                setShowAll((value) => !value)
+                setOpenIndex(null)
+              }}
+            >
+              {showAll ? (
+                <ChevronUp size={18} strokeWidth={2} aria-hidden="true" />
+              ) : (
+                <ChevronDown size={18} strokeWidth={2} aria-hidden="true" />
+              )}
+              {showAll ? 'Show fewer questions' : `Show all ${faqs.length} questions`}
+            </S.ShowAll>
+          )}
           <S.AsideText>Have a question that isn't listed here?</S.AsideText>
           <S.SecondaryButton to="/contact">
             <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />

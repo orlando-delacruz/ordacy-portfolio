@@ -11,7 +11,8 @@ export function useDialogFocusTrap(
 
     const focusable = [
       ...dialog.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])',
+        // Form fields included so dialogs with forms keep focus inside.
+        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])',
       ),
     ].filter((element) => element.offsetParent !== null)
 

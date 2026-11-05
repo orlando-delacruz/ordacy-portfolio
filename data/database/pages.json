@@ -1,0 +1,448 @@
+[
+  {
+    "id": "home",
+    "label": "Homepage",
+    "path": "/",
+    "header": null,
+    "sections": [
+      {
+        "id": "hero",
+        "label": "Hero",
+        "eyebrow": null,
+        "title": "Build Better. Grow Further.",
+        "description": null,
+        "items": null
+      },
+      {
+        "id": "services",
+        "label": "Problems and services",
+        "eyebrow": null,
+        "title": "What We Address.",
+        "description": "Problems solved, systems built.",
+        "items": null
+      },
+      {
+        "id": "work",
+        "label": "Projects",
+        "eyebrow": null,
+        "title": "Solutions in Practice.",
+        "description": "Concept projects built around realistic business scenarios.",
+        "items": null
+      },
+      {
+        "id": "process",
+        "label": "Process",
+        "eyebrow": null,
+        "title": "Challenge to Solution.",
+        "description": "A clear path to launch.",
+        "items": null
+      },
+      {
+        "id": "pricing",
+        "label": "Pricing",
+        "eyebrow": null,
+        "title": "Clear Starting Prices.",
+        "description": "Honest pricing, scoped to fit.",
+        "items": null
+      },
+      {
+        "id": "testimonials",
+        "label": "Testimonials",
+        "eyebrow": null,
+        "title": "What Clients Say.",
+        "description": "Real feedback, published with permission.",
+        "items": null
+      },
+      {
+        "id": "trust",
+        "label": "Working with Ordacy (shown until testimonials are published)",
+        "eyebrow": null,
+        "title": "How We Work With You.",
+        "description": "What every client can expect, from the first conversation to handover.",
+        "items": [
+          {
+            "title": "Understand before building",
+            "text": "Every project starts with discovery: your processes, challenges, and goals come first, before any solution is proposed."
+          },
+          {
+            "title": "Clear scope and pricing",
+            "text": "You receive a written proposal covering the solution, features, scope, timeline, and investment before work begins."
+          },
+          {
+            "title": "Communication you can rely on",
+            "text": "Channels and update points are agreed at the start, so you know where the project stands at each stage."
+          },
+          {
+            "title": "Transparent progress",
+            "text": "Work moves through defined stages, from design and development to testing, so there are no surprises at handover."
+          }
+        ]
+      },
+      {
+        "id": "faqs",
+        "label": "FAQs",
+        "eyebrow": null,
+        "title": "Common Questions, Answered.",
+        "description": "Answers before you commit.",
+        "items": null
+      },
+      {
+        "id": "final-cta",
+        "label": "Closing call to action",
+        "eyebrow": "Let's work together",
+        "title": "Build Better Together.",
+        "description": "Tell us about your project, and we'll propose a solution that fits how your business works.",
+        "items": null
+      }
+    ]
+  },
+  {
+    "id": "about",
+    "label": "About Us",
+    "path": "/about-us",
+    "header": {
+      "eyebrow": "About Ordacy",
+      "title": "Build Better. Grow Further.",
+      "description": "Ordacy is a custom software development and digital solutions provider for startups and businesses in the Philippines and around the world."
+    },
+    "sections": [
+      {
+        "id": "what-we-do",
+        "label": "Purpose",
+        "eyebrow": null,
+        "title": "Why Ordacy exists.",
+        "description": "Many businesses run on tools that were never designed for how they work. We build systems that are.",
+        "items": null
+      },
+      {
+        "id": "problems",
+        "label": "Problems we address",
+        "eyebrow": null,
+        "title": "The problems we help solve.",
+        "description": "Common challenges that slow businesses down, and the systems that address them.",
+        "items": null
+      },
+      {
+        "id": "offerings",
+        "label": "Services",
+        "eyebrow": null,
+        "title": "What we build.",
+        "description": "Six kinds of work, each designed around your processes and goals. Select a service to see what it covers.",
+        "items": null
+      },
+      {
+        "id": "approach",
+        "label": "Working principles",
+        "eyebrow": null,
+        "title": "How we approach every project.",
+        "description": "Principles that shape how we plan, build, and hand over each solution.",
+        "items": [
+          {
+            "title": "Start with the problem",
+            "text": "We learn how your business works today before deciding what to build."
+          },
+          {
+            "title": "Fit the system to the business",
+            "text": "Solutions follow your workflows instead of forcing your team to change how it works."
+          },
+          {
+            "title": "Keep scope and pricing clear",
+            "text": "Features, timeline, and investment are defined in a proposal before development starts."
+          },
+          {
+            "title": "Build for everyday use",
+            "text": "Interfaces are designed for the people who use them daily, on the devices they actually use."
+          },
+          {
+            "title": "Explain things plainly",
+            "text": "Technical decisions are explained in business terms, so you can make informed choices."
+          }
+        ]
+      },
+      {
+        "id": "how-we-work",
+        "label": "Process",
+        "eyebrow": null,
+        "title": "How we work.",
+        "description": "A clear path from the first conversation to a finished project.",
+        "items": null
+      },
+      {
+        "id": "who-we-help",
+        "label": "Who we help",
+        "eyebrow": null,
+        "title": "Who we work with.",
+        "description": "Businesses at different stages, with one thing in common: they need systems that fit.",
+        "items": [
+          {
+            "title": "Startups",
+            "text": "Teams turning an idea into a working website or web application."
+          },
+          {
+            "title": "Small and growing businesses",
+            "text": "Businesses outgrowing spreadsheets, logbooks, and chat-based coordination."
+          },
+          {
+            "title": "Established businesses",
+            "text": "Organizations that need custom systems for processes generic software does not cover."
+          },
+          {
+            "title": "Local and international clients",
+            "text": "Clients in the Philippines and abroad, with pricing in PHP and USD."
+          }
+        ]
+      },
+      {
+        "id": "expectations",
+        "label": "What clients can expect",
+        "eyebrow": null,
+        "title": "What you can expect.",
+        "description": "The terms that apply to every project unless agreed otherwise in writing.",
+        "items": [
+          {
+            "title": "A written proposal",
+            "text": "Solution, features, scope, timeline, and investment are confirmed before work begins."
+          },
+          {
+            "title": "Timelines per project",
+            "text": "Each timeline is estimated for your scope rather than promised as a fixed standard."
+          },
+          {
+            "title": "Clear payment terms",
+            "text": "50% upfront and 50% before final handover, unless a different schedule is agreed in writing."
+          },
+          {
+            "title": "Ownership after payment",
+            "text": "Agreed custom deliverables become yours after full payment, subject to third-party licenses."
+          },
+          {
+            "title": "A 30-day warranty",
+            "text": "Reproducible issues against the agreed specification are covered for 30 days after launch or handover."
+          },
+          {
+            "title": "Optional maintenance",
+            "text": "Ongoing maintenance is available separately and quoted based on your needs."
+          }
+        ]
+      },
+      {
+        "id": "work-with-us",
+        "label": "Call to action",
+        "eyebrow": null,
+        "title": "Work with us.",
+        "description": "Tell us about your business and what you need. We will talk through the right scope together.",
+        "items": null
+      }
+    ]
+  },
+  {
+    "id": "projects",
+    "label": "Projects",
+    "path": "/projects",
+    "header": {
+      "eyebrow": "Projects",
+      "title": "Systems built around real business needs.",
+      "description": "Concept projects that show how we approach common business problems, from booking and inventory to dashboards, CRMs, and websites. Filter by what you are looking for."
+    },
+    "sections": [
+      {
+        "id": "work",
+        "label": "Project grid",
+        "eyebrow": null,
+        "title": "Concept projects.",
+        "description": "Each one is built around a realistic business scenario. Open a project to see the challenge, the solution, and its screens.",
+        "items": null
+      },
+      {
+        "id": "empty",
+        "label": "Empty state",
+        "eyebrow": null,
+        "title": "Projects are on the way.",
+        "description": "We are preparing permissioned case studies. In the meantime, tell us what you need and we will talk it through.",
+        "items": null
+      },
+      {
+        "id": "start",
+        "label": "Call to action",
+        "eyebrow": null,
+        "title": "Have something similar in mind?",
+        "description": "Tell us about your business and we will suggest the right scope for your project.",
+        "items": null
+      }
+    ]
+  },
+  {
+    "id": "testimonials",
+    "label": "Testimonials",
+    "path": "/testimonials",
+    "header": {
+      "eyebrow": "Testimonials",
+      "title": "What working with Ordacy looks like.",
+      "description": "Client feedback is published here only with the client's permission. Alongside it, this is what every client can expect when working with us."
+    },
+    "sections": [
+      {
+        "id": "principles",
+        "label": "Working principles",
+        "eyebrow": null,
+        "title": "How we work with every client.",
+        "description": "The commitments behind each project, whatever its size.",
+        "items": [
+          {
+            "title": "Understand before building",
+            "text": "Every project starts with discovery: your processes, challenges, and goals come first, before any solution is proposed."
+          },
+          {
+            "title": "Clear scope and pricing",
+            "text": "You receive a written proposal covering the solution, features, scope, timeline, and investment before work begins."
+          },
+          {
+            "title": "Communication you can rely on",
+            "text": "Channels and update points are agreed at the start, so you know where the project stands at each stage."
+          },
+          {
+            "title": "Transparent progress",
+            "text": "Work moves through defined stages, from design and development to testing, so there are no surprises at handover."
+          },
+          {
+            "title": "A considered handover",
+            "text": "The finished system is reviewed and tested before handover, and ownership of agreed deliverables transfers after full payment."
+          },
+          {
+            "title": "Support after launch",
+            "text": "A 30-day warranty covers reproducible issues against the agreed specification. Ongoing maintenance is optional and quoted separately."
+          }
+        ]
+      },
+      {
+        "id": "feedback",
+        "label": "Client feedback (shown when approved testimonials exist)",
+        "eyebrow": null,
+        "title": "In our clients' words.",
+        "description": "Feedback shared by clients, published with their permission.",
+        "items": null
+      },
+      {
+        "id": "journey",
+        "label": "Project journey",
+        "eyebrow": null,
+        "title": "From first conversation to handover.",
+        "description": "Four stages, each with a clear outcome before moving on.",
+        "items": null
+      },
+      {
+        "id": "cta",
+        "label": "Call to action",
+        "eyebrow": null,
+        "title": "Ready to talk about your project?",
+        "description": "Share your goals and we will propose a solution that fits how your business works.",
+        "items": null
+      }
+    ]
+  },
+  {
+    "id": "pricing",
+    "label": "Pricing",
+    "path": "/pricing",
+    "header": {
+      "eyebrow": "Pricing",
+      "title": "Clear starting prices, scoped to fit.",
+      "description": "Every project is quoted after we understand your requirements. These starting prices show where websites and business systems typically begin."
+    },
+    "sections": [
+      {
+        "id": "plans",
+        "label": "Plans",
+        "eyebrow": null,
+        "title": "Choose a starting point.",
+        "description": "Pick the plan closest to what you need, then we'll confirm the scope together.",
+        "items": null
+      },
+      {
+        "id": "compare",
+        "label": "Comparison table",
+        "eyebrow": null,
+        "title": "Compare the plans.",
+        "description": "What each plan is built for, side by side.",
+        "items": null
+      },
+      {
+        "id": "how-pricing-works",
+        "label": "How pricing works",
+        "eyebrow": null,
+        "title": "How pricing works.",
+        "description": "What starting prices mean and what happens before you commit.",
+        "items": [
+          {
+            "title": "Starting prices are estimates",
+            "text": "They reflect typical projects in each category. Your final price depends on your requirements and scope."
+          },
+          {
+            "title": "Confirmed in the proposal",
+            "text": "The final price, scope, and timeline are confirmed in a written proposal before work begins."
+          },
+          {
+            "title": "Standard payment terms",
+            "text": "50% upfront and 50% before final handover. Larger projects may follow a different schedule, agreed in writing."
+          },
+          {
+            "title": "Maintenance is optional",
+            "text": "Ongoing maintenance is not included in project prices. It can be arranged and quoted separately."
+          }
+        ]
+      },
+      {
+        "id": "faqs",
+        "label": "Pricing FAQs",
+        "eyebrow": null,
+        "title": "Pricing questions, answered.",
+        "description": "Costs, timelines, and what happens after launch.",
+        "items": null
+      }
+    ]
+  },
+  {
+    "id": "contact",
+    "label": "Contact",
+    "path": "/contact",
+    "header": {
+      "eyebrow": "Contact",
+      "title": "Let's talk about your project.",
+      "description": "Share a few details about your business and what you need. We use them to understand your requirements and prepare for the first conversation."
+    },
+    "sections": [
+      {
+        "id": "next-steps",
+        "label": "What happens next",
+        "eyebrow": null,
+        "title": "What happens next",
+        "description": null,
+        "items": [
+          {
+            "title": "Share your project",
+            "text": "Tell us about your business and the system or website you have in mind. Rough ideas are fine."
+          },
+          {
+            "title": "We review your requirements",
+            "text": "We look at what you need and how it fits your current processes."
+          },
+          {
+            "title": "We discuss next steps",
+            "text": "We follow up to talk through scope, timeline, and investment before anything is agreed."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "not-found",
+    "label": "Page not found (404)",
+    "path": "/404",
+    "header": {
+      "eyebrow": "Error 404",
+      "title": "This page could not be found.",
+      "description": "The link may be broken, or the page may have moved. These pages are a good place to continue."
+    },
+    "sections": []
+  }
+]

@@ -3,6 +3,7 @@ import { BrandLogo, Wordmark } from '@/components/navigation/Wordmark'
 import { primaryNavItems, secondaryNavItems } from '@/components/navigation/navigation'
 import { useRevealOnce } from '@/hooks/useRevealOnce'
 import * as S from './styles/site-footer.styled'
+import { site } from '@/data'
 
 const groups = [
   { title: 'Explore', area: 'explore', icon: Compass, items: primaryNavItems },
@@ -35,11 +36,7 @@ export function SiteFooter() {
             <BrandLogo />
             <Wordmark />
           </S.BrandRow>
-          <S.Tagline>
-            Build Better. Grow Further. Custom digital systems that help
-            businesses manage operations, serve customers, and grow with
-            greater clarity and control.
-          </S.Tagline>
+          <S.Tagline>{site.footerTagline}</S.Tagline>
         </S.Brand>
         {groups.map((group, groupIndex) => {
           const GroupIcon = group.icon

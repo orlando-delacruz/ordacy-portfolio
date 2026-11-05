@@ -1,10 +1,18 @@
-import { useState } from 'react'
-import { FolderKanban, Phone, ThumbsUp } from 'lucide-react'
+import { Fragment, useState } from 'react'
+import { FolderKanban, Phone } from 'lucide-react'
 import { useAppTheme } from '@/app/theme-context'
 import darkLogo from '@/assets/images/ordacy-logo-dark-mode.png'
 import lightLogo from '@/assets/images/ordacy-logo.png'
-import { Lightbox } from '../components/Lightbox'
+import { Lightbox } from '@/components/ui/Lightbox'
 import * as S from './styles/hero.styled'
+import { getSection, plans, services, site } from '@/data'
+
+// Profile stats come from the content itself, never from invented metrics.
+const stats = [
+  { label: 'Services', value: String(services.length) },
+  { label: 'Plans', value: String(plans.length) },
+  { label: 'Markets', value: site.markets.length > 1 ? 'PH + Global' : (site.markets[0] ?? '') },
+]
 
 type LightboxContent = 'cover' | 'avatar' | null
 
@@ -42,7 +50,6 @@ export function Hero() {
   const { theme } = useAppTheme()
   const [lightbox, setLightbox] = useState<LightboxContent>(null)
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null)
-  const [liked, setLiked] = useState(false)
 
   const logo = theme === 'dark' ? darkLogo : lightLogo
 
@@ -81,30 +88,19 @@ export function Hero() {
         </S.AvatarButton>
         <S.Identity>
           <S.Name id="profile-name">
-            Ordacy
-            <S.VerifiedBadge
-              size={20}
-              strokeWidth={2.5}
-              aria-label="Verified account"
-            />
+            {site.name}
           </S.Name>
-          <S.Bio>Build Better. Grow Further.</S.Bio>
+          <S.Bio>{getSection('home', 'hero').title}</S.Bio>
           <S.Stats>
-            {/* Placeholder counts until real analytics and project data exist. */}
-            <S.Stat>
-              <S.StatLabel>Visitors</S.StatLabel>
-              <S.StatCount>1k</S.StatCount>
-            </S.Stat>
-            <S.StatSeparator aria-hidden="true" />
-            <S.Stat>
-              <S.StatLabel>Projects</S.StatLabel>
-              <S.StatCount>20</S.StatCount>
-            </S.Stat>
-            <S.StatSeparator aria-hidden="true" />
-            <S.Stat>
-              <S.StatLabel>Likes</S.StatLabel>
-              <S.StatCount>1k</S.StatCount>
-            </S.Stat>
+            {stats.map((stat, index) => (
+              <Fragment key={stat.label}>
+                {index > 0 && <S.StatSeparator aria-hidden="true" />}
+                <S.Stat>
+                  <S.StatLabel>{stat.label}</S.StatLabel>
+                  <S.StatCount>{stat.value}</S.StatCount>
+                </S.Stat>
+              </Fragment>
+            ))}
           </S.Stats>
         </S.Identity>
         <S.Actions>
@@ -116,20 +112,6 @@ export function Hero() {
             <FolderKanban size={18} strokeWidth={2} aria-hidden="true" />
             Projects
           </S.ProjectsButton>
-          <S.LikeButton
-            type="button"
-            $liked={liked}
-            aria-pressed={liked}
-            aria-label={liked ? 'Unlike' : 'Like'}
-            onClick={() => setLiked((prev) => !prev)}
-          >
-            <ThumbsUp
-              size={20}
-              strokeWidth={2}
-              fill={liked ? 'currentColor' : 'none'}
-              aria-hidden="true"
-            />
-          </S.LikeButton>
         </S.Actions>
       </S.ProfileRow>
 

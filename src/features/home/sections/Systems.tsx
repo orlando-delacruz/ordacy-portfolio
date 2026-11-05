@@ -10,9 +10,10 @@ import { flushSync } from 'react-dom'
 import { useTheme } from 'styled-components'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useRevealOnce } from '@/hooks/useRevealOnce'
-import { Section } from '../components/Section'
+import { Section } from '@/components/ui/Section'
 import { problems, services } from '../home.data'
 import * as S from './styles/systems.styled'
+import { sectionCopy } from '@/data'
 
 type TabId = 'problems' | 'solutions'
 
@@ -406,8 +407,7 @@ export function Systems() {
   return (
     <Section
       id="services"
-      title="What We Address."
-      description="Problems solved, systems built."
+      {...sectionCopy('home', 'services')}
     >
       <S.Stage ref={stageRef} data-revealed={revealed || undefined}>
         {isDesktop ? <DesktopExplorer /> : <MobileTabs />}

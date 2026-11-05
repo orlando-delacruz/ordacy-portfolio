@@ -1,10 +1,10 @@
 import styled, { css, keyframes } from 'styled-components'
-import { PrimaryButton } from '../../components/styles/buttons.styled'
+import { PrimaryButton } from '@/components/ui/styles/buttons.styled'
 
 export {
   PrimaryButton,
   SecondaryButton,
-} from '../../components/styles/buttons.styled'
+} from '@/components/ui/styles/buttons.styled'
 
 /*
  * Motion: the first time the section is seen (data-revealed on Stage, see

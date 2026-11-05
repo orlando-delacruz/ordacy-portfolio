@@ -1,0 +1,64 @@
+[
+  {
+    "id": "starter",
+    "name": "Starter",
+    "icon": "Globe",
+    "category": "Websites",
+    "prices": {
+      "PHP": "₱10,000",
+      "USD": "$500"
+    },
+    "positioning": "For websites and a simple online presence.",
+    "fits": [
+      "Landing pages",
+      "Basic business websites",
+      "Simple online presence"
+    ],
+    "cta": "Get Started",
+    "ctaIcon": "Rocket",
+    "displayOrder": 1,
+    "isPublished": true
+  },
+  {
+    "id": "growth",
+    "name": "Growth",
+    "icon": "LayoutDashboard",
+    "category": "Business systems",
+    "prices": {
+      "PHP": "₱40,000",
+      "USD": "$2,000"
+    },
+    "positioning": "For booking, dashboards, and workflow tools.",
+    "fits": [
+      "Booking systems",
+      "Dashboards",
+      "Administrative tools",
+      "Business workflow solutions"
+    ],
+    "cta": "Discuss Your Project",
+    "ctaIcon": "MessagesSquare",
+    "displayOrder": 2,
+    "isPublished": true
+  },
+  {
+    "id": "custom",
+    "name": "Custom",
+    "icon": "Building2",
+    "category": "Complex builds",
+    "prices": {
+      "PHP": null,
+      "USD": null
+    },
+    "positioning": "For complex, fully custom business systems.",
+    "fits": [
+      "Complex business systems",
+      "Inventory and sales platforms",
+      "CRM solutions",
+      "Custom web applications"
+    ],
+    "cta": "Request a Quote",
+    "ctaIcon": "FileText",
+    "displayOrder": 3,
+    "isPublished": true
+  }
+]

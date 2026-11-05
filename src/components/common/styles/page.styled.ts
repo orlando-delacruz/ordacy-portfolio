@@ -29,3 +29,12 @@ export const PageDescription = styled.p`
   font-size: ${({ theme }) => theme.typography.fontSizes.lg};
   line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
 `
+
+// Header block shared by every full page: eyebrow, h1, intro.
+export const PageHeader = styled.header`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.sm};
+  max-width: 44rem;
+  padding-block: ${({ theme }) => theme.spacing['2xl']}
+    ${({ theme }) => theme.spacing.xl};
+`

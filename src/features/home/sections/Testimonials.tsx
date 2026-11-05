@@ -1,9 +1,11 @@
 import { MessagesSquare, Pause, Play, Star } from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
-import { Section } from '../components/Section'
+import { Section } from '@/components/ui/Section'
 import { testimonials } from '../home.data'
 import type { Testimonial } from '../home.data'
 import * as S from './styles/testimonials.styled'
+import { ContentItems } from '@/components/ui/ContentItems'
+import { getSection, sectionCopy } from '@/data'
 
 // Pixels of marquee travel per second; duration is derived from this so the
 // perceived speed stays similar whatever the card count/width.
@@ -48,17 +50,19 @@ function TestimonialCard({
     <S.Card aria-hidden={hidden || undefined}>
       <S.QuoteMark size={40} strokeWidth={2} aria-hidden="true" />
 
-      <S.Stars role="img" aria-label={`${testimonial.rating} out of 5 stars`}>
-        {Array.from({ length: testimonial.rating }).map((_, index) => (
-          <Star
-            key={index}
-            size={16}
-            strokeWidth={2}
-            fill="currentColor"
-            aria-hidden="true"
-          />
-        ))}
-      </S.Stars>
+      {testimonial.rating !== null && (
+        <S.Stars role="img" aria-label={`${testimonial.rating} out of 5 stars`}>
+          {Array.from({ length: testimonial.rating }).map((_, index) => (
+            <Star
+              key={index}
+              size={16}
+              strokeWidth={2}
+              fill="currentColor"
+              aria-hidden="true"
+            />
+          ))}
+        </S.Stars>
+      )}
 
       <S.Quotation ref={quoteRef} id={quoteId} $expanded={expanded}>
         {testimonial.quote}
@@ -91,7 +95,29 @@ function TestimonialCard({
   )
 }
 
+const trust = getSection('home', 'trust')
+
+// Only approved, genuine testimonials are published. Until there are some,
+// the section explains how Ordacy works with clients instead.
 export function Testimonials() {
+  if (testimonials.length === 0) {
+    return (
+      <Section id="testimonials" {...sectionCopy('home', 'trust')}>
+        <ContentItems items={trust.items} variant="numbered" />
+        <S.Actions>
+          <S.SecondaryButton to="/testimonials">
+            <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
+            How we work with clients
+          </S.SecondaryButton>
+        </S.Actions>
+      </Section>
+    )
+  }
+
+  return <TestimonialsMarquee />
+}
+
+function TestimonialsMarquee() {
   // Tracks how many cards are currently expanded; pause the marquee while any
   // are, so an expanded quote doesn't scroll away mid-read.
   const [expandedCount, setExpandedCount] = useState(0)
@@ -103,8 +129,7 @@ export function Testimonials() {
   return (
     <Section
       id="testimonials"
-      title="What Clients Say."
-      description="Real feedback, published with permission."
+      {...sectionCopy('home', 'testimonials')}
       headerAction={
         <S.ScrollToggle
           type="button"

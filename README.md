@@ -255,4 +255,4 @@ Intended platform is Vercel, but **no deployment configuration exists yet** (no 
 
 ## Repository safety
 
-This project currently has **no Git repository** (no `.git` directory). When one is created, do not commit, push, create/switch branches, merge, rebase, reset, or discard work unless explicitly asked. Inspect status/diffs read-only.
+This repository uses Git. Do not commit, push, create/switch branches, merge, rebase, reset, or discard work unless explicitly asked. Inspect status/diffs read-only.
