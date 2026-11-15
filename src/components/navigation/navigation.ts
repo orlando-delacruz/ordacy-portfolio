@@ -113,14 +113,24 @@ export const moreNavItem = {
   icon: Menu,
 } satisfies Pick<NavigationItem, 'label' | 'icon'>
 
+import { teamMemberBySlug } from '@/data'
+
 export function getPageTitle(pathname: string) {
   const normalized =
     pathname !== '/' ? pathname.replace(/\/+$/, '') : pathname
 
-  return (
-    allNavItems.find((item) => item.to === normalized)?.label ??
-    'Page not found'
-  )
+  const direct = allNavItems.find((item) => item.to === normalized)?.label
+  if (direct) return direct
+
+  // Team member profiles live under /team/:slug and are not listed in nav.
+  if (normalized.startsWith('/team/')) {
+    const slug = normalized.slice('/team/'.length)
+    if (slug && !slug.includes('/')) {
+      return teamMemberBySlug(slug)?.name ?? 'Page not found'
+    }
+  }
+
+  return 'Page not found'
 }
 
 export const sidebarWidths = {

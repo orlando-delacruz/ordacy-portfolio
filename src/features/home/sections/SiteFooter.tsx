@@ -22,12 +22,6 @@ export function SiteFooter() {
 
   return (
     <S.Footer ref={footerRef} data-revealed={revealed || undefined}>
-      <S.Decor aria-hidden="true">
-        <S.Ring />
-        <S.DotGrid />
-        <S.Watermark>Ordacy</S.Watermark>
-      </S.Decor>
-
       <S.TopLine aria-hidden="true" />
 
       <S.Grid>

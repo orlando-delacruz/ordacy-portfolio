@@ -20,20 +20,22 @@ npm run dev | build | preview | lint | typecheck
 
 - Built: all routes (Home, Projects, Testimonials, Pricing, Contact, About Us, Privacy, Terms) plus a custom `NotFoundPage`. Non-home pages are lazy-loaded in `router.tsx`. Frontend only: the contact form submits to a stub (`submitInquiry`, `// BACKEND: replace`).
 - Shell: fixed desktop sidebar (`lg`+, collapsible from TopBar), mobile bottom nav, skip link. Light and dark themes.
+- Team: compact strip inside the homepage hero (`id="team"`, no section title), with `/team/:slug` resume-style profile pages whose hero mirrors the homepage hero. There is no `/team` index and no Team nav item.
 - Admin: `/admin` (Dashboard, Inquiries, Website Content, Projects, Testimonials, Services, Pricing, FAQs, Gallery, SEO, Settings), own shell, lazy-loaded, noindex, `Disallow: /admin` in robots.txt.
 
 ## Where things live
 
 - `src/app/` router, App, ThemeProvider, `theme-context.ts` (`useAppTheme()`), ThemeTransition, NotFoundPage
-- `src/components/{common,layout,navigation,ui}/` shell, nav, `PageHeader`; `ui/` holds shared `Section`, `Lightbox`, and `ui/styles/` (`buttons`, `card`, `icon-badge`, `empty-state`, `section`, `lightbox`)
-- `data/database/*.json` is the single source of content and mock records (site, pages, seo, services, plans, faqs, projects, testimonials, gallery, inquiries, settings, admin-navigation, legal...). Records are CMS-shaped (stable `id`, `displayOrder`, `isPublished`/`status`, ISO timestamps). `src/data` (`@/data`) exposes `seed` (raw records) plus published, ordered, icon-resolved exports for the public site; types in `src/data/types.ts` (`*Record` = stored shape). JSON stores Lucide icon names, mapped in `src/data/icons.ts`. `@data/*` aliases the JSON folder. Pending business facts (email, phone, domain) are `pending: true` and hidden until set.
+- `src/components/{common,layout,navigation,ui}/` shell, nav, `PageHeader`; `ui/` holds shared `Section`, `Lightbox`, `ProfileCoverArt` (`brand` | `member` cover art) + `ui/styles/profile-hero.styled.ts` (shared homepage/member hero layout), and `ui/styles/` (`buttons`, `card`, `icon-badge`, `empty-state`, `section`, `lightbox`)
+- `data/database/*.json` is the single source of content and mock records (site, pages, seo, services, plans, faqs, projects, testimonials, team, gallery, inquiries, settings, admin-navigation, legal...). Records are CMS-shaped (stable `id`, `displayOrder`, `isPublished`/`status`, ISO timestamps). `src/data` (`@/data`) exposes `seed` (raw records) plus published, ordered, icon-resolved exports for the public site; types in `src/data/types.ts` (`*Record` = stored shape). JSON stores Lucide icon names, mapped in `src/data/icons.ts`. `@data/*` aliases the JSON folder. Pending business facts (email, phone, domain) are `pending: true` and hidden until set.
 - Public page copy (headers, section headings/intros, item lists like principles, expectations, pricing notes, contact steps, 404) lives in `pages.json`, read via `pageHeader()`, `sectionCopy()`, `getSection()`; item lists render with `components/ui/ContentItems` (`numbered` | `ruled` | `checklist`). Don't put copy back in JSX.
 - Public and admin share one data source: `src/data/storage.ts` (`readStored`, prefix `ordacy-cms:v2:`) overlays saved admin edits onto the seed when the public site loads. Bump the prefix version whenever a stored record shape changes.
 - `src/services/` data access layer: `local-store.ts` (async collections/documents seeded from `/data`, persisted to localStorage) and `index.ts` (typed services, `queryInquiries`, `getInquiryStats`, `submitInquiry`). UI never touches storage directly; swap this layer for API calls later.
-- `src/features/admin/`: `layout/` shell, `components/` shared admin UI (`AdminPage`, `FormDialog`, `TextField`, `ConfirmDialog`, `Pagination`, `Tabs`, `States`, `RecordControls`, toasts), `hooks/useCollection`, one folder per admin page.
+- `src/features/admin/`: `layout/` shell, `components/` shared admin UI (`AdminPage`, `FormDialog`, `TextField`, `ConfirmDialog`, `Pagination`, `Tabs`, `States` including `TableSkeleton`, toasts), `hooks/useCollection`, one folder per admin page. Website Content uses a split view (page list + editor).
 - `src/features/<route>/` one folder per page. Page sections and sub-components stay inside it, not in `src/components`.
+- `src/features/team/`: `TeamMemberPage` (`/team/:slug`), `components/TeamStrip` (hero strip), `sections/TeamHero` + `TeamResume`. The `team` copy group in `pages.json` holds only profile resume headings (admin preview at `/#team`).
 - `src/features/home/`: `HomePage.tsx` composes `sections/*`; `home.data.ts` just re-exports `@/data`. Reuse `components/ui` and sections shared with other pages (`PricingPlans`, `Faq` props, `ProjectDetails`); don't duplicate.
-- `src/styles/` `theme.ts`, GlobalStyles, breakpoints, typography. `src/types/styled.d.ts` augments `DefaultTheme`; update it if `AppTheme` gains a top-level key.
+- `src/styles/` `theme.ts`, GlobalStyles, breakpoints, typography. Design tokens: neutral light/dark surfaces, teal reserved for action and state; `radii.sm` is 10px; `layout` adds `readingMaxWidth` (68ch) and `formMaxWidth`; `motion` holds duration/easing tokens. Global `scroll-margin-top` keeps `/#id` anchors clear of sticky bars. `src/types/styled.d.ts` augments `DefaultTheme`; update it if `AppTheme` gains a top-level key.
 
 ## Hooks (reuse, don't recreate)
 
@@ -42,6 +44,7 @@ npm run dev | build | preview | lint | typecheck
 - `useScrollDirection`: hides/shows mobile bottom nav on scroll.
 - `useScrollReveal`: call once per page. It scans `[data-reveal]` elements **present on mount** and sets `data-revealed`; elements added later are NOT observed. The fade-up CSS is in GlobalStyles (`data-reveal="1".."3"` staggers).
 - `useRevealOnce`: per-element one-shot `[ref, revealed]` for custom reveal animations.
+- `usePageScrollRestoration`: mounted in `RootLayout` and `AdminLayout`, not in pages. Owns all scroll-on-navigate behavior (top on forward, exact position on back, hash jumps). Never add per-page scroll effects.
 
 ## Code style
 
@@ -81,15 +84,15 @@ npm run dev | build | preview | lint | typecheck
 ## Content integrity
 
 - Never invent clients, projects, testimonials, names, results, or business claims.
-- The home Testimonials section and /testimonials show trust content (working principles, project journey) until approved genuine testimonials exist; then the marquee/list appears.
-- Hero stats are derived from data (services, plans, markets). Never show invented metrics.
+- The home Testimonials section and /testimonials show `sampleTestimonials` (visible `Sample` badge, sample-specific copy) until approved genuine testimonials exist; then the real marquee/grid replaces them, and the trust content (working principles, project journey) always renders below on /testimonials.
+- Hero stats come from `site.profileStats` (Views, Projects, Likes), edited in Settings. The like button toggles the visitor's own like state (stored as `ordacy-hero-liked` in this browser) with `aria-pressed`; the Likes stat stays the content value.
 - Process, payment terms (50/50), ownership, hosting, optional maintenance, and the 30-day warranty from `README.md` are now published (FAQs, About, Pricing notes, Terms). Keep every page consistent with those terms; don't invent new commitments.
 
 ## Admin
 
 - No "Demo mode" wording anywhere in the UI. Be honest instead: no authentication exists (anyone who opens `/admin` sees it, so it must never hold real client data until a backend with server-side auth exists; frontend route guards are not security), and Settings → Integrations lists Authentication, Database, Email and File storage as "Not configured". Never claim any of them is connected.
 - Admin edits persist only in the current browser's localStorage (`ordacy-cms:v2:*`) and appear on the public site in that browser after a reload; other visitors never see them. Settings → "Restore original content" clears them. The contact form writes to the same store, so submissions show in admin Inquiries on that device only; nothing is emailed or sent.
-- Sample content: illustrative inquiries, testimonials, and gallery images have `isSample: true`, show a "Sample" badge in admin, and can never be published (controls locked; public filters drop `isSample`). Sample testimonials have `rating: null`. Public testimonials require `status: approved` + `isPublished` + not sample.
+- Sample content: illustrative inquiries, testimonials, and gallery images have `isSample: true`, show a "Sample" badge in admin, and can never be approved or published as real (controls locked; admin notice explains the public fallback). Sample testimonials have `rating: null` and appear publicly only through `sampleTestimonials` with a visible `Sample` badge and sample-specific copy. Public real testimonials still require `status: approved` + `isPublished` + not sample.
 - Projects are six published concept projects (`type: concept-demo`, `isSample: false`) built on fictional scenarios, labeled "Concept" on the site, with generated SVG screens in `public/projects/<slug>/`. Never present them as client work or attach results.
 - Every admin view must have content on first load; empty states are only for searches/filters that return nothing. Dashboard figures are derived from records, never hardcoded.
 - Gallery has no upload storage: images are added by URL; the UI says so.

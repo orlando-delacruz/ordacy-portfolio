@@ -2,13 +2,10 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Code,
   FolderKanban,
   Globe,
   Info,
-  Layers,
   MessagesSquare,
-  Sparkles,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { KeyboardEvent, MouseEvent, PointerEvent } from 'react'
@@ -117,21 +114,6 @@ function ProjectsCarousel() {
         tabIndex={0}
         onKeyDown={handleKeyDown}
       >
-        <S.Decor aria-hidden="true">
-          <S.Glow />
-          <S.Ring $size="large" />
-          <S.Ring $size="small" />
-          <S.FloatingIcon $spot="topLeft">
-            <Code size={18} strokeWidth={2} />
-          </S.FloatingIcon>
-          <S.FloatingIcon $spot="topRight">
-            <Layers size={18} strokeWidth={2} />
-          </S.FloatingIcon>
-          <S.FloatingIcon $spot="bottomLeft">
-            <Sparkles size={16} strokeWidth={2} />
-          </S.FloatingIcon>
-        </S.Decor>
-
         <S.Stage
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
@@ -173,7 +155,6 @@ function ProjectsCarousel() {
                     draggable={false}
                   />
                   <S.Scrim />
-                  <S.Shine aria-hidden="true" />
                   <S.Category>
                     <ProjectIcon size={12} strokeWidth={2.5} aria-hidden="true" />
                     <S.CategoryLabel>

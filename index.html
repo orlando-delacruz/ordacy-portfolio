@@ -8,7 +8,7 @@
       name="description"
       content="Ordacy provides practical digital solutions for growing businesses."
     />
-    <meta name="theme-color" content="#FEFEFE" />
+    <meta name="theme-color" content="#FAFCFB" />
     <script>
       // Same rule as src/app/ThemeProvider.tsx: saved choice, else OS theme.
       ;(() => {
@@ -24,7 +24,7 @@
           if (theme === 'dark') {
             document
               .querySelector('meta[name="theme-color"]')
-              .setAttribute('content', '#001A2C')
+              .setAttribute('content', '#061722')
           }
         } catch {
           document.documentElement.dataset.theme = 'light'
@@ -34,10 +34,10 @@
     <style>
       /* Pre-hydration background; keep in sync with src/styles/theme.ts. */
       html {
-        background: #fefefe;
+        background: #fafcfb;
       }
       html[data-theme='dark'] {
-        background: #001a2c;
+        background: #061722;
       }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

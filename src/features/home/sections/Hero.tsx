@@ -1,57 +1,57 @@
 import { Fragment, useState } from 'react'
-import { FolderKanban, Phone } from 'lucide-react'
+import { FolderKanban, Phone, ThumbsUp } from 'lucide-react'
 import { useAppTheme } from '@/app/theme-context'
 import darkLogo from '@/assets/images/ordacy-logo-dark-mode.png'
 import lightLogo from '@/assets/images/ordacy-logo.png'
 import { Lightbox } from '@/components/ui/Lightbox'
+import { ProfileCoverArt } from '@/components/ui/ProfileCoverArt'
+import { TeamStrip } from '@/features/team/components/TeamStrip'
 import * as S from './styles/hero.styled'
-import { getSection, plans, services, site } from '@/data'
+import { getSection, site } from '@/data'
 
-// Profile stats come from the content itself, never from invented metrics.
+const LIKED_KEY = 'ordacy-hero-liked'
+
+function readLiked(): boolean {
+  try {
+    return localStorage.getItem(LIKED_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+// Profile stats are site content, edited in Settings. Blank values stay hidden.
 const stats = [
-  { label: 'Services', value: String(services.length) },
-  { label: 'Plans', value: String(plans.length) },
-  { label: 'Markets', value: site.markets.length > 1 ? 'PH + Global' : (site.markets[0] ?? '') },
-]
+  { label: 'Views', value: site.profileStats.views },
+  { label: 'Projects', value: site.profileStats.projects },
+  { label: 'Likes', value: site.profileStats.likes },
+].filter((stat) => stat.value.trim() !== '')
 
 type LightboxContent = 'cover' | 'avatar' | null
 
 // Abstract cover artwork: rings, a bar, sparkles, and two floating mock UI cards.
 function CoverArt() {
-  return (
-    <>
-      <S.CoverRingLarge />
-      <S.CoverRingSmall />
-      <S.CoverBar />
-      <S.Sparkle $top="22%" $left="38%" $delay={0} />
-      <S.Sparkle $top="68%" $left="56%" $delay={1.2} />
-      <S.Sparkle $top="30%" $left="78%" $delay={2.4} />
-      <S.MockCard $variant="chart">
-        <S.MockLine $width="45%" />
-        <S.MockBars>
-          {[40, 70, 55, 90, 65].map((height, index) => (
-            <S.MockBar key={index} $height={height} $index={index} />
-          ))}
-        </S.MockBars>
-      </S.MockCard>
-      <S.MockCard $variant="list">
-        {[0, 1, 2].map((row) => (
-          <S.MockRow key={row}>
-            <S.MockDot />
-            <S.MockLine $width={row === 1 ? '55%' : '75%'} />
-          </S.MockRow>
-        ))}
-      </S.MockCard>
-    </>
-  )
+  return <ProfileCoverArt variant="brand" />
 }
 
 export function Hero() {
   const { theme } = useAppTheme()
   const [lightbox, setLightbox] = useState<LightboxContent>(null)
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null)
+  const [liked, setLiked] = useState(readLiked)
 
   const logo = theme === 'dark' ? darkLogo : lightLogo
+
+  const toggleLike = () => {
+    setLiked((prev) => {
+      const next = !prev
+      try {
+        localStorage.setItem(LIKED_KEY, next ? '1' : '0')
+      } catch {
+        // Storage unavailable (private mode): keep the state for this visit.
+      }
+      return next
+    })
+  }
 
   const openLightbox =
     (content: Exclude<LightboxContent, null>) =>
@@ -112,8 +112,24 @@ export function Hero() {
             <FolderKanban size={18} strokeWidth={2} aria-hidden="true" />
             Projects
           </S.ProjectsButton>
+          <S.LikeButton
+            type="button"
+            $liked={liked}
+            aria-pressed={liked}
+            aria-label={liked ? 'Unlike' : 'Like'}
+            title={liked ? 'Unlike' : 'Like'}
+            onClick={toggleLike}
+          >
+            <ThumbsUp
+              size={20}
+              strokeWidth={2}
+              fill={liked ? 'currentColor' : 'none'}
+              aria-hidden="true"
+            />
+          </S.LikeButton>
         </S.Actions>
       </S.ProfileRow>
+      <TeamStrip />
 
       {lightbox && (
         <Lightbox

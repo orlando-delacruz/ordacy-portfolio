@@ -34,13 +34,7 @@ export function FinalCta() {
         aria-labelledby="final-cta-title"
       >
         <S.Decor aria-hidden="true">
-          <S.Glow />
           <S.RingLarge />
-          <S.RingSmall />
-          <S.DotGrid />
-          <S.Orbit>
-            <S.OrbitDot />
-          </S.Orbit>
         </S.Decor>
 
         <S.Copy>

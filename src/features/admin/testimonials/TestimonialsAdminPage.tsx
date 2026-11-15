@@ -95,8 +95,9 @@ export function TestimonialsAdminPage() {
         <ShieldCheck size={16} strokeWidth={2} aria-hidden="true" />
         <span>
           Only add real feedback a client has agreed to share. Approved and
-          published testimonials appear on the site ({published} right now). Sample records
-          ({samples}) are never published.
+          published testimonials appear on the site ({published} right now).
+          Sample records ({samples}) stay unpublished and appear publicly only
+          as clearly labeled examples until real testimonials exist.
         </span>
       </U.Notice>
 

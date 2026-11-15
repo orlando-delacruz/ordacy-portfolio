@@ -320,16 +320,6 @@ function DesktopExplorer() {
             </S.ItemList>
 
             <S.Detail role="tabpanel" id={detailId}>
-              <S.DetailRing $tone={tab.tone} aria-hidden="true" />
-              <S.DetailDots aria-hidden="true" />
-              {/* Keyed so the watermark spins in again on every selection. */}
-              <S.DetailWatermark
-                key={`${tab.id}-${item.title}`}
-                $tone={tab.tone}
-                aria-hidden="true"
-              >
-                <Icon size={200} strokeWidth={1.25} />
-              </S.DetailWatermark>
               {/* Keyed so the fade-in replays on every selection. */}
               <S.DetailBody key={item.title}>
                 <S.DetailIcon $tone={tab.tone}>

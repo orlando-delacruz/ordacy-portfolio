@@ -15,9 +15,9 @@ const spacing = {
 }
 
 const radii = {
-  sm: '0.375rem',
+  sm: '0.625rem',
   md: '0.75rem',
-  lg: '1.25rem',
+  lg: '1rem',
   pill: '999px',
   round: '50%',
 }
@@ -28,9 +28,26 @@ const transitions = {
   slow: '300ms ease',
 }
 
+// Shared motion language: state changes only, never decoration.
+const motion = {
+  duration: {
+    instant: '100ms',
+    fast: '150ms',
+    base: '200ms',
+    slow: '300ms',
+    slower: '450ms',
+  },
+  easing: {
+    standard: 'cubic-bezier(0.2, 0, 0, 1)',
+    emphasized: 'cubic-bezier(0.2, 0, 0, 1)',
+  },
+}
+
 const layout = {
   contentMaxWidth: '90rem',
   appMaxWidth: '105rem',
+  readingMaxWidth: '68ch',
+  formMaxWidth: '40rem',
 }
 
 const lightColors = {
@@ -42,37 +59,37 @@ const lightColors = {
     white: '#FEFEFE',
   },
   background: {
-    default: '#FEFEFE',
-    subtle: '#F1FBF9',
+    default: '#FAFCFB',
+    subtle: '#F4F8F7',
     inverse: '#00243E',
   },
   surface: {
-    default: '#FEFEFE',
-    subtle: '#F7FCFB',
+    default: '#FFFFFF',
+    subtle: '#F4F8F7',
   },
   text: {
-    primary: '#00243E',
-    secondary: '#00585E',
-    accent: '#00585E',
+    primary: '#0B2233',
+    secondary: '#52676B',
+    accent: '#006B5E',
     inverse: '#FEFEFE',
   },
   border: {
-    default: '#D6E9E6',
-    focus: '#00585E',
+    default: '#E2E9E7',
+    focus: '#006B5E',
   },
   // Small accent cues only: brand navy for problems, brand teal for solutions.
   problem: {
-    accent: '#00243E',
+    accent: '#0B2233',
   },
   solution: {
-    accent: '#00585E',
+    accent: '#006B5E',
   },
   danger: {
     text: '#B42318',
   },
   // Admin status badges (inquiries, publishing). Text colors meet 4.5:1 on surfaces.
   status: {
-    info: '#00585E',
+    info: '#006B5E',
     warning: '#8A5300',
     success: '#1E6B3A',
     neutral: '#4A6670',
@@ -88,22 +105,22 @@ const darkColors: typeof lightColors = {
     white: '#FEFEFE',
   },
   background: {
-    default: '#001A2C',
-    subtle: '#062B42',
+    default: '#061722',
+    subtle: '#0E2938',
     inverse: '#F1F8F7',
   },
   surface: {
-    default: '#022238',
-    subtle: '#041E31',
+    default: '#0B2130',
+    subtle: '#0E2938',
   },
   text: {
-    primary: '#F1F8F7',
-    secondary: '#A8C5C6',
+    primary: '#F1F7F6',
+    secondary: '#A7C0C3',
     accent: '#5FE7D4',
     inverse: '#00243E',
   },
   border: {
-    default: '#16445C',
+    default: '#1B3A4A',
     focus: '#5FE7D4',
   },
   problem: {
@@ -124,9 +141,9 @@ const darkColors: typeof lightColors = {
 }
 
 const lightShadows = {
-  sm: '0 1px 2px rgba(0, 36, 62, 0.06)',
-  md: '0 8px 24px rgba(0, 36, 62, 0.08)',
-  lg: '0 20px 48px rgba(0, 36, 62, 0.12)',
+  sm: '0 1px 2px rgba(11, 34, 51, 0.05)',
+  md: '0 8px 24px rgba(11, 34, 51, 0.08)',
+  lg: '0 20px 48px rgba(11, 34, 51, 0.12)',
 }
 
 const darkShadows: typeof lightShadows = {
@@ -144,6 +161,7 @@ export type AppTheme = {
   radii: typeof radii
   breakpoints: typeof breakpoints
   transitions: typeof transitions
+  motion: typeof motion
   layout: typeof layout
 }
 
@@ -156,6 +174,7 @@ export const lightTheme: AppTheme = {
   radii,
   breakpoints,
   transitions,
+  motion,
   layout,
 }
 
@@ -168,5 +187,6 @@ export const darkTheme: AppTheme = {
   radii,
   breakpoints,
   transitions,
+  motion,
   layout,
 }

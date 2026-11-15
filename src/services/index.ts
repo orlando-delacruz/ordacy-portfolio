@@ -13,6 +13,7 @@ import type {
   ServiceRecord,
   SettingsRecord,
   SiteRecord,
+  TeamMemberRecord,
   TestimonialRecord,
 } from '@/data'
 import { createCollection, createDocument, createId } from './local-store'
@@ -41,6 +42,10 @@ export const faqsService = createCollection<FaqRecord>('faqs', seed.faqs)
 export const galleryService = createCollection<GalleryImageRecord>(
   'gallery',
   seed.gallery,
+)
+export const teamService = createCollection<TeamMemberRecord>(
+  'team',
+  seed.team,
 )
 export const pagesService = createCollection<PageRecord>('pages', seed.pages)
 export const seoService = createCollection<SeoRecord>(

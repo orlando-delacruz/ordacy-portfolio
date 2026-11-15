@@ -19,6 +19,7 @@ import seoJson from '@data/seo.json'
 import servicesJson from '@data/services.json'
 import settingsJson from '@data/settings.json'
 import siteJson from '@data/site.json'
+import teamJson from '@data/team.json'
 import testimonialsJson from '@data/testimonials.json'
 import { resolveIcon } from './icons'
 import { readStored } from './storage'
@@ -43,6 +44,8 @@ import type {
   SiteRecord,
   Step,
   StepRecord,
+  TeamMember,
+  TeamMemberRecord,
   Testimonial,
   TestimonialRecord,
 } from './types'
@@ -64,6 +67,7 @@ export const seed = {
   faqs: faqsJson as FaqRecord[],
   projects: projectsJson as ProjectRecord[],
   testimonials: testimonialsJson as TestimonialRecord[],
+  team: teamJson as TeamMemberRecord[],
   gallery: galleryJson as GalleryImageRecord[],
   inquiries: inquiriesJson as InquiryRecord[],
   seo: seoJson as Record<SeoKey, PageSeo>,
@@ -77,14 +81,24 @@ export const seed = {
  * Same records and models as the admin; swap readStored for an API later.
  */
 const storedSeo = readStored<(PageSeo & { id: string })[] | null>('seo', null)
+const storedSite = readStored('site', seed.site)
 const current = {
-  site: readStored('site', seed.site),
+  // Older saved edits may lack newer fields; fill them from the seed.
+  site: {
+    ...seed.site,
+    ...storedSite,
+    profileStats: {
+      ...seed.site.profileStats,
+      ...(storedSite.profileStats ?? {}),
+    },
+  },
   pages: readStored('pages', seed.pages),
   services: readStored('services', seed.services),
   plans: readStored('plans', seed.plans),
   faqs: readStored('faqs', seed.faqs),
   projects: readStored('projects', seed.projects),
   testimonials: readStored('testimonials', seed.testimonials),
+  team: readStored('team', seed.team),
   gallery: readStored('gallery', seed.gallery),
   seo: storedSeo
     ? (Object.fromEntries(storedSeo.map(({ id, ...page }) => [id, page])) as Record<SeoKey, PageSeo>)
@@ -164,6 +178,20 @@ export const showcaseProjects: readonly ShowcaseProject[] = ordered(
 export const testimonials: readonly Testimonial[] = ordered(
   current.testimonials,
 ).filter((t) => t.status === 'approved' && t.isPublished && !t.isSample)
+
+// Deliberate public fallback: clearly labeled sample cards, never real testimonials.
+export const sampleTestimonials: readonly Testimonial[] = ordered(
+  current.testimonials,
+).filter((testimonial) => testimonial.isSample)
+
+export const team: readonly TeamMember[] = ordered(
+  published(current.team),
+)
+
+/** Published member by URL slug, or undefined for unknown slugs. */
+export function teamMemberBySlug(slug: string): TeamMember | undefined {
+  return team.find((member) => member.slug === slug)
+}
 
 export const gallery = ordered(published(current.gallery)).filter(
   (image) => !image.isSample,

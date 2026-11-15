@@ -44,7 +44,7 @@ export function SeoAdminPage() {
         <span>
           Canonical URLs default to {site.siteUrl} plus the page path
           {site.siteUrlPending ? ' (domain to be confirmed in Settings)' : ''}.
-          Set a canonical URL below only to override that default.
+          Set one below only to override.
         </span>
       </U.Notice>
 

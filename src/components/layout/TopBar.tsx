@@ -33,8 +33,9 @@ export function TopBar({ collapsed, onToggleSidebar }: TopBarProps) {
   const SidebarIcon = collapsed ? PanelLeftOpen : PanelLeftClose
 
   const closeMore = useCallback(() => {
+    // #more is menu UI state, not an anchor: never reset the scroll for it.
     if (key === 'default') {
-      navigate({ pathname, hash: '' }, { replace: true })
+      navigate({ pathname, hash: '' }, { replace: true, preventScrollReset: true })
     } else {
       navigate(-1)
     }
@@ -93,7 +94,7 @@ export function TopBar({ collapsed, onToggleSidebar }: TopBarProps) {
               aria-controls={moreOpen ? 'mobile-more-dialog' : undefined}
               aria-current={secondaryActive ? 'page' : undefined}
               onClick={() => {
-                if (!moreOpen) navigate({ pathname, hash: 'more' })
+                if (!moreOpen) navigate({ pathname, hash: 'more' }, { preventScrollReset: true })
               }}
             >
               <MoreIcon size={20} strokeWidth={2} aria-hidden="true" />

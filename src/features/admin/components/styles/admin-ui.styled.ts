@@ -77,11 +77,30 @@ export const PanelText = styled.p`
 
 /* ---------- Toolbar ---------- */
 
-export const Toolbar = styled.div`
+export const Toolbar = styled.div<{ $sticky?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
+
+  ${({ $sticky, theme }) =>
+    $sticky &&
+    `
+    position: sticky;
+    top: 4rem;
+    z-index: 10;
+    margin-inline: calc(-1 * ${theme.spacing.md});
+    padding: ${theme.spacing.sm} ${theme.spacing.md};
+    background: color-mix(in srgb, ${theme.colors.background.default} 94%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid ${theme.colors.border.default};
+
+    @media (min-width: ${theme.breakpoints.md}) {
+      margin-inline: 0;
+      padding-inline: 0;
+    }
+  `}
 `
 
 export const Caption = styled.p`
@@ -138,6 +157,12 @@ export const IconButton = styled.button<{ $danger?: boolean }>`
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.border.focus};
     outline-offset: 2px;
+  }
+
+  /* Comfortable touch targets on coarse pointers. */
+  @media (pointer: coarse) {
+    width: 2.75rem;
+    height: 2.75rem;
   }
 `
 
@@ -456,12 +481,48 @@ const spin = keyframes`
   }
 `
 
+const shimmer = keyframes`
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+`
+
+// Shimmering placeholder rows for data tables; static under reduced motion.
+// Reserves the table's space so content doesn't jump when records arrive.
+export const SkeletonTable = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${({ theme }) => theme.spacing.md};
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: ${({ theme }) => theme.colors.surface.default};
+`
+
+export const SkeletonRow = styled.span`
+  height: 2.75rem;
+  border-radius: ${({ theme }) => theme.radii.sm};
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.colors.background.subtle} 25%,
+    ${({ theme }) => theme.colors.border.default} 50%,
+    ${({ theme }) => theme.colors.background.subtle} 75%
+  );
+  background-size: 200% 100%;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: ${shimmer} 1.4s linear infinite;
+  }
+`
+
 export const StateBox = styled.div`
   display: grid;
   justify-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => theme.spacing['2xl']} ${({ theme }) => theme.spacing.lg};
-  border: 1px dashed ${({ theme }) => theme.colors.border.default};
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.md};
   color: ${({ theme }) => theme.colors.text.secondary};
   text-align: center;

@@ -18,8 +18,8 @@ import * as S from './styles/settings.styled'
 // Each row states what is NOT connected yet. Update when a real integration lands.
 const integrations: { icon: LucideIcon; name: string; text: string }[] = [
   { icon: KeyRound, name: 'Authentication', text: 'Sign-in and role-based access are not configured. Until they are, this admin must not hold real client data.' },
-  { icon: Database, name: 'Database', text: 'Content and inquiries are kept in this browser. A database connection is not configured.' },
-  { icon: Mail, name: 'Email notifications', text: 'New inquiries do not trigger emails. Email delivery is not configured.' },
+  { icon: Database, name: 'Database', text: 'Content and inquiries live in this browser only. No database is connected.' },
+  { icon: Mail, name: 'Email notifications', text: 'New inquiries do not trigger emails. No email service is connected.' },
   { icon: HardDrive, name: 'File storage', text: 'Image uploads are not available. Images are added by URL.' },
 ]
 
@@ -33,7 +33,10 @@ export function SettingsAdminPage() {
       {siteDoc.status === 'loading' && <LoadingState />}
       {siteDoc.status === 'error' && <ErrorState onRetry={() => window.location.reload()} />}
       {siteDoc.value && (
-        <SiteForm site={siteDoc.value} onSave={(next) => siteDoc.save(next, 'Site details saved.')} />
+        <>
+          <SiteForm site={siteDoc.value} onSave={(next) => siteDoc.save(next, 'Site details saved.')} />
+          <ProfileStatsForm site={siteDoc.value} onSave={(next) => siteDoc.save(next, 'Profile stats saved.')} />
+        </>
       )}
 
       {settingsDoc.value && (
@@ -67,10 +70,9 @@ export function SettingsAdminPage() {
           <U.PanelTitle id="settings-storage">Storage</U.PanelTitle>
         </U.PanelHeader>
         <U.PanelText>
-          Changes made in this admin are saved in this browser and appear on
-          the public website in this browser after a page reload. They are not
-          sent to a server, so other visitors and devices do not see them.
-          Restoring returns every record to its original content.
+          Edits save in this browser and appear on the public site after a
+          reload. Other visitors never see them. Restoring returns every
+          record to its original content.
         </U.PanelText>
         <div>
           <U.SecondaryAction
@@ -153,6 +155,48 @@ function SiteForm({ site, onSave }: { site: SiteRecord; onSave: (next: SiteRecor
           <U.PrimaryAction type="submit">
             <Save size={16} strokeWidth={2} aria-hidden="true" />
             Save site details
+          </U.PrimaryAction>
+        </F.Actions>
+      </F.Form>
+    </U.Panel>
+  )
+}
+
+function ProfileStatsForm({ site, onSave }: { site: SiteRecord; onSave: (next: SiteRecord) => Promise<boolean> }) {
+  const [busy, setBusy] = useState(false)
+
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    setBusy(true)
+    void onSave({
+      ...site,
+      profileStats: {
+        views: text(data, 'profileViews') || site.profileStats.views,
+        projects: text(data, 'profileProjects') || site.profileStats.projects,
+        likes: text(data, 'profileLikes') || site.profileStats.likes,
+      },
+    }).finally(() => setBusy(false))
+  }
+
+  return (
+    <U.Panel aria-labelledby="settings-profile-stats">
+      <U.PanelHeader>
+        <U.PanelTitle id="settings-profile-stats">Profile stats</U.PanelTitle>
+      </U.PanelHeader>
+      <U.PanelText>
+        The three figures in the homepage hero. Keep them short.
+      </U.PanelText>
+      <F.Form onSubmit={submit} noValidate>
+        <F.Grid>
+          <TextField idPrefix="sitestats" name="profileViews" label="Views" defaultValue={site.profileStats.views} />
+          <TextField idPrefix="sitestats" name="profileProjects" label="Projects" defaultValue={site.profileStats.projects} />
+          <TextField idPrefix="sitestats" name="profileLikes" label="Likes" defaultValue={site.profileStats.likes} />
+        </F.Grid>
+        <F.Actions>
+          <U.PrimaryAction type="submit" disabled={busy}>
+            <Save size={16} strokeWidth={2} aria-hidden="true" />
+            {busy ? 'Saving…' : 'Save profile stats'}
           </U.PrimaryAction>
         </F.Actions>
       </F.Form>

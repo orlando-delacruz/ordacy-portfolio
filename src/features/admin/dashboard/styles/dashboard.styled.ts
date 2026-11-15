@@ -6,54 +6,6 @@ const toneColor = (tone: Tone) =>
   ({ theme }: { theme: import('styled-components').DefaultTheme }) =>
     tone === 'danger' ? theme.colors.danger.text : theme.colors.status[tone]
 
-export const Stats = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: ${({ theme }) => theme.spacing.sm};
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: ${({ theme }) => theme.spacing.md};
-  }
-`
-
-export const Stat = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: ${({ theme }) => theme.colors.surface.default};
-`
-
-export const StatIcon = styled.span`
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: ${({ theme }) => theme.radii.sm};
-  background: ${({ theme }) => theme.colors.background.subtle};
-  color: ${({ theme }) => theme.colors.text.accent};
-`
-
-export const StatLabel = styled.span`
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
-`
-
-export const StatValue = styled.strong`
-  grid-column: 1 / -1;
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-size: ${({ theme }) => theme.typography.fontSizes['3xl']};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
-`
-
 export const Caption = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.colors.text.secondary};
@@ -63,10 +15,49 @@ export const Caption = styled.p`
 export const Columns = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing.md};
+  align-items: start;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   }
+`
+
+export const SideStack = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.md};
+  min-width: 0;
+`
+
+// Inbox hero figure: one confident number, not four equal cards.
+export const InboxHead = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: ${({ theme }) => theme.spacing.sm};
+`
+
+export const InboxTotal = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes['3xl']};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+`
+
+export const InboxLabel = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+`
+
+export const RecentHeading = styled.h3`
+  margin: ${({ theme }) => theme.spacing.sm} 0 0;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 `
 
 export const PanelLink = styled(Link)`

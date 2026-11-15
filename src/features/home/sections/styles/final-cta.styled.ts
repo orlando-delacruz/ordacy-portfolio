@@ -4,10 +4,9 @@ import { baseStyles } from '@/components/ui/styles/buttons.styled'
 
 /*
  * Motion: the first time the banner is seen (data-revealed, see FinalCta.tsx)
- * the background shapes drift in, then the "what happens next" steps light up
- * left to right with their pointers. Afterwards the pointers nudge forward on a
- * loop and a dot circles the large ring. Durations are choreography-specific,
- * so they don't use theme.transitions. Reduced motion shows the final, still state.
+ * the ring eases in, then the "what happens next" steps light up left to right
+ * with their pointers. Durations are choreography-specific, so they don't use
+ * theme.transitions. Reduced motion shows the final, still state.
  */
 const STEP_DELAY = 350
 const stepDelay = (index: number, offset = 0) =>
@@ -53,30 +52,6 @@ const pointerIn = keyframes`
   }
 `
 
-const pointerNudge = keyframes`
-  0%, 60%, 100% {
-    transform: translateX(0);
-  }
-  30% {
-    transform: translateX(3px);
-  }
-`
-
-const spin = keyframes`
-  to {
-    transform: rotate(360deg);
-  }
-`
-
-const bob = keyframes`
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-`
-
 // The page's one full-color surface: brand teal with navy ink in both themes.
 export const Banner = styled.section`
   position: relative;
@@ -101,7 +76,7 @@ export const Banner = styled.section`
   }
 `
 
-/* ---------- Decorative shapes (aria-hidden, behind the content) ---------- */
+/* ---------- Decorative shape (aria-hidden, behind the content) ---------- */
 
 export const Decor = styled.div`
   position: absolute;
@@ -110,7 +85,7 @@ export const Decor = styled.div`
   pointer-events: none;
 `
 
-// Shared by every shape: hidden until the banner is revealed, then drifts in.
+// Shared entrance: hidden until the banner is revealed, then eases in once.
 const revealShape = (delay: number) => css`
   @media (prefers-reduced-motion: no-preference) {
     opacity: 0;
@@ -122,115 +97,16 @@ const revealShape = (delay: number) => css`
   }
 `
 
-// Soft white light pooling in the top-right corner.
-export const Glow = styled.span`
-  position: absolute;
-  top: -10rem;
-  right: -8rem;
-  width: 28rem;
-  height: 28rem;
-  border-radius: ${({ theme }) => theme.radii.round};
-  background: radial-gradient(
-    closest-side,
-    ${({ theme }) =>
-      `color-mix(in srgb, ${theme.colors.brand.white} 45%, transparent)`},
-    transparent
-  );
-  ${revealShape(0)}
-`
-
-const ringBase = css`
-  position: absolute;
-  border-radius: ${({ theme }) => theme.radii.round};
-`
-
-// Large and small rings share a center near the top-right corner.
+// Single ring near the top-right corner.
 export const RingLarge = styled.span`
-  ${ringBase}
+  position: absolute;
   top: -9rem;
   right: -7rem;
   width: 22rem;
   height: 22rem;
   border: 2px solid ${navyMix(14)};
-  ${revealShape(100)}
-`
-
-export const RingSmall = styled.span`
-  ${ringBase}
-  top: -4rem;
-  right: -2rem;
-  width: 12rem;
-  height: 12rem;
-  border: 2px dashed ${navyMix(18)};
-  ${revealShape(200)}
-
-  @media (prefers-reduced-motion: no-preference) {
-    ${Banner}[data-revealed] & {
-      animation:
-        ${shapeIn} 900ms ease-out 200ms backwards,
-        ${spin} 40s linear 1100ms infinite reverse;
-    }
-  }
-`
-
-// Rotating frame matching RingLarge; carries a dot around its edge.
-export const Orbit = styled.span`
-  ${ringBase}
-  top: -9rem;
-  right: -7rem;
-  width: 22rem;
-  height: 22rem;
-  ${revealShape(300)}
-
-  @media (prefers-reduced-motion: no-preference) {
-    ${Banner}[data-revealed] & {
-      animation:
-        ${shapeIn} 900ms ease-out 300ms backwards,
-        ${spin} 18s linear 1200ms infinite;
-    }
-  }
-`
-
-export const OrbitDot = styled.span`
-  position: absolute;
-  /* On the circle at 45°: r − r/√2 − half the dot (r = 11rem). */
-  bottom: 2.85rem;
-  left: 2.85rem;
-  width: 0.75rem;
-  height: 0.75rem;
   border-radius: ${({ theme }) => theme.radii.round};
-  background: ${({ theme }) => theme.colors.brand.navy};
-  box-shadow: 0 0 0 4px
-    ${({ theme }) =>
-      `color-mix(in srgb, ${theme.colors.brand.white} 50%, transparent)`};
-`
-
-// Dot pattern in the lower-left corner, fading toward the content.
-export const DotGrid = styled.span`
-  position: absolute;
-  bottom: ${({ theme }) => theme.spacing.lg};
-  left: ${({ theme }) => theme.spacing.lg};
-  width: 9rem;
-  height: 5rem;
-  background-image: radial-gradient(${navyMix(22)} 1.5px, transparent 1.5px);
-  background-size: 0.875rem 0.875rem;
-  mask-image: linear-gradient(to top right, black, transparent 80%);
-  ${revealShape(400)}
-
-  @media (prefers-reduced-motion: no-preference) {
-    ${Banner}[data-revealed] & {
-      animation:
-        ${shapeIn} 900ms ease-out 400ms backwards,
-        ${bob} 6s ease-in-out 1300ms infinite;
-    }
-  }
-
-  /* On phones it would sit under the buttons; keep it for roomier layouts. */
-  display: none;
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
-    display: block;
-  }
+  ${revealShape(100)}
 `
 
 /* ---------- Content ---------- */
@@ -322,7 +198,7 @@ export const StepIcon = styled.span`
   color: ${({ theme }) => theme.colors.brand.white};
 `
 
-// Chevron between steps; slides in just before its step, then nudges forward on a loop.
+// Chevron between steps; slides in just before its step. No looping motion.
 export const Pointer = styled.li<{ $index: number }>`
   display: grid;
   place-items: center;
@@ -335,11 +211,6 @@ export const Pointer = styled.li<{ $index: number }>`
       opacity: 1;
       animation: ${pointerIn} 350ms ease-out
         ${({ $index }) => stepDelay($index, -180)} backwards;
-    }
-
-    ${Banner}[data-revealed] & svg {
-      animation: ${pointerNudge} 1.6s ease-in-out
-        ${({ $index }) => stepDelay(3, $index * 200)} infinite;
     }
   }
 `

@@ -54,6 +54,14 @@
         "items": null
       },
       {
+        "id": "testimonial-samples",
+        "label": "Sample testimonials (shown when no real testimonials exist)",
+        "eyebrow": null,
+        "title": "What Working With Us Can Feel Like.",
+        "description": "Illustrative feedback from sample individuals, not real quotes. Real feedback appears here only with permission.",
+        "items": null
+      },
+      {
         "id": "trust",
         "label": "Working with Ordacy (shown until testimonials are published)",
         "eyebrow": null,
@@ -62,19 +70,19 @@
         "items": [
           {
             "title": "Understand before building",
-            "text": "Every project starts with discovery: your processes, challenges, and goals come first, before any solution is proposed."
+            "text": "Every project starts with discovery: your processes, challenges, and goals come first."
           },
           {
             "title": "Clear scope and pricing",
-            "text": "You receive a written proposal covering the solution, features, scope, timeline, and investment before work begins."
+            "text": "You receive a written proposal covering the solution, features, scope, timeline, and investment."
           },
           {
             "title": "Communication you can rely on",
-            "text": "Channels and update points are agreed at the start, so you know where the project stands at each stage."
+            "text": "Channels and update points are agreed at the start, so you always know the project status."
           },
           {
             "title": "Transparent progress",
-            "text": "Work moves through defined stages, from design and development to testing, so there are no surprises at handover."
+            "text": "Work moves through defined stages, from design to testing. No surprises at handover."
           }
         ]
       },
@@ -91,7 +99,7 @@
         "label": "Closing call to action",
         "eyebrow": "Let's work together",
         "title": "Build Better Together.",
-        "description": "Tell us about your project, and we'll propose a solution that fits how your business works.",
+        "description": "Tell us about your project. We will propose a solution that fits how you work.",
         "items": null
       }
     ]
@@ -103,7 +111,7 @@
     "header": {
       "eyebrow": "About Ordacy",
       "title": "Build Better. Grow Further.",
-      "description": "Ordacy is a custom software development and digital solutions provider for startups and businesses in the Philippines and around the world."
+      "description": "Ordacy builds custom systems and websites for startups and businesses in the Philippines and abroad."
     },
     "sections": [
       {
@@ -111,7 +119,7 @@
         "label": "Purpose",
         "eyebrow": null,
         "title": "Why Ordacy exists.",
-        "description": "Many businesses run on tools that were never designed for how they work. We build systems that are.",
+        "description": "Many businesses run on tools never designed for them. We build systems that fit.",
         "items": null
       },
       {
@@ -127,7 +135,7 @@
         "label": "Services",
         "eyebrow": null,
         "title": "What we build.",
-        "description": "Six kinds of work, each designed around your processes and goals. Select a service to see what it covers.",
+        "description": "Six kinds of work, each designed around your processes. Select a service to see more.",
         "items": null
       },
       {
@@ -172,7 +180,7 @@
         "label": "Who we help",
         "eyebrow": null,
         "title": "Who we work with.",
-        "description": "Businesses at different stages, with one thing in common: they need systems that fit.",
+        "description": "Businesses at every stage that need systems that fit.",
         "items": [
           {
             "title": "Startups",
@@ -217,7 +225,7 @@
           },
           {
             "title": "A 30-day warranty",
-            "text": "Reproducible issues against the agreed specification are covered for 30 days after launch or handover."
+            "text": "Reproducible specification issues are covered for 30 days after launch or handover."
           },
           {
             "title": "Optional maintenance",
@@ -230,7 +238,7 @@
         "label": "Call to action",
         "eyebrow": null,
         "title": "Work with us.",
-        "description": "Tell us about your business and what you need. We will talk through the right scope together.",
+        "description": "Tell us what you need. We will talk through the right scope together.",
         "items": null
       }
     ]
@@ -242,7 +250,7 @@
     "header": {
       "eyebrow": "Projects",
       "title": "Systems built around real business needs.",
-      "description": "Concept projects that show how we approach common business problems, from booking and inventory to dashboards, CRMs, and websites. Filter by what you are looking for."
+      "description": "Concept projects showing how we approach booking, inventory, dashboards, CRMs, and websites. Filter to explore."
     },
     "sections": [
       {
@@ -250,7 +258,7 @@
         "label": "Project grid",
         "eyebrow": null,
         "title": "Concept projects.",
-        "description": "Each one is built around a realistic business scenario. Open a project to see the challenge, the solution, and its screens.",
+        "description": "Built around realistic business scenarios. Open one to see its challenge, solution, and screens.",
         "items": null
       },
       {
@@ -258,7 +266,7 @@
         "label": "Empty state",
         "eyebrow": null,
         "title": "Projects are on the way.",
-        "description": "We are preparing permissioned case studies. In the meantime, tell us what you need and we will talk it through.",
+        "description": "Permissioned case studies are on the way. Tell us what you need in the meantime.",
         "items": null
       },
       {
@@ -266,7 +274,7 @@
         "label": "Call to action",
         "eyebrow": null,
         "title": "Have something similar in mind?",
-        "description": "Tell us about your business and we will suggest the right scope for your project.",
+        "description": "Tell us about your project. We will suggest the right scope.",
         "items": null
       }
     ]
@@ -278,7 +286,7 @@
     "header": {
       "eyebrow": "Testimonials",
       "title": "What working with Ordacy looks like.",
-      "description": "Client feedback is published here only with the client's permission. Alongside it, this is what every client can expect when working with us."
+      "description": "Client feedback appears here only with permission, alongside what every client can expect."
     },
     "sections": [
       {
@@ -290,27 +298,27 @@
         "items": [
           {
             "title": "Understand before building",
-            "text": "Every project starts with discovery: your processes, challenges, and goals come first, before any solution is proposed."
+            "text": "Every project starts with discovery: your processes, challenges, and goals come first."
           },
           {
             "title": "Clear scope and pricing",
-            "text": "You receive a written proposal covering the solution, features, scope, timeline, and investment before work begins."
+            "text": "You receive a written proposal covering the solution, features, scope, timeline, and investment."
           },
           {
             "title": "Communication you can rely on",
-            "text": "Channels and update points are agreed at the start, so you know where the project stands at each stage."
+            "text": "Channels and update points are agreed at the start, so you always know the project status."
           },
           {
             "title": "Transparent progress",
-            "text": "Work moves through defined stages, from design and development to testing, so there are no surprises at handover."
+            "text": "Work moves through defined stages, from design to testing. No surprises at handover."
           },
           {
             "title": "A considered handover",
-            "text": "The finished system is reviewed and tested before handover, and ownership of agreed deliverables transfers after full payment."
+            "text": "The system is reviewed and tested before handover. Ownership transfers after full payment."
           },
           {
             "title": "Support after launch",
-            "text": "A 30-day warranty covers reproducible issues against the agreed specification. Ongoing maintenance is optional and quoted separately."
+            "text": "A 30-day warranty covers reproducible specification issues. Maintenance is optional and quoted separately."
           }
         ]
       },
@@ -320,6 +328,14 @@
         "eyebrow": null,
         "title": "In our clients' words.",
         "description": "Feedback shared by clients, published with their permission.",
+        "items": null
+      },
+      {
+        "id": "samples",
+        "label": "Sample testimonials (shown when no real testimonials exist)",
+        "eyebrow": null,
+        "title": "Sample feedback.",
+        "description": "Illustrative examples, not real quotes. Real feedback appears here only with permission.",
         "items": null
       },
       {
@@ -335,7 +351,63 @@
         "label": "Call to action",
         "eyebrow": null,
         "title": "Ready to talk about your project?",
-        "description": "Share your goals and we will propose a solution that fits how your business works.",
+        "description": "Share your goals. We will propose a solution that fits how you work.",
+        "items": null
+      }
+    ]
+  },
+  {
+    "id": "team",
+    "label": "Team profiles",
+    "path": "/#team",
+    "header": null,
+    "sections": [
+      {
+        "id": "profile",
+        "label": "Profile summary",
+        "eyebrow": null,
+        "title": "Profile.",
+        "description": null,
+        "items": null
+      },
+      {
+        "id": "experience",
+        "label": "Experience",
+        "eyebrow": null,
+        "title": "Experience.",
+        "description": null,
+        "items": null
+      },
+      {
+        "id": "education",
+        "label": "Education",
+        "eyebrow": null,
+        "title": "Education.",
+        "description": null,
+        "items": null
+      },
+      {
+        "id": "skills",
+        "label": "Skills",
+        "eyebrow": null,
+        "title": "Skills.",
+        "description": null,
+        "items": null
+      },
+      {
+        "id": "credentials",
+        "label": "Certifications and languages",
+        "eyebrow": null,
+        "title": "Certifications and languages.",
+        "description": null,
+        "items": null
+      },
+      {
+        "id": "contact",
+        "label": "Call to action",
+        "eyebrow": null,
+        "title": "Work with us.",
+        "description": "Tell us about your project. We will suggest the right scope together.",
         "items": null
       }
     ]
@@ -347,7 +419,7 @@
     "header": {
       "eyebrow": "Pricing",
       "title": "Clear starting prices, scoped to fit.",
-      "description": "Every project is quoted after we understand your requirements. These starting prices show where websites and business systems typically begin."
+      "description": "Every project is quoted after discovery. These starting prices show where websites and systems typically begin."
     },
     "sections": [
       {
@@ -355,7 +427,7 @@
         "label": "Plans",
         "eyebrow": null,
         "title": "Choose a starting point.",
-        "description": "Pick the plan closest to what you need, then we'll confirm the scope together.",
+        "description": "Pick the closest starting point. We confirm the scope together.",
         "items": null
       },
       {
@@ -375,7 +447,7 @@
         "items": [
           {
             "title": "Starting prices are estimates",
-            "text": "They reflect typical projects in each category. Your final price depends on your requirements and scope."
+            "text": "They reflect typical projects. Your final price depends on your requirements and scope."
           },
           {
             "title": "Confirmed in the proposal",
@@ -383,11 +455,11 @@
           },
           {
             "title": "Standard payment terms",
-            "text": "50% upfront and 50% before final handover. Larger projects may follow a different schedule, agreed in writing."
+            "text": "50% upfront and 50% before handover. Larger projects may follow a different agreed schedule."
           },
           {
             "title": "Maintenance is optional",
-            "text": "Ongoing maintenance is not included in project prices. It can be arranged and quoted separately."
+            "text": "Ongoing maintenance is not included in project prices. It can be quoted separately."
           }
         ]
       },
@@ -408,7 +480,7 @@
     "header": {
       "eyebrow": "Contact",
       "title": "Let's talk about your project.",
-      "description": "Share a few details about your business and what you need. We use them to understand your requirements and prepare for the first conversation."
+      "description": "Share a few details about your project. We review them before our first conversation."
     },
     "sections": [
       {
@@ -420,7 +492,7 @@
         "items": [
           {
             "title": "Share your project",
-            "text": "Tell us about your business and the system or website you have in mind. Rough ideas are fine."
+            "text": "Tell us about your business and the system you have in mind. Rough ideas are fine."
           },
           {
             "title": "We review your requirements",
@@ -428,7 +500,7 @@
           },
           {
             "title": "We discuss next steps",
-            "text": "We follow up to talk through scope, timeline, and investment before anything is agreed."
+            "text": "We follow up to talk through scope, timeline, and investment."
           }
         ]
       }
@@ -441,7 +513,7 @@
     "header": {
       "eyebrow": "Error 404",
       "title": "This page could not be found.",
-      "description": "The link may be broken, or the page may have moved. These pages are a good place to continue."
+      "description": "The link may be broken or the page moved. These pages are a good place to continue."
     },
     "sections": []
   }

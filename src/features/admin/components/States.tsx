@@ -12,6 +12,17 @@ export function LoadingState({ label = 'Loading…' }: { label?: string }) {
   )
 }
 
+// Shimmering placeholder for data tables; keeps layout stable while loading.
+export function TableSkeleton({ rows = 5 }: { rows?: number }) {
+  return (
+    <S.SkeletonTable role="status" aria-label="Loading records">
+      {Array.from({ length: rows }).map((_, index) => (
+        <S.SkeletonRow key={index} aria-hidden="true" />
+      ))}
+    </S.SkeletonTable>
+  )
+}
+
 export function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
     <S.StateBox role="alert">

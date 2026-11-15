@@ -1,0 +1,119 @@
+[
+  {
+    "id": "orlando-dela-cruz",
+    "slug": "orlando-dela-cruz",
+    "name": "Orlando Dela Cruz",
+    "role": "Founder and Software Engineer",
+    "initials": "OD",
+    "avatar": null,
+    "headline": "Founder and Software Engineer building custom business systems, websites, and dashboards.",
+    "summary": "Orlando founded Ordacy to replace scattered spreadsheets and chat threads with systems that fit. He plans each build around the client's process, then designs, develops, and hands over software the team can use every day.",
+    "facts": [
+      { "label": "Role", "value": "Founder" },
+      { "label": "Focus", "value": "Full-stack builds" },
+      { "label": "Base", "value": "Philippines" }
+    ],
+    "skills": [
+      "TypeScript",
+      "React",
+      "Node.js",
+      "REST API design",
+      "PostgreSQL",
+      "System design",
+      "Responsive UI implementation",
+      "Deployment and maintenance"
+    ],
+    "experience": [
+      {
+        "role": "Founder and Software Engineer",
+        "organization": "Ordacy",
+        "period": "2023 — Present",
+        "summary": "Leads discovery, scoping, and delivery of business systems, booking tools, dashboards, and websites for startups and growing businesses."
+      },
+      {
+        "role": "Freelance Web Developer",
+        "organization": "Independent",
+        "period": "2021 — 2023",
+        "summary": "Built marketing websites, admin dashboards, and internal tools for small businesses, from requirements to deployment and handover."
+      },
+      {
+        "role": "IT Support Specialist",
+        "organization": "Metro Manila service firm",
+        "period": "2019 — 2021",
+        "summary": "Maintained office systems and supported daily operations, learning how workflows break when tools do not fit."
+      }
+    ],
+    "education": [
+      {
+        "credential": "BS Computer Science",
+        "school": "Polytechnic University of the Philippines",
+        "period": "2015 — 2019",
+        "details": "Software engineering, databases, and web development. Capstone: an inventory system for a local retailer."
+      }
+    ],
+    "certifications": [
+      { "name": "Meta Front-End Developer Professional", "issuer": "Meta", "year": "2022" },
+      { "name": "AWS Certified Cloud Practitioner", "issuer": "Amazon Web Services", "year": "2023" }
+    ],
+    "languages": ["English", "Filipino"],
+    "displayOrder": 1,
+    "isPublished": true,
+    "createdAt": "2026-01-15T00:00:00.000Z",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "darcy-tabafunda",
+    "slug": "darcy-tabafunda",
+    "name": "Darcy Tabafunda",
+    "role": "Secretary",
+    "initials": "DT",
+    "avatar": null,
+    "headline": "Secretary keeping projects organized, clients updated, and daily operations running smoothly.",
+    "summary": "Darcy keeps every Ordacy project organized from first inquiry to final handover. She coordinates schedules, prepares documents, and keeps clients updated at each stage.",
+    "facts": [
+      { "label": "Role", "value": "Secretary" },
+      { "label": "Focus", "value": "Coordination" },
+      { "label": "Base", "value": "Philippines" }
+    ],
+    "skills": [
+      "Administrative support",
+      "Scheduling and coordination",
+      "Client communication",
+      "Document preparation",
+      "Records management",
+      "Invoicing support",
+      "Meeting notes and follow-ups",
+      "File organization"
+    ],
+    "experience": [
+      {
+        "role": "Secretary",
+        "organization": "Ordacy",
+        "period": "2023 — Present",
+        "summary": "Manages inquiries, schedules, project documents, and client updates so every engagement stays on track."
+      },
+      {
+        "role": "Administrative Assistant",
+        "organization": "Quezon City business services office",
+        "period": "2020 — 2023",
+        "summary": "Supported daily operations through scheduling, records handling, billing help, and front-desk coordination."
+      }
+    ],
+    "education": [
+      {
+        "credential": "BS Business Administration",
+        "school": "University of the East",
+        "period": "2016 — 2020",
+        "details": "Management major with coursework in office administration and business communication."
+      }
+    ],
+    "certifications": [
+      { "name": "TESDA NC III in Events Management", "issuer": "TESDA", "year": "2021" }
+    ],
+    "languages": ["English", "Filipino"],
+    "displayOrder": 2,
+    "isPublished": true,
+    "createdAt": "2026-01-15T00:00:00.000Z",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  }
+]

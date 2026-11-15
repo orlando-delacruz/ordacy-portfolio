@@ -3,12 +3,16 @@ import { PageHeader } from '@/components/common/PageHeader'
 import { ContentItems } from '@/components/ui/ContentItems'
 import { Section } from '@/components/ui/Section'
 import { SecondaryButton } from '@/components/ui/styles/buttons.styled'
-import { getSection, pageHeader, sectionCopy, seo, steps, testimonials } from '@/data'
+import { getSection, pageHeader, sampleTestimonials, sectionCopy, seo, steps, testimonials } from '@/data'
 import { usePageMeta } from '@/hooks/usePageMeta'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { TestimonialCard } from './components/TestimonialCard'
 import * as S from './styles/testimonials-page.styled'
 
-// `testimonials` holds only approved, published, non-sample entries.
+// Real, approved testimonials when they exist; clearly labeled sample cards
+// until then. The principles below always describe how we work.
+const hasReal = testimonials.length > 0
+const items = hasReal ? testimonials : sampleTestimonials
 const principles = getSection('testimonials', 'principles')
 const journey = steps.map((step) => ({ title: step.title, text: step.description }))
 
@@ -20,21 +24,22 @@ export function TestimonialsPage() {
     <>
       <PageHeader {...pageHeader('testimonials')} />
 
-      {testimonials.length > 0 && (
-        <Section id="feedback" {...sectionCopy('testimonials', 'feedback')}>
-          <S.List>
-            {testimonials.map((testimonial) => (
-              <S.Item key={testimonial.id}>
-                <S.Attribution>
-                  <strong>{testimonial.name}</strong>
-                  <span>
-                    {testimonial.role}, {testimonial.company}
-                  </span>
-                </S.Attribution>
-                <S.Quote>{testimonial.quote}</S.Quote>
-              </S.Item>
+      {items.length > 0 && (
+        <Section
+          id="feedback"
+          {...(hasReal
+            ? sectionCopy('testimonials', 'feedback')
+            : sectionCopy('testimonials', 'samples'))}
+        >
+          <S.Grid>
+            {items.map((testimonial) => (
+              <TestimonialCard
+                key={testimonial.id}
+                testimonial={testimonial}
+                layout="grid"
+              />
             ))}
-          </S.List>
+          </S.Grid>
         </Section>
       )}
 

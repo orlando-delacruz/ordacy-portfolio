@@ -11,7 +11,6 @@ export const GlobalStyles = createGlobalStyle`
     -webkit-text-size-adjust: 100%;
     background: ${({ theme }) => theme.colors.background.default};
     color-scheme: ${({ theme }) => theme.mode};
-    scroll-behavior: smooth;
   }
 
   body {
@@ -89,6 +88,11 @@ export const GlobalStyles = createGlobalStyle`
   :focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.border.focus};
     outline-offset: 3px;
+  }
+
+  /* Anchor targets clear the sticky top bars instead of hiding beneath them. */
+  [id] {
+    scroll-margin-top: 5rem;
   }
 
   /*

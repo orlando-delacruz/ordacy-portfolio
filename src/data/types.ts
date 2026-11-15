@@ -16,6 +16,12 @@ type WithIcon<T extends { icon: string }> = Omit<T, 'icon'> & {
 
 export type PendingValue = { value: string | null; pending: boolean }
 
+export type ProfileStats = {
+  views: string
+  projects: string
+  likes: string
+}
+
 export type SiteRecord = {
   name: string
   tagline: string
@@ -23,6 +29,8 @@ export type SiteRecord = {
   siteUrl: string
   siteUrlPending: boolean
   footerTagline: string
+  /** Profile stats shown in the homepage hero; edited in Settings. */
+  profileStats: ProfileStats
   contact: {
     email: PendingValue
     phone: PendingValue
@@ -209,6 +217,64 @@ export type GalleryImageRecord = {
   isPublished: boolean
   createdAt: string
 }
+
+/* ---------- Team ---------- */
+
+export type TeamAvatar = {
+  src: string
+  alt: string
+}
+
+export type TeamFact = {
+  label: string
+  value: string
+}
+
+export type TeamExperienceRecord = {
+  role: string
+  organization: string
+  period: string
+  summary: string
+}
+
+export type TeamEducationRecord = {
+  credential: string
+  school: string
+  period: string
+  details: string
+}
+
+export type TeamCertificationRecord = {
+  name: string
+  issuer: string
+  year: string
+}
+
+export type TeamMemberRecord = {
+  id: string
+  slug: string
+  name: string
+  role: string
+  initials: string
+  avatar: TeamAvatar | null
+  /** One-sentence hero bio and meta description. */
+  headline: string
+  /** Longer resume summary. */
+  summary: string
+  /** Optional hero stats. When empty, counts are derived from section content. */
+  facts: readonly TeamFact[]
+  skills: readonly string[]
+  experience: readonly TeamExperienceRecord[]
+  education: readonly TeamEducationRecord[]
+  certifications: readonly TeamCertificationRecord[]
+  languages: readonly string[]
+  displayOrder: number
+  isPublished: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type TeamMember = TeamMemberRecord
 
 /* ---------- Inquiries ---------- */
 

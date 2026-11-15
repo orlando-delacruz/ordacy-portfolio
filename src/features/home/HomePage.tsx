@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { Faq } from './sections/Faq'
 import { FinalCta } from './sections/FinalCta'
@@ -16,16 +14,10 @@ import { organizationJsonLd, usePageMeta } from '@/hooks/usePageMeta'
 const structuredData = organizationJsonLd()
 
 export function HomePage() {
-  const { hash } = useLocation()
-
   usePageMeta({ ...seo.home, structuredData })
   // Section headings, descriptions and content fade up as they scroll into view.
+  // Hash and back-navigation scrolling is owned by usePageScrollRestoration.
   useScrollReveal()
-
-  useEffect(() => {
-    if (!hash) return
-    document.getElementById(hash.slice(1))?.scrollIntoView()
-  }, [hash])
 
   return (
     <>

@@ -1,7 +1,7 @@
 // Home content now lives in /data/database and is read through `@/data`.
-// PLACEHOLDER WARNING: projects and testimonials are still illustrative
-// (picsum screenshots, example.com URLs, "Placeholder Name"). Replace with
-// real, permitted content before launch.
+// Projects still run on illustrative concept data (swap in real,
+// permissioned work before launch). Testimonials show clearly labeled sample
+// cards until real, approved client feedback exists.
 export {
   faqs,
   plans,
@@ -9,6 +9,7 @@ export {
   services,
   showcaseProjects,
   steps,
+  sampleTestimonials,
   testimonials,
 } from '@/data'
 export type {

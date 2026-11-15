@@ -1,15 +1,16 @@
 import styled from 'styled-components'
 
 export const Wrapper = styled.section`
-  padding-block: ${({ theme }) => theme.spacing.lg};
+  /* Airy vertical rhythm: sections breathe instead of stacking tightly. */
+  padding-block: clamp(3.5rem, 8vw, 5.5rem);
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding-block: ${({ theme }) => theme.spacing.xl};
+    padding-block: clamp(4rem, 7vw, 6rem);
   }
 `
 
 export const Header = styled.div<{ $withAction?: boolean }>`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
 
   ${({ $withAction, theme }) =>
     $withAction &&

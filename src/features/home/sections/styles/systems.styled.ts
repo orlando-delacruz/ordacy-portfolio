@@ -9,9 +9,8 @@ export type Tone = 'problem' | 'solution'
 /*
  * Motion: the first time the section scrolls into view (data-revealed on Stage,
  * see Systems.tsx) list rows slide in one by one and the detail panel eases in.
- * Selecting an item pops its icon and spins the detail watermark in; the panel's
- * ring and dots drift slowly. Durations are choreography-specific, so they don't
- * use theme.transitions. Reduced motion shows the final, still state.
+ * Selecting an item pops its icon. Durations are choreography-specific, so they
+ * don't use theme.transitions. Reduced motion shows the final, still state.
  */
 const noMotionPref = '@media (prefers-reduced-motion: no-preference)'
 
@@ -60,32 +59,6 @@ const iconPop = keyframes`
   }
   100% {
     transform: scale(1) rotate(0deg);
-  }
-`
-
-const watermarkIn = keyframes`
-  from {
-    opacity: 0;
-    transform: rotate(-25deg) scale(0.8);
-  }
-  to {
-    opacity: 0.06;
-    transform: rotate(0deg) scale(1);
-  }
-`
-
-const spin = keyframes`
-  to {
-    transform: rotate(360deg);
-  }
-`
-
-const bob = keyframes`
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
   }
 `
 
@@ -280,61 +253,6 @@ export const Detail = styled.div`
       opacity: 1;
       animation: ${panelIn} 600ms ease-out 250ms backwards;
     }
-  }
-`
-
-// Dashed ring circling the watermark in the top-right corner; turns slowly.
-export const DetailRing = styled.span<{ $tone: Tone }>`
-  position: absolute;
-  top: -6rem;
-  right: -6rem;
-  z-index: -1;
-  width: 20rem;
-  height: 20rem;
-  border: 1px dashed
-    ${({ $tone, theme }) =>
-      `color-mix(in srgb, ${theme.colors[$tone].accent} 25%, transparent)`};
-  border-radius: ${({ theme }) => theme.radii.round};
-  pointer-events: none;
-
-  ${noMotionPref} {
-    animation: ${spin} 60s linear infinite;
-  }
-`
-
-// Dot pattern fading in from the bottom-right corner.
-export const DetailDots = styled.span`
-  position: absolute;
-  right: ${({ theme }) => theme.spacing.lg};
-  bottom: ${({ theme }) => theme.spacing.lg};
-  z-index: -1;
-  width: 8rem;
-  height: 5rem;
-  background-image: radial-gradient(
-    ${({ theme }) => theme.colors.border.default} 1.5px,
-    transparent 1.5px
-  );
-  background-size: 0.875rem 0.875rem;
-  mask-image: linear-gradient(to top left, black, transparent 80%);
-  pointer-events: none;
-
-  ${noMotionPref} {
-    animation: ${bob} 6s ease-in-out infinite;
-  }
-`
-
-// Oversized faint copy of the item's icon in the corner, purely decorative depth.
-export const DetailWatermark = styled.span<{ $tone: Tone }>`
-  position: absolute;
-  top: -3rem;
-  right: -3rem;
-  z-index: -1;
-  color: ${({ $tone, theme }) => theme.colors[$tone].accent};
-  opacity: 0.06;
-  pointer-events: none;
-
-  ${noMotionPref} {
-    animation: ${watermarkIn} 700ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
   }
 `
 

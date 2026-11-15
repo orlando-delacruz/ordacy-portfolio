@@ -7,18 +7,18 @@ import { AdminPage } from '../components/AdminPage'
 import { ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
-import { Tabs } from '../components/Tabs'
 import { TextField } from '../components/TextField'
 import { lines, text } from '../format'
 import { useCollection, useDocument } from '../hooks/useCollection'
 import { adminNavGroups } from '../navigation'
+import * as S from './styles/content.styled'
 
 const FOOTER_TAB = 'footer'
 
 // Collections with their own managers, linked from here instead of duplicated.
 const managers = adminNavGroups
   .flatMap((group) => group.items)
-  .filter((item) => ['projects', 'testimonials', 'services', 'pricing', 'faqs', 'gallery'].includes(item.id))
+  .filter((item) => ['projects', 'testimonials', 'services', 'pricing', 'faqs', 'gallery', 'team'].includes(item.id))
 
 /** "Title | text" per line. */
 const parseItems = (value: string): ContentItem[] =>
@@ -48,8 +48,7 @@ export function ContentAdminPage() {
           <U.PanelTitle id="content-managers">Managed separately</U.PanelTitle>
         </U.PanelHeader>
         <U.PanelText>
-          Page headings and introductions are edited below. Lists of records
-          have their own screens:
+          Edit headings below. Record lists have their own screens:
         </U.PanelText>
         <U.Toolbar>
           {managers.map(({ id, label, path, Icon }) => (
@@ -64,12 +63,28 @@ export function ContentAdminPage() {
       {status === 'loading' && <LoadingState label="Loading page content…" />}
       {status === 'error' && <ErrorState onRetry={refresh} />}
       {status === 'ready' && (
-        <Tabs label="Public pages" tabs={tabs} active={active} onChange={setActive}>
-          {page && <PageEditor key={page.id} page={page} onSave={savePage} />}
-          {active === FOOTER_TAB && siteDoc.value && (
-            <FooterEditor site={siteDoc.value} onSave={(next) => siteDoc.save(next, 'Footer and contact saved.')} />
-          )}
-        </Tabs>
+        <S.Split>
+          <S.PageNav aria-label="Public pages">
+            {tabs.map(({ id, label, icon: Icon }) => (
+              <S.PageNavButton
+                key={id}
+                type="button"
+                $active={id === active}
+                aria-current={id === active ? 'page' : undefined}
+                onClick={() => setActive(id)}
+              >
+                <Icon size={16} strokeWidth={2} aria-hidden="true" />
+                {label}
+              </S.PageNavButton>
+            ))}
+          </S.PageNav>
+          <div>
+            {page && <PageEditor key={page.id} page={page} onSave={savePage} />}
+            {active === FOOTER_TAB && siteDoc.value && (
+              <FooterEditor site={siteDoc.value} onSave={(next) => siteDoc.save(next, 'Footer and contact saved.')} />
+            )}
+          </div>
+        </S.Split>
       )}
     </AdminPage>
   )

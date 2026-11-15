@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { BrandLogo, Wordmark } from '@/components/navigation/Wordmark'
+import { usePageScrollRestoration } from '@/hooks/usePageScrollRestoration'
 import { ToastProvider } from '../components/ToastProvider'
 import { AdminDrawer } from './AdminDrawer'
 import { AdminNav } from './AdminNav'
@@ -15,6 +16,9 @@ import * as S from './styles/admin-layout.styled'
 export function AdminLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [menuButton, setMenuButton] = useState<HTMLButtonElement | null>(null)
+
+  // Same scroll contract as the public shell.
+  usePageScrollRestoration()
 
   return (
     <ToastProvider>

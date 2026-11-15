@@ -12,7 +12,7 @@ import type { InquiryPage } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Pagination } from '../components/Pagination'
-import { EmptyState, ErrorState, LoadingState } from '../components/States'
+import { EmptyState, ErrorState, TableSkeleton } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { useToast } from '../components/toast-context'
@@ -112,7 +112,7 @@ export function InquiriesPage() {
         </U.SecondaryAction>
       }
     >
-      <U.Toolbar>
+      <U.Toolbar $sticky>
         <F.Search>
           <Search size={16} strokeWidth={2} aria-hidden="true" />
           <F.Input
@@ -150,7 +150,7 @@ export function InquiriesPage() {
         )}
       </U.Toolbar>
 
-      {loadStatus === 'loading' && !result && <LoadingState label="Loading inquiries…" />}
+      {loadStatus === 'loading' && !result && <TableSkeleton rows={6} />}
       {loadStatus === 'error' && <ErrorState onRetry={refresh} />}
 
       {loadStatus !== 'error' && result && result.total === 0 && (

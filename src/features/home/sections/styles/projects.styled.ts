@@ -27,44 +27,6 @@ const rise = keyframes`
   }
 `
 
-const shineSweep = keyframes`
-  0% {
-    transform: translateX(-150%) skewX(-20deg);
-  }
-  25%, 100% {
-    transform: translateX(350%) skewX(-20deg);
-  }
-`
-
-const glowPulse = keyframes`
-  0%, 100% {
-    opacity: 0.6;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-`
-
-const spin = keyframes`
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-`
-
-const bob = keyframes`
-  0%, 100% {
-    transform: translateY(0) rotate(var(--tilt));
-  }
-  50% {
-    transform: translateY(-8px) rotate(var(--tilt));
-  }
-`
-
 /* ---------- 3D looping carousel ---------- */
 
 export const Carousel = styled.div`
@@ -78,98 +40,7 @@ export const Carousel = styled.div`
   }
 `
 
-/* ---------- Decorative backdrop (aria-hidden, behind the stage) ---------- */
-
-export const Decor = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-`
-
-// Soft brand light pooled behind the active card.
-export const Glow = styled.span`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(36rem, 90%);
-  height: 26rem;
-  border-radius: ${({ theme }) => theme.radii.round};
-  background: radial-gradient(
-    closest-side,
-    ${({ theme }) =>
-      `color-mix(in srgb, ${theme.colors.brand.primary} 22%, transparent)`},
-    transparent
-  );
-  transform: translate(-50%, -50%);
-
-  ${noMotionPref} {
-    animation: ${glowPulse} 7s ease-in-out infinite;
-  }
-`
-
-// Concentric rings centred on the stage; the small dashed one turns.
-export const Ring = styled.span<{ $size: 'large' | 'small' }>`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: ${({ $size }) => ($size === 'large' ? '38rem' : '26rem')};
-  aspect-ratio: 1;
-  border: 1px ${({ $size }) => ($size === 'large' ? 'solid' : 'dashed')}
-    ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.round};
-  transform: translate(-50%, -50%);
-
-  ${noMotionPref} {
-    animation: ${spin} ${({ $size }) => ($size === 'large' ? '90s' : '50s')}
-      linear infinite ${({ $size }) => ($size === 'large' ? 'normal' : 'reverse')};
-  }
-`
-
-const iconSpots = {
-  topLeft: css`
-    --tilt: -8deg;
-    top: 8%;
-    left: 4%;
-  `,
-  topRight: css`
-    --tilt: 6deg;
-    top: 14%;
-    right: 5%;
-  `,
-  bottomLeft: css`
-    --tilt: 10deg;
-    bottom: 22%;
-    left: 9%;
-  `,
-} as const
-
-// Small floating tiles with build-related icons. Desktop only (phones are too narrow).
-export const FloatingIcon = styled.span<{ $spot: keyof typeof iconSpots }>`
-  position: absolute;
-  display: none;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: ${({ theme }) => theme.colors.surface.default};
-  box-shadow: ${({ theme }) => theme.shadows.md};
-  color: ${({ theme }) => theme.colors.text.accent};
-  transform: rotate(var(--tilt));
-  ${({ $spot }) => iconSpots[$spot]}
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    display: grid;
-  }
-
-  ${noMotionPref} {
-    animation: ${bob} ${({ $spot }) => ($spot === 'topRight' ? '7s' : '5.5s')}
-      ease-in-out ${({ $spot }) => ($spot === 'bottomLeft' ? '-2s' : '0s')}
-      infinite;
-  }
-`
+/* ---------- Image-led cards ---------- */
 
 // All slides share one grid cell, so the stage is as tall as the tallest card.
 // Edges fade out so the curving side cards dissolve instead of being cut off.
@@ -308,27 +179,6 @@ export const CardImage = styled.img`
     ${Card}[data-active] & {
       transform: scale(1.08);
       transition: transform 8s ease-out;
-    }
-  }
-`
-
-// Diagonal light that sweeps across the active card every few seconds.
-export const Shine = styled.span`
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 35%;
-  background: linear-gradient(
-    to right,
-    transparent,
-    color-mix(in srgb, ${({ theme }) => theme.colors.brand.white} 18%, transparent),
-    transparent
-  );
-  transform: translateX(-150%) skewX(-20deg);
-  pointer-events: none;
-
-  ${noMotionPref} {
-    ${Card}[data-active] & {
-      animation: ${shineSweep} 6s ease-in-out 400ms infinite;
     }
   }
 `

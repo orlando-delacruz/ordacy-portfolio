@@ -76,11 +76,20 @@ export const desktopItemStyles = css<{ $collapsed: boolean }>`
 
 export const desktopItemActiveStyles = css`
   border-color: ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.pill};
   background: ${({ theme }) => theme.colors.background.subtle};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
   color: ${({ theme }) => theme.colors.text.accent};
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+
+  &::before {
+    position: absolute;
+    top: 0.625rem;
+    bottom: 0.625rem;
+    left: 0.375rem;
+    width: 2px;
+    border-radius: 2px;
+    background: ${({ theme }) => theme.colors.text.accent};
+    content: '';
+  }
 `
 
 export const mobileItemStyles = css`

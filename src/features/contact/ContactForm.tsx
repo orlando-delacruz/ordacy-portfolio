@@ -109,8 +109,8 @@ export function ContactForm() {
         <CheckCircle2 size={32} strokeWidth={2} aria-hidden="true" />
         <h2>Thank you for sharing your project details.</h2>
         <p>
-          We use them to understand your requirements and to discuss scope,
-          timeline, and next steps with you.
+          We review your details and follow up to discuss scope, timeline, and
+          next steps.
         </p>
         <S.SecondaryAction
           type="button"

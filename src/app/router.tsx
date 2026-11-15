@@ -23,6 +23,7 @@ export const router = createBrowserRouter([
       { path: 'gallery', lazy: async () => ({ Component: (await import('@/features/admin/gallery/GalleryAdminPage')).GalleryAdminPage }) },
       { path: 'seo', lazy: async () => ({ Component: (await import('@/features/admin/seo/SeoAdminPage')).SeoAdminPage }) },
       { path: 'settings', lazy: async () => ({ Component: (await import('@/features/admin/settings/SettingsAdminPage')).SettingsAdminPage }) },
+      { path: 'team', lazy: async () => ({ Component: (await import('@/features/admin/team/TeamAdminPage')).TeamAdminPage }) },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
@@ -43,6 +44,13 @@ export const router = createBrowserRouter([
         lazy: async () => ({
           Component: (await import('@/features/testimonials/TestimonialsPage'))
             .TestimonialsPage,
+        }),
+      },
+      {
+        path: 'team/:slug',
+        lazy: async () => ({
+          Component: (await import('@/features/team/TeamMemberPage'))
+            .TeamMemberPage,
         }),
       },
       {

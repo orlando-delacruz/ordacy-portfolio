@@ -71,6 +71,13 @@
         "path": "/admin/gallery",
         "icon": "Images",
         "description": "Images and their alt text."
+      },
+      {
+        "id": "team",
+        "label": "Team",
+        "path": "/admin/team",
+        "icon": "Users",
+        "description": "Team members shown on the homepage and their profile pages."
       }
     ]
   },

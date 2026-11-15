@@ -6,7 +6,7 @@ export const EmptyState = styled.div`
   justify-items: start;
   max-width: 44rem;
   padding: ${({ theme }) => theme.spacing.xl};
-  border: 1px dashed ${({ theme }) => theme.colors.border.default};
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.lg};
   background: ${({ theme }) => theme.colors.surface.subtle};
 `
