@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components'
-import { PrimaryButton, SecondaryButton } from '@/components/ui/styles/buttons.styled'
+import { PrimaryButton, SecondaryAnchor, SecondaryButton } from '@/components/ui/styles/buttons.styled'
+import { fluidFont } from '@/styles/typography'
 
 /*
  * Shared profile-hero layout: the homepage hero and the team member hero
@@ -386,7 +387,7 @@ export const StatCount = styled.dd`
 
 export const StatLabel = styled.dt`
   color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: 0.6875rem;
+  font-size: ${fluidFont(0.6875)};
   font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   letter-spacing: 0.08em;
   line-height: ${({ theme }) => theme.typography.lineHeights.normal};
@@ -463,6 +464,15 @@ export const ProjectsButton = styled(SecondaryButton)`
   }
 `
 
+/* PDF resumes open outside the SPA, so they need a plain anchor. */
+export const ResumeButton = styled(SecondaryAnchor)`
+  ${heroButtonSizing}
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    padding-inline: ${({ theme }) => theme.spacing.sm};
+  }
+`
+
 // Full-view images for the bare lightbox: leave room for the top bar, the
 // caption, and the body padding so the image never runs under them.
 export const LightboxImage = styled.img`
@@ -481,8 +491,11 @@ export const LightboxCover = styled.div<{ $photo?: boolean }>`
   width: min(92vw, 80rem);
   max-height: calc(100vh - 14rem);
   max-height: calc(100dvh - 14rem);
-  aspect-ratio: 16 / 6;
-  min-height: min(14rem, 30dvh);
+  /* The photo keeps its own 1916x821 frame so contain shows the whole image;
+     the generated art keeps the wide band. */
+  aspect-ratio: ${({ $photo }) => ($photo ? '1916 / 821' : '16 / 6')};
+  min-height: ${({ $photo }) =>
+    $photo ? '0' : 'min(14rem, 30dvh)'};
   overflow: hidden;
   border-radius: ${({ theme }) => theme.radii.lg};
   box-shadow: ${({ theme }) => theme.shadows.lg};
@@ -495,10 +508,11 @@ export const LightboxCover = styled.div<{ $photo?: boolean }>`
           transparent 1.5px
         )`};
   background-repeat: no-repeat;
-  background-size: ${({ $photo }) => ($photo ? 'cover' : '1.5rem 1.5rem')};
+  background-size: ${({ $photo }) => ($photo ? 'contain' : '1.5rem 1.5rem')};
   background-position: ${({ $photo }) => ($photo ? 'center' : '0 0')};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    min-height: min(22rem, 40dvh);
+    min-height: ${({ $photo }) =>
+      $photo ? '0' : 'min(22rem, 40dvh)'};
   }
 `

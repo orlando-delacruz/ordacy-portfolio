@@ -43,6 +43,7 @@ export const Dialog = styled.dialog<{ $closing: boolean; $size: 'md' | 'sm' }>`
   border-radius: ${({ theme }) => theme.radii.lg};
   background: ${({ theme }) => theme.colors.surface.default};
   color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
   box-shadow: ${({ theme }) => theme.shadows.lg};
   overflow: auto;
   animation: ${cardIn} 220ms ease-out;
@@ -108,6 +109,8 @@ export const BareDialog = styled.dialog<{ $closing: boolean }>`
   padding: 0;
   border: 0;
   background: transparent;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
   overflow: hidden;
 
   &[open] {

@@ -1,11 +1,11 @@
-import { ArrowLeft, Phone, Rocket, UsersRound } from 'lucide-react'
+import { ArrowLeft, FileText, Phone, UsersRound } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAppTheme } from '@/app/theme-context'
 import { Lightbox } from '@/components/ui/Lightbox'
 import { PageHero } from '@/components/ui/PageHero'
 import { ProfileCoverArt } from '@/components/ui/ProfileCoverArt'
 import * as S from '@/components/ui/styles/profile-hero.styled'
-import * as Hero from '@/components/ui/styles/page-hero.styled'
 import type { TeamMember } from '@/data'
 import * as T from '../styles/team-hero.styled'
 import { teamAvatarSrc } from '../avatar'
@@ -37,6 +37,7 @@ type TeamHeroProps = {
 
 export function TeamHero({ member }: TeamHeroProps) {
   const { theme } = useAppTheme()
+  const navigate = useNavigate()
   const [lightbox, setLightbox] = useState(false)
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null)
   const stats = statsFor(member)
@@ -51,18 +52,6 @@ export function TeamHero({ member }: TeamHeroProps) {
         title={member.name}
         description={member.headline}
         art={<ProfileCoverArt variant="member" monogram={member.initials} />}
-        actions={
-          <>
-            <Hero.PrimaryButton to="/contact">
-              <Rocket size={18} strokeWidth={2} aria-hidden="true" />
-              Get started
-            </Hero.PrimaryButton>
-            <Hero.GhostButton to="/#team">
-              <ArrowLeft size={18} strokeWidth={2} aria-hidden="true" />
-              Team
-            </Hero.GhostButton>
-          </>
-        }
       />
 
       <T.ProfileStrip>
@@ -90,7 +79,7 @@ export function TeamHero({ member }: TeamHeroProps) {
         <S.Identity>
           <T.RoleGroup>
             <T.StripName>{member.name}</T.StripName>
-            <S.Role>{member.role}</S.Role>
+            <T.StripRole>{member.role}</T.StripRole>
           </T.RoleGroup>
           {stats.length > 0 && (
             <S.Stats $row>
@@ -109,6 +98,25 @@ export function TeamHero({ member }: TeamHeroProps) {
             <Phone size={18} strokeWidth={2} aria-hidden="true" />
             Contact
           </S.ContactButton>
+          {member.resumeUrl && (
+            <S.ResumeButton
+              href={member.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name} resume (opens in a new tab)`}
+            >
+              <FileText size={18} strokeWidth={2} aria-hidden="true" />
+              Resume
+            </S.ResumeButton>
+          )}
+          <T.BackButton
+            type="button"
+            aria-label="Back to team"
+            title="Back to team"
+            onClick={() => navigate('/#team')}
+          >
+            <ArrowLeft size={20} strokeWidth={2} aria-hidden="true" />
+          </T.BackButton>
         </S.Actions>
       </T.ProfileStrip>
 

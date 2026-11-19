@@ -129,11 +129,7 @@ export const HeroTitle = styled.h1`
   line-height: 1.05;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    font-size: clamp(
-      ${({ theme }) => theme.typography.fontSizes['4xl']},
-      4.2vw,
-      3.5rem
-    );
+    font-size: clamp(2.5rem, 4.2vw, 3.5rem);
   }
 `
 
@@ -260,11 +256,7 @@ export const Rule = styled.span`
 export const BlockTitle = styled.h2`
   margin: 0;
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['3xl']},
-    3.2vw,
-    ${({ theme }) => theme.typography.fontSizes['4xl']}
-  );
+  font-size: clamp(2rem, 3.2vw, 2.5rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: -0.02em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};

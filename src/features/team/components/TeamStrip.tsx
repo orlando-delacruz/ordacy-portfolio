@@ -48,7 +48,9 @@ export function TeamStrip() {
                 </S.AvatarFrame>
                 <S.MemberInfo>
                   <S.MemberName>{member.name}</S.MemberName>
-                  <S.MemberRole>{member.role}</S.MemberRole>
+                  <S.MemberRole>
+                    <S.MemberRoleText>{member.role}</S.MemberRoleText>
+                  </S.MemberRole>
                   <S.ViewProfile>
                     <Eye size={14} strokeWidth={2.5} aria-hidden="true" />
                     View Profile

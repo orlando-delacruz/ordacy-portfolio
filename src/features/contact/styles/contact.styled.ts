@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { PrimaryAction } from '@/components/ui/styles/buttons.styled'
 import type { AppTheme } from '@/styles/theme'
 
@@ -113,11 +113,7 @@ export const HeroTitle = styled.h1`
   max-width: 34rem;
   margin: 0;
   color: ${({ theme }) => theme.colors.brand.white};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['4xl']},
-    4.2vw,
-    3.5rem
-  );
+  font-size: clamp(2.5rem, 4.2vw, 3.5rem);
   letter-spacing: -0.02em;
   line-height: 1.05;
 
@@ -447,11 +443,7 @@ export const FormIcon = styled(IconTile)``
 export const FormTitle = styled.h2`
   margin: 0;
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['2xl']},
-    2.2vw,
-    1.75rem
-  );
+  font-size: clamp(1.5rem, 2.2vw, 1.75rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: -0.01em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
@@ -616,6 +608,141 @@ export const Textarea = styled(Input).attrs({ as: 'textarea' })`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.md}
     ${({ theme }) => theme.spacing.md} 2.25rem;
   resize: vertical;
+`
+
+/* ---------- Project type picker (custom listbox) ---------- */
+
+const pickerIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
+export const PickerTrigger = styled.button`
+  ${controlStyles}
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding-right: 2.75rem;
+  text-align: left;
+  cursor: pointer;
+`
+
+export const PickerValue = styled.span<{ $placeholder: boolean }>`
+  min-width: 0;
+  overflow: hidden;
+  color: ${({ $placeholder, theme }) =>
+    $placeholder ? theme.colors.text.secondary : theme.colors.text.primary};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
+export const PickerChevron = styled.span<{ $open: boolean }>`
+  position: absolute;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  pointer-events: none;
+  transform: rotate(${({ $open }) => ($open ? '180deg' : '0deg')});
+  transition:
+    color ${({ theme }) => theme.transitions.base},
+    transform ${({ theme }) => theme.transitions.base};
+
+  ${Control}:focus-within & {
+    color: ${({ theme }) => theme.colors.text.accent};
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: color ${({ theme }) => theme.transitions.fast};
+  }
+`
+
+export const PickerMenu = styled.div`
+  position: absolute;
+  top: calc(100% + ${({ theme }) => theme.spacing.xs});
+  right: 0;
+  left: 0;
+  z-index: 30;
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.xs};
+  max-height: 18rem;
+  padding: ${({ theme }) => theme.spacing.xs};
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: ${({ theme }) => theme.colors.surface.default};
+  box-shadow: ${({ theme }) => theme.shadows.md};
+  animation: ${pickerIn} 150ms ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`
+
+export const PickerOption = styled.button<{ $selected: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  width: 100%;
+  min-height: 2.75rem;
+  padding: ${({ theme }) => theme.spacing.xs}
+    ${({ theme }) => theme.spacing.md};
+  border: 1px solid
+    ${({ $selected, theme }) =>
+      $selected ? theme.colors.text.accent : 'transparent'};
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: ${({ $selected, theme }) =>
+    $selected
+      ? `color-mix(in srgb, ${theme.colors.text.accent} 12%, ${theme.colors.surface.default})`
+      : 'transparent'};
+  color: ${({ $selected, theme }) =>
+    $selected ? theme.colors.text.accent : theme.colors.text.primary};
+  font: inherit;
+  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background ${({ theme }) => theme.transitions.fast},
+    color ${({ theme }) => theme.transitions.fast},
+    border-color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.text.accent};
+    color: ${({ theme }) => theme.colors.text.accent};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.border.focus};
+    outline-offset: -2px;
+  }
+`
+
+export const PickerOptionIcon = styled.span`
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: ${({ theme }) => theme.radii.sm};
+  background: ${({ theme }) => theme.colors.background.subtle};
+  color: ${({ theme }) => theme.colors.text.accent};
+`
+
+export const PickerOptionLabel = styled.span`
+  flex: 1;
+  min-width: 0;
+  line-height: 1.35;
 `
 
 export const ErrorText = styled.p`

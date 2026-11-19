@@ -1,5 +1,5 @@
 import { breakpoints } from './breakpoints'
-import { typography } from './typography'
+import { fluidTypography, typography } from './typography'
 
 export type ThemeName = 'light' | 'dark'
 
@@ -189,4 +189,15 @@ export const darkTheme: AppTheme = {
   transitions,
   motion,
   layout,
+}
+
+/* Public routes opt into the fluid scale; admin keeps the fixed root theme. */
+export const fluidLightTheme: AppTheme = {
+  ...lightTheme,
+  typography: fluidTypography,
+}
+
+export const fluidDarkTheme: AppTheme = {
+  ...darkTheme,
+  typography: fluidTypography,
 }

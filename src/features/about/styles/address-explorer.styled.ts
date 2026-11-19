@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { PrimaryButton } from '@/components/ui/styles/buttons.styled'
+import { fluidFont } from '@/styles/typography'
 
 export const Explorer = styled.div`
   display: grid;
@@ -156,7 +157,7 @@ export const PanelText = styled.p`
   margin: ${({ theme }) => theme.spacing.sm} 0 0;
   color: ${({ theme }) => theme.colors.text.secondary};
   /* 15px: the mock's body copy sits between the sm and md type steps. */
-  font-size: 0.9375rem;
+  font-size: ${fluidFont(0.9375)};
   line-height: 1.6;
 `
 

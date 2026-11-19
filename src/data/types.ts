@@ -308,6 +308,8 @@ export type TeamMemberRecord = {
   role: string
   initials: string
   avatar: TeamAvatar | null
+  /** Optional PDF resume; shows a Resume button beside Contact. */
+  resumeUrl?: string | null
   /** One-sentence hero bio and meta description. */
   headline: string
   /** Longer resume summary. */

@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { PrimaryButton } from '@/components/ui/styles/buttons.styled'
+import { fluidFont } from '@/styles/typography'
 
 // Tinted teal surface shared by the selected tab and the problem box.
 const mintSurface = css`
@@ -120,7 +121,7 @@ export const PanelDescription = styled.p`
   max-width: 46rem;
   margin: ${({ theme }) => theme.spacing.xs} 0 0;
   color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: 0.9375rem;
+  font-size: ${fluidFont(0.9375)};
   line-height: 1.6;
 `
 

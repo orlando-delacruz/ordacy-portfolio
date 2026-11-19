@@ -219,7 +219,7 @@ export function ProjectsPage() {
                 onClick={() => setMenuOpen((open) => !open)}
               >
                 Categories
-                <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
+                <ChevronDown size={18} strokeWidth={2} aria-hidden="true" />
               </S.SegmentCategories>
               {viewToggle}
               {menuOpen && (

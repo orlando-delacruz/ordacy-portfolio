@@ -17,11 +17,7 @@ export const PageEyebrow = styled.p`
 
 export const PageTitle = styled.h1`
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['3xl']},
-    6vw,
-    ${({ theme }) => theme.typography.fontSizes['4xl']}
-  );
+  font-size: clamp(2rem, 6vw, 2.5rem);
 `
 
 export const PageDescription = styled.p`

@@ -4,6 +4,7 @@ import { sidebarWidths } from '@/components/navigation/navigation'
 export const Shell = styled.div`
   min-height: 100vh;
   min-height: 100dvh;
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
 `
 
 export const SkipLink = styled.a`

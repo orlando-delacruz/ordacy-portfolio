@@ -492,11 +492,7 @@ export const Price = styled.p<{ $featured: boolean }>`
   margin: 0;
   color: ${({ $featured, theme }) =>
     $featured ? theme.colors.text.accent : theme.colors.text.primary};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['2xl']},
-    3vw,
-    ${({ theme }) => theme.typography.fontSizes['3xl']}
-  );
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.extrabold};
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;

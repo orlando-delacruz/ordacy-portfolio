@@ -25,11 +25,7 @@ export const Text = styled.div`
 export const Title = styled.h2`
   margin: 0;
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['2xl']},
-    4.5vw,
-    ${({ theme }) => theme.typography.fontSizes['3xl']}
-  );
+  font-size: clamp(1.5rem, 4.5vw, 2rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: -0.02em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};

@@ -101,6 +101,17 @@ export const AvatarLink = styled(Link)`
     outline-offset: 3px;
   }
 
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  /* The narrowest phones keep the name column but need a smaller portrait
+     and gap so the role stays on one line next to it. */
+  @container (max-width: 18rem) {
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
+
   @media (prefers-reduced-motion: reduce) {
     transition:
       border-color ${({ theme }) => theme.transitions.fast},
@@ -159,6 +170,11 @@ export const AvatarFrame = styled.span`
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
     width: 7rem;
     height: 7rem;
+  }
+
+  @container (max-width: 18rem) {
+    width: 4.5rem;
+    height: 4.5rem;
   }
 
   a:hover &,
@@ -229,6 +245,7 @@ export const MemberInitials = styled.span`
 
 export const MemberInfo = styled.span`
   display: grid;
+  flex: 1;
   gap: ${({ theme }) => theme.spacing.sm};
   min-width: 0;
 `
@@ -254,6 +271,7 @@ export const MemberRole = styled.span`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
+  justify-self: start;
   width: fit-content;
   max-width: 100%;
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
@@ -264,6 +282,7 @@ export const MemberRole = styled.span`
   font-size: ${({ theme }) => theme.typography.fontSizes.xs};
   font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+  white-space: nowrap;
   transition:
     border-color ${({ theme }) => theme.transitions.fast},
     color ${({ theme }) => theme.transitions.fast};
@@ -292,9 +311,18 @@ export const MemberRole = styled.span`
     );
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    font-size: 0.6875rem;
+  @container (max-width: 18rem) {
+    padding-inline: ${({ theme }) => theme.spacing.xs};
   }
+`
+
+/* The role stays on one line at every width; the text ellipsizes only below
+   the smallest supported card rather than wrapping the chip. */
+export const MemberRoleText = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 export const ViewProfile = styled.span`

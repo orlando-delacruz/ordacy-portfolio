@@ -13,7 +13,7 @@ import {
   Sparkles,
   UserRound,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import { PrimaryButton, SecondaryButton } from '@/components/ui/styles/buttons.styled'
 import { getSection } from '@/data'
@@ -54,6 +54,84 @@ function detailLines(details: string) {
     .filter(Boolean)
 }
 
+type SkillGroupData = NonNullable<TeamMember['skillGroups']>[number]
+
+type SkillGroupProps = {
+  group: SkillGroupData
+  id: string
+}
+
+/**
+ * One stack group, capped at two pill rows. The toggle only appears when the
+ * group actually overflows, and it expands that group alone; the first items
+ * in the data are the ones previewed.
+ */
+function SkillGroup({ group, id }: SkillGroupProps) {
+  const [open, setOpen] = useState(false)
+  const [overflowing, setOverflowing] = useState(false)
+  const [height, setHeight] = useState<number | null>(null)
+  const clampRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const element = clampRef.current
+    if (!element) return
+
+    const measure = () => {
+      if (open) setHeight(element.scrollHeight)
+      else setOverflowing(element.scrollHeight > element.clientHeight + 1)
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [open, group.items])
+
+  const toggle = () => {
+    if (open) {
+      setOpen(false)
+      return
+    }
+
+    if (clampRef.current) setHeight(clampRef.current.scrollHeight)
+    setOpen(true)
+  }
+
+  return (
+    <S.StackGroup>
+      <S.StackHead>
+        <S.StackLabel>{group.label}</S.StackLabel>
+        <S.StackCount aria-hidden="true">{group.items.length}</S.StackCount>
+      </S.StackHead>
+      <S.SkillClamp ref={clampRef} id={id} $open={open} $height={height}>
+        <S.Pills>
+          {group.items.map((item) => (
+            <S.Pill key={item}>{item}</S.Pill>
+          ))}
+        </S.Pills>
+      </S.SkillClamp>
+      {overflowing && (
+        <S.SkillsToggle
+          type="button"
+          aria-expanded={open}
+          aria-controls={id}
+          aria-label={`${open ? 'Hide' : 'Show All'} ${group.label}`}
+          onClick={toggle}
+        >
+          <S.SkillsTogglePill>
+            {open ? (
+              <ChevronUp size={16} strokeWidth={2} aria-hidden="true" />
+            ) : (
+              <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
+            )}
+            {open ? 'Hide' : 'Show All'}
+          </S.SkillsTogglePill>
+        </S.SkillsToggle>
+      )}
+    </S.StackGroup>
+  )
+}
+
 export function TeamResume({ member }: TeamResumeProps) {
   const profile = getSection('team', 'profile')
   const experience = getSection('team', 'experience')
@@ -62,22 +140,7 @@ export function TeamResume({ member }: TeamResumeProps) {
   const credentials = getSection('team', 'credentials')
   const contact = getSection('team', 'contact')
   const skillGroups = member.skillGroups ?? []
-  const [skillsOpen, setSkillsOpen] = useState(false)
   const sectionId = (name: string) => `member-${member.slug}-${name}`
-  const skillsListId = `${sectionId('skills')}-list`
-
-  // Interleave groups so the two-row preview shows something from every stack.
-  const previewSkills: string[] = []
-  const longestGroup = skillGroups.reduce(
-    (longest, group) => Math.max(longest, group.items.length),
-    0,
-  )
-  for (let index = 0; index < longestGroup; index += 1) {
-    for (const group of skillGroups) {
-      const item = group.items[index]
-      if (item) previewSkills.push(item)
-    }
-  }
 
   return (
     <>
@@ -120,9 +183,6 @@ export function TeamResume({ member }: TeamResumeProps) {
                         <S.EntryPeriod>{entry.period}</S.EntryPeriod>
                       </S.EntryHead>
                       <S.EntryOrg>{entry.organization}</S.EntryOrg>
-                      {entry.summary && (
-                        <S.EntryText>{entry.summary}</S.EntryText>
-                      )}
                     </S.EntryBody>
                   </S.TimelineItem>
                 ))}
@@ -273,46 +333,15 @@ export function TeamResume({ member }: TeamResumeProps) {
             title={skills.title}
             icon={Sparkles}
           />
-          {skillsOpen ? (
-            <S.StackGrid id={skillsListId}>
-              {skillGroups.map((group) => (
-                <S.StackGroup key={group.label}>
-                  <S.StackHead>
-                    <S.StackLabel>{group.label}</S.StackLabel>
-                    <S.StackCount aria-hidden="true">
-                      {group.items.length}
-                    </S.StackCount>
-                  </S.StackHead>
-                  <S.Pills>
-                    {group.items.map((item) => (
-                      <S.Pill key={item}>{item}</S.Pill>
-                    ))}
-                  </S.Pills>
-                </S.StackGroup>
-              ))}
-            </S.StackGrid>
-          ) : (
-            <S.SkillsPreview id={skillsListId}>
-              <S.Pills>
-                {previewSkills.map((item) => (
-                  <S.Pill key={item}>{item}</S.Pill>
-                ))}
-              </S.Pills>
-            </S.SkillsPreview>
-          )}
-          <S.SkillsToggle
-            type="button"
-            aria-expanded={skillsOpen}
-            aria-controls={skillsListId}
-            onClick={() => setSkillsOpen((open) => !open)}
-          >
-            {skillsOpen ? (
-              <ChevronUp size={16} strokeWidth={2} aria-hidden="true" />
-            ) : (
-              <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
-            )}
-            {skillsOpen ? 'Hide' : 'Show All'}
-          </S.SkillsToggle>
+          <S.StackGrid id={`${sectionId('skills')}-list`}>
+            {skillGroups.map((group, index) => (
+              <SkillGroup
+                key={group.label}
+                group={group}
+                id={`${sectionId('skills')}-group-${index}`}
+              />
+            ))}
+          </S.StackGrid>
         </S.StackBand>
       )}
     </>

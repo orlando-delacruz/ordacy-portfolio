@@ -98,7 +98,7 @@ const parseSkillGroups = (value: string): TeamSkillGroup[] =>
     }
   })
 
-const isImageRef = (value: string) =>
+const isAssetRef = (value: string) =>
   value.startsWith('/') || isHttpUrl(value)
 
 function validate(data: FormData, others: TeamMemberRecord[]): FieldErrors {
@@ -115,7 +115,7 @@ function validate(data: FormData, others: TeamMemberRecord[]): FieldErrors {
   if (headline.length < 20) errors.headline = 'Write a headline (at least 20 characters).'
   if (text(data, 'summary').length < 20) errors.summary = 'Write a summary (at least 20 characters).'
   const avatarSrc = text(data, 'avatarSrc')
-  if (avatarSrc && !isImageRef(avatarSrc)) {
+  if (avatarSrc && !isAssetRef(avatarSrc)) {
     errors.avatarSrc = 'Enter a full image URL (https://…) or a /path, or leave it empty.'
   }
   if (avatarSrc && !text(data, 'avatarAlt')) {
@@ -124,8 +124,12 @@ function validate(data: FormData, others: TeamMemberRecord[]): FieldErrors {
   const avatarDarkSrc = text(data, 'avatarDarkSrc')
   if (avatarDarkSrc && !avatarSrc) {
     errors.avatarDarkSrc = 'Add the photo URL above before the dark-mode photo.'
-  } else if (avatarDarkSrc && !isImageRef(avatarDarkSrc)) {
+  } else if (avatarDarkSrc && !isAssetRef(avatarDarkSrc)) {
     errors.avatarDarkSrc = 'Enter a full image URL (https://…) or a /path, or leave it empty.'
+  }
+  const resumeUrl = text(data, 'resumeUrl')
+  if (resumeUrl && !isAssetRef(resumeUrl)) {
+    errors.resumeUrl = 'Enter a full URL (https://…) or a /path, or leave it empty.'
   }
   if (parseFacts(text(data, 'facts')).some((fact) => !fact.label || !fact.value)) {
     errors.facts = 'Each line needs "Label | Value".'
@@ -185,6 +189,7 @@ export function TeamAdminPage() {
             alt: text(data, 'avatarAlt'),
           }
         : null,
+      resumeUrl: text(data, 'resumeUrl') || null,
       headline: text(data, 'headline'),
       summary: text(data, 'summary'),
       facts: parseFacts(text(data, 'facts')),
@@ -378,6 +383,16 @@ function MemberFields({ record, errors }: MemberFieldsProps) {
             hint="Shown in the circle when there is no photo."
             defaultValue={record?.initials}
             error={errors.initials}
+          />
+          <TextField
+            idPrefix={p}
+            name="resumeUrl"
+            label="Resume URL"
+            optional
+            type="url"
+            hint="PDF path or full URL. Shows a Resume button beside Contact."
+            defaultValue={record?.resumeUrl ?? ''}
+            error={errors.resumeUrl}
           />
           <F.Field>
             <F.Label as="span">Visibility</F.Label>

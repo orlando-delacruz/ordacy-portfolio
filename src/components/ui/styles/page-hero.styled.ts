@@ -110,11 +110,7 @@ export const HeroBadge = styled.span`
 export const HeroTitle = styled.h1`
   margin: 0;
   color: ${({ theme }) => theme.colors.brand.white};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['3xl']},
-    5vw,
-    ${({ theme }) => theme.typography.fontSizes['4xl']}
-  );
+  font-size: clamp(2rem, 5vw, 2.5rem);
   letter-spacing: -0.02em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
   text-wrap: balance;

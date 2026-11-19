@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components'
 import { PrimaryButton } from '@/components/ui/styles/buttons.styled'
+import { fluidFont } from '@/styles/typography'
 
 export {
   PrimaryAnchor,
@@ -419,11 +420,7 @@ const badgeBase = css`
   );
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
   color: ${({ theme }) => theme.colors.brand.white};
-  font-size: clamp(
-    calc(${({ theme }) => theme.typography.fontSizes.xs} * 0.85),
-    4.5cqi,
-    ${({ theme }) => theme.typography.fontSizes.xs}
-  );
+  font-size: clamp(calc(0.75rem * 0.85), 4.5cqi, 0.75rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -468,7 +465,7 @@ export const Category = styled.span`
   /* Smaller cards get a smaller label so the longest category still fits. */
   @container (max-width: 22rem) {
     ${Card}[data-layout='grid'] & {
-      font-size: 0.625rem;
+      font-size: ${fluidFont(0.625)};
     }
   }
 
@@ -500,7 +497,7 @@ export const ConceptTag = styled.span`
   @container (max-width: 22rem) {
     ${Card}[data-layout='grid'] & {
       padding-inline: ${({ theme }) => theme.spacing.sm};
-      font-size: 0.625rem;
+      font-size: ${fluidFont(0.625)};
       letter-spacing: 0.04em;
     }
   }
@@ -522,11 +519,7 @@ export const CategoryLabel = styled.span`
 export const Title = styled.h3`
   margin: 0;
   color: ${({ theme }) => theme.colors.brand.white};
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes.sm},
-    7cqi,
-    ${({ theme }) => theme.typography.fontSizes.xl}
-  );
+  font-size: clamp(0.875rem, 7cqi, 1.25rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: -0.02em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
@@ -548,11 +541,7 @@ export const CardActions = styled.div`
     min-width: 0;
     min-height: ${actionHeight};
     padding-inline: clamp(${({ theme }) => theme.spacing.xs}, 4cqi, ${({ theme }) => theme.spacing.md});
-    font-size: clamp(
-      ${({ theme }) => theme.typography.fontSizes.xs},
-      5cqi,
-      ${({ theme }) => theme.typography.fontSizes.sm}
-    );
+    font-size: clamp(0.75rem, 5cqi, 0.875rem);
   }
 
   & svg {
@@ -614,11 +603,7 @@ export const DetailsButton = styled.button`
   );
   color: ${({ theme }) => theme.colors.brand.white};
   font-family: inherit;
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes.xs},
-    5cqi,
-    ${({ theme }) => theme.typography.fontSizes.sm}
-  );
+  font-size: clamp(0.75rem, 5cqi, 0.875rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   cursor: pointer;
   backdrop-filter: blur(8px);
@@ -941,7 +926,7 @@ export const RowCategory = styled.span`
   /* Narrow cards: smaller pill text so the longest category fits uncut. */
   @container (max-width: 22rem) {
     padding-inline: ${({ theme }) => theme.spacing.sm};
-    font-size: 0.6875rem;
+    font-size: ${fluidFont(0.6875)};
   }
 `
 

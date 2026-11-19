@@ -107,11 +107,7 @@ export const Eyebrow = styled.span`
 export const Title = styled.h2`
   margin: 0;
   color: inherit;
-  font-size: clamp(
-    ${({ theme }) => theme.typography.fontSizes['2xl']},
-    5vw,
-    ${({ theme }) => theme.typography.fontSizes['4xl']}
-  );
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
   font-weight: ${({ theme }) => theme.typography.fontWeights.extrabold};
   letter-spacing: -0.03em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};

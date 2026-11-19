@@ -3,6 +3,7 @@ import {
   Building2,
   CalendarDays,
   CheckCircle2,
+  CircleHelp,
   Layers,
   Loader2,
   Lock,
@@ -19,6 +20,7 @@ import { plans, sectionCopy, services } from '@/data'
 import { SelectField } from '@/components/ui/SelectField'
 import { submitInquiry } from '@/services'
 import type { InquiryInput } from '@/services'
+import { ProjectTypeField } from './ProjectTypeField'
 import * as S from './styles/contact.styled'
 
 type Field = 'name' | 'email' | 'message'
@@ -36,11 +38,12 @@ const budgetOptions = plans.map((plan) =>
     : `${plan.name}: quote`,
 )
 
-const serviceOptions = [
-  { value: '', label: 'Not sure yet' },
+const projectTypeOptions = [
+  { value: '', label: 'Not sure yet', icon: CircleHelp },
   ...services.map((service) => ({
     value: service.title,
     label: service.title,
+    icon: service.icon,
   })),
 ]
 
@@ -244,14 +247,13 @@ export function ContactForm() {
         </S.Field>
 
         <S.Row>
-          <SelectField
+          <ProjectTypeField
             id="contact-service"
             name="service"
             label="Project type"
             optional
             icon={Layers}
-            options={serviceOptions}
-            defaultValue=""
+            options={projectTypeOptions}
           />
           <SelectField
             id="contact-plan"

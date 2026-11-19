@@ -93,6 +93,11 @@ export const PrimaryAnchor = styled.a`
   ${primaryStyles}
 `
 
+/** Same look as SecondaryButton, for external links (plain <a>). */
+export const SecondaryAnchor = styled.a`
+  ${secondaryStyles}
+`
+
 /** Same look as PrimaryButton, for form submits (real <button>). */
 export const PrimaryAction = styled.button`
   ${primaryStyles}

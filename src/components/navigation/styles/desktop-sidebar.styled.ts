@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
+import { fluidFont } from '@/styles/typography'
 import * as nav from './navigation.styled'
 import { sidebarWidths } from '../navigation'
 
@@ -87,7 +88,7 @@ export const GroupLabel = styled.p<{ $collapsed: boolean }>`
     $collapsed ? '0' : theme.spacing.lg};
   overflow: hidden;
   color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: 0.6875rem;
+  font-size: ${fluidFont(0.6875)};
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: 0.12em;
   line-height: ${({ theme }) => theme.typography.lineHeights.normal};

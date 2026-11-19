@@ -1,23 +1,20 @@
 import styled, { css } from 'styled-components'
 
-// Horizontal scroll on small screens; focusable so keyboard users can scroll it.
+// The table only appears where it fits without scrolling; below xl the
+// comparison becomes a stacked plan list.
 export const TableWrap = styled.div`
-  overflow-x: auto;
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.lg};
-  background: ${({ theme }) => theme.colors.surface.default};
+  display: none;
 
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.border.focus};
-    outline-offset: 2px;
+  @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
+    display: block;
+    border: 1px solid ${({ theme }) => theme.colors.border.default};
+    border-radius: ${({ theme }) => theme.radii.lg};
+    background: ${({ theme }) => theme.colors.surface.default};
   }
 `
 
 export const Table = styled.table`
   width: 100%;
-  /* Below xl the table scrolls horizontally, so give every plan cell a
-     readable width instead of squeezing the lists into slivers. */
-  min-width: 50rem;
   border-collapse: separate;
   border-spacing: 0;
   font-size: ${({ theme }) => theme.typography.fontSizes.md};
@@ -51,7 +48,7 @@ export const Table = styled.table`
   }
 
   tbody th {
-    width: 7rem;
+    width: 11rem;
     color: ${({ theme }) => theme.colors.text.secondary};
     font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
   }
@@ -60,36 +57,11 @@ export const Table = styled.table`
     color: ${({ theme }) => theme.colors.text.primary};
   }
 
-  /* Sticky row-label column: keeps context while the plans scroll
-     horizontally on small screens. Opaque backgrounds required. */
-  thead th:first-child,
-  tbody th {
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    border-right: 1px solid ${({ theme }) => theme.colors.border.default};
-  }
-
-  thead th:first-child {
-    background: ${({ theme }) => theme.colors.background.subtle};
-  }
-
-  tbody th {
-    background: ${({ theme }) => theme.colors.surface.default};
-  }
-
-  /* Desktop: the table fits the section again; plans get the extra room. */
   @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
-    min-width: 0;
-
     th,
     td {
       padding: ${({ theme }) => theme.spacing.md}
         ${({ theme }) => theme.spacing.lg};
-    }
-
-    tbody th {
-      width: 11rem;
     }
   }
 `
@@ -100,6 +72,22 @@ export const List = styled.ul`
   margin: 0;
   padding: 0;
   list-style: none;
+
+  li {
+    position: relative;
+    padding-left: ${({ theme }) => theme.spacing.md};
+
+    &::before {
+      position: absolute;
+      top: 0.5rem;
+      left: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: ${({ theme }) => theme.radii.round};
+      background: ${({ theme }) => theme.colors.text.accent};
+      content: '';
+    }
+  }
 `
 
 // Growth-column highlight for the comparison table only (not a plan-card
@@ -147,4 +135,96 @@ export const Price = styled.span<{ $featured?: boolean }>`
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   color: ${({ $featured, theme }) =>
     $featured ? theme.colors.text.accent : theme.colors.text.primary};
+`
+
+/* Below xl the comparison becomes one plan group per row: the table needs
+   horizontal scrolling otherwise, which hides two plans at a time. */
+export const CompareStack = styled.div`
+  display: grid;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: ${({ theme }) => theme.colors.surface.default};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
+    display: none;
+  }
+`
+
+export const ComparePlan = styled.section<{ $featured?: boolean }>`
+  position: relative;
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.lg};
+
+  & + & {
+    border-top: 1px solid ${({ theme }) => theme.colors.border.default};
+  }
+
+  ${({ $featured }) => $featured && featuredCell}
+
+  ${({ $featured }) =>
+    $featured &&
+    css`
+      && {
+        border-top: 0;
+      }
+    `}
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    gap: ${({ theme }) => theme.spacing.md};
+    padding: ${({ theme }) => theme.spacing.md};
+  }
+`
+
+export const ComparePlanHead = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+
+  h3 {
+    margin: 0;
+    color: ${({ theme }) => theme.colors.text.primary};
+    font-size: ${({ theme }) => theme.typography.fontSizes.xl};
+    font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+    letter-spacing: -0.01em;
+    line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+  }
+`
+
+export const CompareDetails = styled.dl`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin: 0;
+`
+
+export const CompareRow = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.xs};
+
+  dt {
+    margin: 0;
+    color: ${({ theme }) => theme.colors.text.secondary};
+    font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+    font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+    line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+  }
+
+  dd {
+    min-width: 0;
+    margin: 0;
+    color: ${({ theme }) => theme.colors.text.primary};
+    font-size: ${({ theme }) => theme.typography.fontSizes.md};
+    line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.sm}) {
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: ${({ theme }) => theme.spacing.md};
+    align-items: start;
+  }
+`
+
+export const ComparePrice = styled(Price)`
+  font-size: ${({ theme }) => theme.typography.fontSizes.lg};
 `

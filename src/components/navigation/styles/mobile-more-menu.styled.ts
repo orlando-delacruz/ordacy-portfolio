@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 const moreIn = keyframes`
   from {
@@ -37,6 +37,9 @@ export const Dialog = styled.dialog`
   border: 0;
   background: transparent;
   color: ${({ theme }) => theme.colors.text.primary};
+  /* The sheet is translated during the drag; keep the dialog itself from
+     producing a scrollbar while it travels. */
+  overflow: hidden;
 
   &[open] {
     animation: ${moreIn} 200ms ease-out;
@@ -78,7 +81,7 @@ export const Grabber = styled.span`
   cursor: grab;
 `
 
-export const Inner = styled.div`
+export const Inner = styled.div<{ $scrollable: boolean }>`
   max-height: calc(100dvh - ${({ theme }) => theme.spacing['2xl']});
   padding:
     calc(env(safe-area-inset-top) + ${({ theme }) => theme.spacing.md})
@@ -88,6 +91,12 @@ export const Inner = styled.div`
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
+  /* Drag from anywhere on the card; only a genuinely scrollable sheet keeps
+     vertical panning so its links stay reachable. */
+  touch-action: ${({ $scrollable }) => ($scrollable ? 'pan-y' : 'none')};
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 
   &::-webkit-scrollbar {
     display: none;
@@ -95,7 +104,19 @@ export const Inner = styled.div`
   border-radius: ${({ theme }) => theme.radii.lg}
     ${({ theme }) => theme.radii.lg} 0 0;
   background: ${({ theme }) => theme.colors.surface.default};
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
   box-shadow: ${({ theme }) => theme.shadows.lg};
+
+  /* Dark surfaces blend into the backdrop without an edge; a soft hairline
+     keeps the sheet readable. */
+  ${({ theme }) =>
+    theme.mode === 'dark' &&
+    css`
+      border: 1px solid
+        color-mix(in srgb, ${theme.colors.border.default} 80%, transparent);
+      border-bottom: 0;
+    `}
 `
 
 export const Header = styled.div`
@@ -112,6 +133,9 @@ export const Brand = styled.span`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
+  /* Keep the brand artwork from starting a native image drag/selection; the
+     header underneath handles the sheet drag. */
+  pointer-events: none;
 `
 
 export const Section = styled.section`

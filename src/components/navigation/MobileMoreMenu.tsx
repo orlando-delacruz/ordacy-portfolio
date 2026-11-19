@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type {
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
@@ -32,12 +32,26 @@ export function MobileMoreMenu({
   const SHEET_EXIT_MS = 220
 
   const sheetRef = useRef<HTMLDivElement>(null)
+  const [scrollable, setScrollable] = useState(false)
   const dragRef = useRef<{
     pointerId: number
     startY: number
     startT: number
   } | null>(null)
   const exitTimer = useRef<number | null>(null)
+
+  useLayoutEffect(() => {
+    const inner = sheetRef.current
+    if (!inner) return
+
+    const measure = () =>
+      setScrollable(inner.scrollHeight > inner.clientHeight + 1)
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(inner)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(
     () => () => {
@@ -177,20 +191,16 @@ export function MobileMoreMenu({
       onClick={closeOnBackdrop}
       onKeyDown={trapFocus}
     >
-      <S.Inner ref={sheetRef}>
-        <S.Grabber
-          aria-hidden="true"
-          onPointerDown={startSheetDrag}
-          onPointerMove={moveSheetDrag}
-          onPointerUp={endSheetDrag}
-          onPointerCancel={cancelSheetDrag}
-        />
-        <S.Header
-          onPointerDown={startSheetDrag}
-          onPointerMove={moveSheetDrag}
-          onPointerUp={endSheetDrag}
-          onPointerCancel={cancelSheetDrag}
-        >
+      <S.Inner
+        ref={sheetRef}
+        $scrollable={scrollable}
+        onPointerDown={startSheetDrag}
+        onPointerMove={moveSheetDrag}
+        onPointerUp={endSheetDrag}
+        onPointerCancel={cancelSheetDrag}
+      >
+        <S.Grabber aria-hidden="true" />
+        <S.Header>
           <S.Brand>
             <BrandLogo />
             <Wordmark />
