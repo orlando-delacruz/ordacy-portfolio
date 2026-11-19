@@ -96,7 +96,8 @@ const zoomOut = keyframes`
 `
 
 // Image-only viewer: a transparent full-screen dialog over a blurred backdrop.
-// Clicking anywhere outside the image closes it (see Lightbox.tsx).
+// Slim title bar, centred image, optional caption. Clicking outside the image
+// closes it (see Lightbox.tsx).
 export const BareDialog = styled.dialog<{ $closing: boolean }>`
   width: 100vw;
   max-width: none;
@@ -104,13 +105,14 @@ export const BareDialog = styled.dialog<{ $closing: boolean }>`
   height: 100dvh;
   max-height: none;
   margin: 0;
-  padding: ${({ theme }) => theme.spacing['3xl']} ${({ theme }) => theme.spacing.md};
+  padding: 0;
   border: 0;
   background: transparent;
   overflow: hidden;
 
   &[open] {
     display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
   }
 
   &::backdrop {
@@ -129,10 +131,6 @@ export const BareDialog = styled.dialog<{ $closing: boolean }>`
       }
     `}
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding: ${({ theme }) => theme.spacing['3xl']};
-  }
-
   @media (prefers-reduced-motion: reduce) {
     &::backdrop {
       animation: none;
@@ -140,15 +138,60 @@ export const BareDialog = styled.dialog<{ $closing: boolean }>`
   }
 `
 
+export const BareHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.xl};
+  }
+`
+
+export const BareTitle = styled.h2`
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: ${({ theme }) => theme.colors.brand.white};
+  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
+export const BareCaption = styled.p`
+  justify-self: center;
+  max-width: min(90vw, 40rem);
+  margin: 0 ${({ theme }) => theme.spacing.md}
+    ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
+  border: 1px solid rgba(254, 254, 254, 0.16);
+  border-radius: ${({ theme }) => theme.radii.pill};
+  background: rgba(0, 20, 32, 0.55);
+  color: ${({ theme }) => theme.colors.brand.white};
+  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+  text-align: center;
+  text-wrap: balance;
+`
+
 export const BareBody = styled.div`
   display: grid;
   place-items: center;
   min-width: 0;
   min-height: 0;
+  padding: ${({ theme }) => theme.spacing.md};
   animation: ${zoomIn} 260ms cubic-bezier(0.2, 0.9, 0.3, 1.1);
 
   ${BareDialog}[data-closing] & {
     animation: ${zoomOut} ${CLOSE_MS}ms ease-in forwards;
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing.xl};
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -196,14 +239,11 @@ export const CloseButton = styled.button<{ $bare?: boolean }>`
     transform: scale(0.96);
   }
 
-  /* Bare viewer: floats in the viewport corner, light-on-dark over the blur. */
+  /* Bare viewer: light-on-dark control in the slim top bar. */
   ${({ $bare, theme }) =>
     $bare &&
     css`
-      position: fixed;
-      top: ${theme.spacing.md};
-      right: ${theme.spacing.md};
-      z-index: 1;
+      flex-shrink: 0;
       border-color: rgba(254, 254, 254, 0.3);
       background: rgba(254, 254, 254, 0.14);
       color: ${theme.colors.brand.white};

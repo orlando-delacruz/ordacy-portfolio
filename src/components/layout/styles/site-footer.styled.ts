@@ -69,12 +69,12 @@ const revealColumn = css<{ $index: number }>`
 export const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-areas: 'brand brand' 'explore company';
+  grid-template-areas: 'brand brand' 'explore pages';
   gap: ${({ theme }) => theme.spacing.xl};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-areas: 'brand explore company';
+    grid-template-areas: 'brand explore pages';
     column-gap: ${({ theme }) => theme.spacing['2xl']};
   }
 `
@@ -163,13 +163,6 @@ export const LinkLabel = styled.span`
   }
 `
 
-export const LinkPointer = styled.span`
-  display: inline-grid;
-  color: ${({ theme }) => theme.colors.text.accent};
-  opacity: 0;
-  transform: translateX(-0.375rem);
-`
-
 export const FooterLink = styled(Link)`
   display: inline-flex;
   align-items: center;
@@ -181,7 +174,7 @@ export const FooterLink = styled(Link)`
   text-decoration: none;
   transition: color ${({ theme }) => theme.transitions.fast};
 
-  ${LinkIcon}, ${LinkLabel}, ${LinkLabel}::after, ${LinkPointer} {
+  ${LinkIcon}, ${LinkLabel}, ${LinkLabel}::after {
     transition:
       color ${({ theme }) => theme.transitions.base},
       opacity ${({ theme }) => theme.transitions.base},
@@ -207,11 +200,6 @@ export const FooterLink = styled(Link)`
     transform: scaleX(1);
   }
 
-  &:hover ${LinkPointer}, &:focus-visible ${LinkPointer} {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
   &:focus-visible {
     border-radius: ${({ theme }) => theme.radii.sm};
     outline: 2px solid ${({ theme }) => theme.colors.border.focus};
@@ -219,13 +207,12 @@ export const FooterLink = styled(Link)`
   }
 
   @media (prefers-reduced-motion: reduce) {
-    ${LinkIcon}, ${LinkLabel}, ${LinkLabel}::after, ${LinkPointer} {
+    ${LinkIcon}, ${LinkLabel}, ${LinkLabel}::after {
       transition: none;
     }
 
     &:hover ${LinkIcon}, &:focus-visible ${LinkIcon},
-    &:hover ${LinkLabel}, &:focus-visible ${LinkLabel},
-    &:hover ${LinkPointer}, &:focus-visible ${LinkPointer} {
+    &:hover ${LinkLabel}, &:focus-visible ${LinkLabel} {
       transform: none;
     }
   }

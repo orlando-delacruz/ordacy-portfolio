@@ -48,7 +48,7 @@ export const Toast = styled.div<{ $tone: 'success' | 'error' }>`
 
   & > svg {
     flex: none;
-    margin-top: 0.1rem;
+    margin-top: 0.125rem;
     color: ${({ $tone, theme }) =>
       $tone === 'success' ? theme.colors.status.success : theme.colors.danger.text};
   }

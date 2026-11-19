@@ -9,9 +9,56 @@ import { sectionCopy } from '@/data'
 
 const currencies = ['PHP', 'USD'] as const
 
+export type PricingPlansProps = {
+  currency?: Currency
+  onCurrencyChange?: (c: Currency) => void
+  showToggle?: boolean
+}
+
+export function PlanCurrencyToggle({
+  currency,
+  onCurrencyChange
+}: {
+  currency: Currency
+  onCurrencyChange: (c: Currency) => void
+}) {
+  return (
+    <S.Toggle
+      role="group"
+      aria-label="Show prices in"
+      $index={currencies.indexOf(currency)}
+    >
+      {currencies.map((option) => (
+        <S.ToggleOption
+          key={option}
+          type="button"
+          $selected={currency === option}
+          aria-pressed={currency === option}
+          onClick={() => onCurrencyChange(option)}
+        >
+          {/* One icon per option: the currency sign itself. */}
+          <S.CurrencyGlyph aria-hidden="true">
+            {option === 'PHP' ? '₱' : '$'}
+          </S.CurrencyGlyph>
+          {option}
+        </S.ToggleOption>
+      ))}
+    </S.Toggle>
+  )
+}
+
 /** The currency toggle, plan cards and help strip. Shared by the home section and /pricing. */
-export function PricingPlans() {
-  const [currency, setCurrency] = useState<Currency>('PHP')
+export function PricingPlans({
+  currency: controlledCurrency,
+  onCurrencyChange,
+  showToggle = true
+}: PricingPlansProps) {
+  const [internalCurrency, setInternalCurrency] = useState<Currency>('PHP')
+  const currency = controlledCurrency ?? internalCurrency
+  const handleCurrencyChange = (next: Currency) => {
+    if (controlledCurrency === undefined) setInternalCurrency(next)
+    onCurrencyChange?.(next)
+  }
   // Cards rise in one after another the first time the section is seen.
   const [stageRef, revealed] = useRevealOnce<HTMLDivElement>(0.15)
 
@@ -22,36 +69,21 @@ export function PricingPlans() {
         <S.Dots />
       </S.Decor>
 
-      <S.Toolbar>
-        <S.Toggle
-          role="group"
-          aria-label="Show prices in"
-          $index={currencies.indexOf(currency)}
-        >
-          {currencies.map((option) => (
-            <S.ToggleOption
-              key={option}
-              type="button"
-              $selected={currency === option}
-              aria-pressed={currency === option}
-              onClick={() => setCurrency(option)}
-            >
-              {/* One icon per option: the currency sign itself. */}
-              <S.CurrencyGlyph aria-hidden="true">
-                {option === 'PHP' ? '₱' : '$'}
-              </S.CurrencyGlyph>
-              {option}
-            </S.ToggleOption>
-          ))}
-        </S.Toggle>
-      </S.Toolbar>
+      {showToggle && (
+        <S.Toolbar>
+          <PlanCurrencyToggle
+            currency={currency}
+            onCurrencyChange={handleCurrencyChange}
+          />
+        </S.Toolbar>
+      )}
 
       {/* Focusable so keyboard users can scroll the card row on small screens. */}
       <S.Grid role="region" aria-label="Pricing plans" tabIndex={0}>
         {plans.map((plan, planIndex) => {
           const price = plan.prices[currency]
           const featured = plan.id === 'growth'
-          const Button = featured ? S.PrimaryButton : S.SecondaryButton
+          const Button = featured ? S.FeaturedButton : S.PrimaryButton
           const CtaIcon = plan.ctaIcon
           const PlanIcon = plan.icon
 
@@ -59,7 +91,7 @@ export function PricingPlans() {
             <S.Card key={plan.id} $featured={featured} $index={planIndex}>
               <S.CardHeader>
                 <S.PlanIcon>
-                  <PlanIcon size={22} strokeWidth={2} aria-hidden="true" />
+                  <PlanIcon size={24} strokeWidth={2} aria-hidden="true" />
                 </S.PlanIcon>
                 <S.NameRow>
                   <S.PlanName>{plan.name}</S.PlanName>
@@ -85,12 +117,20 @@ export function PricingPlans() {
                 </S.Price>
                 <S.PriceNote>
                   {price
-                    ? `${currency} · final quote after scoping`
-                    : 'Quoted after we review your requirements'}
+                    ? 'Final quote after scoping'
+                    : 'Quoted after our review'}
                 </S.PriceNote>
               </S.PriceBlock>
 
               <S.Positioning>{plan.positioning}</S.Positioning>
+
+              {/* Directly under the description, so the CTAs line up across plans. */}
+              <S.CardAction>
+                <Button to="/contact">
+                  <CtaIcon size={18} strokeWidth={2} aria-hidden="true" />
+                  {plan.cta}
+                </Button>
+              </S.CardAction>
 
               <S.FitList aria-label={`Good fit for ${plan.name}`}>
                 {plan.fits.map((fit, fitIndex) => (
@@ -102,13 +142,6 @@ export function PricingPlans() {
                   </S.FitItem>
                 ))}
               </S.FitList>
-
-              <S.CardAction>
-                <Button to="/contact">
-                  <CtaIcon size={18} strokeWidth={2} aria-hidden="true" />
-                  {plan.cta}
-                </Button>
-              </S.CardAction>
             </S.Card>
           )
         })}
@@ -124,7 +157,7 @@ export function PricingPlans() {
         </div>
         <S.HelpButton to="/contact">
           <Send size={18} strokeWidth={2} aria-hidden="true" />
-          Tell us about your project
+          Contact us
         </S.HelpButton>
       </S.Help>
     </S.Stage>

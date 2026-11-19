@@ -3,14 +3,9 @@ import styled, { css, keyframes } from 'styled-components'
 import { baseStyles } from '@/components/ui/styles/buttons.styled'
 
 /*
- * Motion: the first time the banner is seen (data-revealed, see FinalCta.tsx)
- * the ring eases in, then the "what happens next" steps light up left to right
- * with their pointers. Durations are choreography-specific, so they don't use
- * theme.transitions. Reduced motion shows the final, still state.
+ * Motion: the first time the banner is seen (data-revealed, see CtaBanner.tsx)
+ * the ring eases in. Reduced motion shows the final, still state.
  */
-const STEP_DELAY = 350
-const stepDelay = (index: number, offset = 0) =>
-  `${400 + index * STEP_DELAY + offset}ms`
 
 const navyMix = (amount: number) =>
   css`color-mix(in srgb, ${({ theme }) => theme.colors.brand.navy} ${amount}%, transparent)`
@@ -26,36 +21,13 @@ const shapeIn = keyframes`
   }
 `
 
-const stepIn = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(0.5rem) scale(0.95);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(-2px) scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-`
-
-const pointerIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(-0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-`
-
 // The page's one full-color surface: brand teal with navy ink in both themes.
 export const Banner = styled.section`
   position: relative;
   display: grid;
+  grid-template-areas:
+    'copy'
+    'actions';
   gap: ${({ theme }) => theme.spacing.xl};
   margin-block: ${({ theme }) => theme.spacing['2xl']};
   padding: ${({ theme }) => theme.spacing.xl} ${({ theme }) => theme.spacing.lg};
@@ -71,6 +43,7 @@ export const Banner = styled.section`
 
   @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
     grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'copy actions';
     align-items: end;
     column-gap: ${({ theme }) => theme.spacing['2xl']};
   }
@@ -113,6 +86,7 @@ export const RingLarge = styled.span`
 
 export const Copy = styled.div`
   display: grid;
+  grid-area: copy;
   gap: ${({ theme }) => theme.spacing.md};
   justify-items: start;
 `
@@ -153,74 +127,13 @@ export const Description = styled.p`
   line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
 `
 
-// "What happens next": three pills joined by chevron pointers.
-export const Steps = styled.ol`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  margin: ${({ theme }) => theme.spacing.sm} 0 0;
-  padding: 0;
-  list-style: none;
-`
-
-export const StepItem = styled.li<{ $index: number }>`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => theme.spacing.xs};
-  padding-right: ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${navyMix(18)};
-  border-radius: ${({ theme }) => theme.radii.pill};
-  background: ${navyMix(6)};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
-  white-space: nowrap;
-
-  @media (prefers-reduced-motion: no-preference) {
-    opacity: 0;
-
-    ${Banner}[data-revealed] & {
-      opacity: 1;
-      animation: ${stepIn} 500ms ease-out ${({ $index }) => stepDelay($index)}
-        backwards;
-    }
-  }
-`
-
-export const StepIcon = styled.span`
-  display: grid;
-  place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: ${({ theme }) => theme.radii.round};
-  background: ${({ theme }) => theme.colors.brand.navy};
-  color: ${({ theme }) => theme.colors.brand.white};
-`
-
-// Chevron between steps; slides in just before its step. No looping motion.
-export const Pointer = styled.li<{ $index: number }>`
-  display: grid;
-  place-items: center;
-  color: ${navyMix(70)};
-
-  @media (prefers-reduced-motion: no-preference) {
-    opacity: 0;
-
-    ${Banner}[data-revealed] & {
-      opacity: 1;
-      animation: ${pointerIn} 350ms ease-out
-        ${({ $index }) => stepDelay($index, -180)} backwards;
-    }
-  }
-`
-
 export const Actions = styled.div`
   display: flex;
+  grid-area: actions;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing.sm};
 
-  /* Full-width tap targets on phones; natural width once there is room. */
+  /* Full-width tap targets on phones, natural width once there is room. */
   & > * {
     flex: 1 1 14rem;
   }
@@ -253,11 +166,6 @@ const iconLift = css`
   }
 `
 
-export const ButtonArrow = styled.span`
-  display: inline-grid;
-  transition: transform ${({ theme }) => theme.transitions.base};
-`
-
 export const PrimaryButton = styled(Link)`
   ${baseStyles}
   ${navyFocus}
@@ -269,12 +177,23 @@ export const PrimaryButton = styled(Link)`
   &:hover {
     background: ${({ theme }) =>
       `color-mix(in srgb, ${theme.colors.brand.navy} 86%, ${theme.colors.brand.white})`};
+    color: ${({ theme }) => theme.colors.brand.white};
   }
+`
 
-  @media (prefers-reduced-motion: no-preference) {
-    &:hover ${ButtonArrow} {
-      transform: translateX(3px);
-    }
+// Same primary look for in-page anchors such as the contact form target.
+export const PrimaryAnchor = styled.a`
+  ${baseStyles}
+  ${navyFocus}
+  ${iconLift}
+  border: 1px solid ${({ theme }) => theme.colors.brand.navy};
+  background: ${({ theme }) => theme.colors.brand.navy};
+  color: ${({ theme }) => theme.colors.brand.white};
+
+  &:hover {
+    background: ${({ theme }) =>
+      `color-mix(in srgb, ${theme.colors.brand.navy} 86%, ${theme.colors.brand.white})`};
+    color: ${({ theme }) => theme.colors.brand.white};
   }
 `
 
@@ -289,5 +208,7 @@ export const SecondaryButton = styled(Link)`
   &:hover {
     border-color: ${({ theme }) => theme.colors.brand.navy};
     background: ${navyMix(8)};
+    color: ${({ theme }) => theme.colors.brand.navy};
   }
 `
+

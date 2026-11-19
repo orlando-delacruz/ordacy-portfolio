@@ -14,7 +14,12 @@ export function personJsonLd(member: TeamMember) {
       name: site.name,
       ...(site.siteUrlPending ? {} : { url: site.siteUrl }),
     },
-    knowsAbout: member.skills.length > 0 ? [...member.skills] : undefined,
+    knowsAbout:
+      member.skillGroups && member.skillGroups.length > 0
+        ? member.skillGroups.flatMap((group) => [...group.items])
+        : member.skills.length > 0
+          ? [...member.skills]
+          : undefined,
     alumniOf: member.education.map((entry) => entry.school),
     ...(member.avatar ? { image: member.avatar.src } : {}),
   }

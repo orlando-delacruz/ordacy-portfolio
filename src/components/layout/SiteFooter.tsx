@@ -1,14 +1,9 @@
-import { ArrowUp, Building2, ChevronRight, Compass } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
 import { BrandLogo, Wordmark } from '@/components/navigation/Wordmark'
-import { primaryNavItems, secondaryNavItems } from '@/components/navigation/navigation'
+import { footerGroups } from '@/components/navigation/navigation'
 import { useRevealOnce } from '@/hooks/useRevealOnce'
-import * as S from './styles/site-footer.styled'
 import { site } from '@/data'
-
-const groups = [
-  { title: 'Explore', area: 'explore', icon: Compass, items: primaryNavItems },
-  { title: 'Company', area: 'company', icon: Building2, items: secondaryNavItems },
-] as const
+import * as S from './styles/site-footer.styled'
 
 function scrollToTop() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -21,7 +16,7 @@ export function SiteFooter() {
   const [footerRef, revealed] = useRevealOnce<HTMLElement>(0.15)
 
   return (
-    <S.Footer ref={footerRef} data-revealed={revealed || undefined}>
+    <S.Footer ref={footerRef} data-revealed={revealed || undefined} data-print-hide>
       <S.TopLine aria-hidden="true" />
 
       <S.Grid>
@@ -32,7 +27,7 @@ export function SiteFooter() {
           </S.BrandRow>
           <S.Tagline>{site.footerTagline}</S.Tagline>
         </S.Brand>
-        {groups.map((group, groupIndex) => {
+        {footerGroups.map((group, groupIndex) => {
           const GroupIcon = group.icon
           return (
             <S.NavGroup
@@ -57,9 +52,6 @@ export function SiteFooter() {
                           <Icon size={16} strokeWidth={2} />
                         </S.LinkIcon>
                         <S.LinkLabel>{item.label}</S.LinkLabel>
-                        <S.LinkPointer aria-hidden="true">
-                          <ChevronRight size={14} strokeWidth={2.5} />
-                        </S.LinkPointer>
                       </S.FooterLink>
                     </li>
                   )
@@ -73,7 +65,7 @@ export function SiteFooter() {
       <S.Bottom data-reveal="1">
         <S.Copyright>© {year} Ordacy. All rights reserved.</S.Copyright>
         <S.BackToTop type="button" onClick={scrollToTop}>
-          Back to top
+          Back up
           <S.BackToTopIcon aria-hidden="true">
             <ArrowUp size={16} strokeWidth={2.25} />
           </S.BackToTopIcon>

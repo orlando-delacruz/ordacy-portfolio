@@ -44,6 +44,41 @@ export type SiteRecord = {
 
 export type ContentItem = { title: string; text: string }
 
+/** Copy the About-style mobile layout uses instead of the desktop text. */
+export type PageSectionMobile = {
+  eyebrow: string
+  title: string
+  description: string
+}
+
+export type PageCtaAction = {
+  label: string
+  to: string
+  icon: string
+}
+
+export type PageCta = {
+  eyebrow: string
+  title: string
+  description: string
+  actions: readonly PageCtaAction[]
+}
+
+/** CTA action with its Lucide icon resolved by the data layer. */
+export type CtaAction = {
+  label: string
+  to: string
+  icon: LucideIcon
+}
+
+/** Runtime CTA copy shared by sections and legal documents. */
+export type ClosingCtaData = {
+  eyebrow: string | null
+  title: string
+  description: string | null
+  actions: readonly CtaAction[]
+}
+
 export type PageSectionRecord = {
   id: string
   /** Admin-facing name for the block. */
@@ -51,6 +86,10 @@ export type PageSectionRecord = {
   eyebrow: string | null
   title: string
   description: string | null
+  /** Closing CTA buttons; present only on the section that renders a banner. */
+  actions?: readonly PageCtaAction[] | null
+  /** Optional mobile-only heading copy. */
+  mobile?: PageSectionMobile | null
   items: readonly ContentItem[] | null
 }
 
@@ -74,6 +113,10 @@ export type ProblemRecord = {
   id: string
   icon: string
   title: string
+  /** One-line preview shown in the problem list. */
+  summary: string
+  /** Shorter preview used by the mobile problem list. */
+  mobileSummary: string
   description: string
   /** Titles of the `services` entries that address this problem. */
   solvedBy: readonly string[]
@@ -222,6 +265,8 @@ export type GalleryImageRecord = {
 
 export type TeamAvatar = {
   src: string
+  /** Dark-theme photo; falls back to `src` when absent (older saved records). */
+  darkSrc?: string
   alt: string
 }
 
@@ -250,6 +295,12 @@ export type TeamCertificationRecord = {
   year: string
 }
 
+/** A labelled group of skills; labels are content, so they live in data. */
+export type TeamSkillGroup = {
+  label: string
+  items: readonly string[]
+}
+
 export type TeamMemberRecord = {
   id: string
   slug: string
@@ -264,6 +315,8 @@ export type TeamMemberRecord = {
   /** Optional hero stats. When empty, counts are derived from section content. */
   facts: readonly TeamFact[]
   skills: readonly string[]
+  /** Optional grouped stack; when present it replaces `skills` on the resume. */
+  skillGroups?: readonly TeamSkillGroup[]
   experience: readonly TeamExperienceRecord[]
   education: readonly TeamEducationRecord[]
   certifications: readonly TeamCertificationRecord[]
@@ -315,16 +368,25 @@ export type SeoRecord = PageSeo & { id: string }
 export type LegalSection = {
   id: string
   title: string
+  /** Short 2-word label for the table of contents. */
+  tocLabel: string
   paragraphs: readonly string[]
   items?: readonly string[]
 }
 
-export type LegalDocument = {
+export type LegalDocumentRecord = {
   title: string
   intro: string
+  /** Short 5–6 word hero description; the full intro stays in the body. */
+  heroDescription: string
   /** ISO date (YYYY-MM-DD). */
   updated: string
   sections: readonly LegalSection[]
+  cta: PageCta
+}
+
+export type LegalDocument = Omit<LegalDocumentRecord, 'cta'> & {
+  cta: ClosingCtaData
 }
 
 export type SettingsRecord = {

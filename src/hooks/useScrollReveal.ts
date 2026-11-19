@@ -4,9 +4,12 @@ import { useEffect } from 'react'
  * Marks every [data-reveal] element on the page with data-revealed the first
  * time it scrolls into view. The fade-up itself lives in GlobalStyles.
  * Call once from a page component; it scans the elements present on mount.
+ * Pass a key (e.g. a layout flag) to re-scan after the rendered branch changes.
  */
-export function useScrollReveal() {
+export function useScrollReveal(revealKey: unknown = 0) {
   useEffect(() => {
+    // Referenced so the effect re-runs when the branch changes.
+    void revealKey
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -24,5 +27,5 @@ export function useScrollReveal() {
       .forEach((element) => observer.observe(element))
 
     return () => observer.disconnect()
-  }, [])
+  }, [revealKey])
 }

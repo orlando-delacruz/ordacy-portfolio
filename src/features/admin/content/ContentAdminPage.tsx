@@ -1,7 +1,8 @@
 import { ExternalLink, FileText, PanelBottom, Save } from 'lucide-react'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import type { ContentItem, PageRecord, PageSectionRecord, SiteRecord } from '@/data'
+import type { ContentItem, PageCtaAction, PageRecord, PageSectionRecord, SiteRecord } from '@/data'
+import { iconNames } from '@/data'
 import { pagesService, siteService } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { ErrorState, LoadingState } from '../components/States'
@@ -138,13 +139,15 @@ function PageEditor({ page, onSave }: PageEditorProps) {
           title={section.label}
           fields={{ eyebrow: section.eyebrow, title: section.title, description: section.description }}
           items={section.items}
-          onSave={(values, items) => {
+          actions={section.actions}
+          onSave={(values, items, nextActions) => {
             const next: PageSectionRecord = {
               ...section,
               eyebrow: section.eyebrow === null ? null : (values.eyebrow ?? ''),
               title: values.title ?? section.title,
               description: section.description === null ? null : (values.description ?? ''),
               items: section.items === null ? null : items,
+              actions: section.actions == null ? section.actions : nextActions,
             }
             return onSave(
               { ...page, sections: page.sections.map((s) => (s.id === section.id ? next : s)) },
@@ -164,12 +167,18 @@ type BlockFormProps = {
   title: string
   fields: BlockFields
   items?: readonly ContentItem[] | null
-  onSave: (values: Partial<Record<keyof BlockFields, string>>, items: ContentItem[]) => Promise<boolean>
+  actions?: readonly PageCtaAction[] | null
+  onSave: (
+    values: Partial<Record<keyof BlockFields, string>>,
+    items: ContentItem[],
+    actions?: PageCtaAction[],
+  ) => Promise<boolean>
 }
 
-/** One heading block (eyebrow, title, description, optional list). */
-function BlockForm({ id, title, fields, items, onSave }: BlockFormProps) {
+/** One heading block (eyebrow, title, description, optional list and CTA). */
+function BlockForm({ id, title, fields, items, actions, onSave }: BlockFormProps) {
   const [error, setError] = useState<string | undefined>()
+  const [ctaError, setCtaError] = useState<string | undefined>()
   const [busy, setBusy] = useState(false)
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -179,7 +188,29 @@ function BlockForm({ id, title, fields, items, onSave }: BlockFormProps) {
       setError('Enter a heading.')
       return
     }
+    const nextActions = actions
+      ? [1, 2].map((index) => ({
+          label: text(data, `action${index}Label`),
+          to: text(data, `action${index}To`),
+          icon: text(data, `action${index}Icon`),
+        }))
+      : undefined
+    for (const action of nextActions ?? []) {
+      if (!action.label || !action.to || !action.icon) {
+        setCtaError('Complete both CTA buttons: label, link, and icon.')
+        return
+      }
+      if (!action.to.startsWith('/') && !action.to.startsWith('#')) {
+        setCtaError('CTA links must start with "/" or "#".')
+        return
+      }
+      if (!(iconNames as readonly string[]).includes(action.icon)) {
+        setCtaError('Use a valid Lucide icon name for each CTA button.')
+        return
+      }
+    }
     setError(undefined)
+    setCtaError(undefined)
     setBusy(true)
     await onSave(
       {
@@ -188,6 +219,7 @@ function BlockForm({ id, title, fields, items, onSave }: BlockFormProps) {
         description: text(data, 'description'),
       },
       parseItems(text(data, 'items')),
+      nextActions,
     )
     setBusy(false)
   }
@@ -226,6 +258,54 @@ function BlockForm({ id, title, fields, items, onSave }: BlockFormProps) {
             />
           )}
         </F.Grid>
+        {actions && (
+          <F.Fieldset>
+            <legend>CTA buttons</legend>
+            <F.Grid>
+              <TextField
+                idPrefix={`${id}-action1`}
+                name="action1Label"
+                label="Primary label"
+                defaultValue={actions[0]?.label}
+                error={ctaError}
+              />
+              <TextField
+                idPrefix={`${id}-action1`}
+                name="action1To"
+                label="Primary link"
+                hint="/path or #anchor"
+                defaultValue={actions[0]?.to}
+              />
+              <TextField
+                idPrefix={`${id}-action1`}
+                name="action1Icon"
+                label="Primary icon"
+                hint="Lucide icon name"
+                defaultValue={actions[0]?.icon}
+              />
+              <TextField
+                idPrefix={`${id}-action2`}
+                name="action2Label"
+                label="Secondary label"
+                defaultValue={actions[1]?.label}
+              />
+              <TextField
+                idPrefix={`${id}-action2`}
+                name="action2To"
+                label="Secondary link"
+                hint="/path or #anchor"
+                defaultValue={actions[1]?.to}
+              />
+              <TextField
+                idPrefix={`${id}-action2`}
+                name="action2Icon"
+                label="Secondary icon"
+                hint="Lucide icon name"
+                defaultValue={actions[1]?.icon}
+              />
+            </F.Grid>
+          </F.Fieldset>
+        )}
         <F.Actions>
           <U.PrimaryAction type="submit" disabled={busy}>
             <Save size={16} strokeWidth={2} aria-hidden="true" />

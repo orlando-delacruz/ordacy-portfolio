@@ -32,6 +32,71 @@ export const GlobalStyles = createGlobalStyle`
     min-height: 100vh;
   }
 
+  /*
+   * Single source of truth for the sticky top bar's total height, safe-area
+   * aware. The hero offset, anchor scroll margins and the bar itself all
+   * derive from it, so the 40px rhythm holds whatever the bar measures.
+   */
+  :root {
+    --top-bar-height: calc(env(safe-area-inset-top, 0px) + 3.5rem);
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    :root {
+      --top-bar-height: calc(env(safe-area-inset-top, 0px) + 4rem);
+    }
+  }
+
+  /*
+   * Scrollbars: slim, rounded, and theme-aware. Chromium/Safari get the
+   * custom track and pill thumb; Firefox keeps the standard thin style.
+   */
+  @supports selector(::-webkit-scrollbar) {
+    *::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      border: 3px solid transparent;
+      border-radius: ${({ theme }) => theme.radii.pill};
+      background-color: color-mix(
+        in srgb,
+        ${({ theme }) => theme.colors.text.secondary} 42%,
+        transparent
+      );
+      background-clip: content-box;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background-color: color-mix(
+        in srgb,
+        ${({ theme }) => theme.colors.text.secondary} 68%,
+        transparent
+      );
+    }
+
+    *::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+  }
+
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-color: color-mix(
+          in srgb,
+          ${({ theme }) => theme.colors.text.secondary} 42%,
+          transparent
+        )
+        transparent;
+      scrollbar-width: thin;
+    }
+  }
+
   h1,
   h2,
   h3,
@@ -90,9 +155,9 @@ export const GlobalStyles = createGlobalStyle`
     outline-offset: 3px;
   }
 
-  /* Anchor targets clear the sticky top bars instead of hiding beneath them. */
+  /* Anchor targets clear the sticky top bar plus a little air. */
   [id] {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: calc(var(--top-bar-height) + 1rem);
   }
 
   /*
@@ -141,6 +206,25 @@ export const GlobalStyles = createGlobalStyle`
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+
+  /* Print: the document only. Shell, hero, CTA, and footer carry
+     data-print-hide. */
+  @media print {
+    html,
+    body {
+      background: #fff;
+      color: #000;
+    }
+
+    [data-print-hide] {
+      display: none !important;
+    }
+
+    #main-content > div {
+      max-width: none;
+      padding: 0;
     }
   }
 `

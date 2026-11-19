@@ -46,7 +46,7 @@
   {
     "id": "how-much-does-a-project-cost",
     "icon": "Wallet",
-    "category": "Pricing and payment",
+    "category": "Pricing",
     "question": "How much does a project cost?",
     "answer": "Project pricing depends on the type of solution, features, complexity, and overall scope. Our pricing section provides starting prices, while custom requirements are quoted individually.",
     "featured": true,
@@ -57,7 +57,7 @@
   {
     "id": "are-starting-prices-final",
     "icon": "FileText",
-    "category": "Pricing and payment",
+    "category": "Pricing",
     "question": "Are the starting prices final?",
     "answer": "No. Starting prices are estimates for typical projects. The final price depends on your requirements and scope, and is confirmed in the proposal before any work begins.",
     "featured": false,
@@ -68,7 +68,7 @@
   {
     "id": "what-are-your-payment-terms",
     "icon": "Wallet",
-    "category": "Pricing and payment",
+    "category": "Pricing",
     "question": "What are your payment terms?",
     "answer": "Our standard terms are 50% upfront and 50% before final handover. Larger projects may follow a different payment schedule, agreed in writing.",
     "featured": false,
@@ -79,7 +79,7 @@
   {
     "id": "how-long-does-development-take",
     "icon": "Clock",
-    "category": "Process and timeline",
+    "category": "Process",
     "question": "How long does development take?",
     "answer": "Development time depends on project requirements, complexity, and scope. We provide an estimated timeline during the proposal stage and confirm it for each project.",
     "featured": true,
@@ -90,7 +90,7 @@
   {
     "id": "what-happens-in-discovery-and-proposal",
     "icon": "Search",
-    "category": "Process and timeline",
+    "category": "Process",
     "question": "What happens during discovery and the proposal?",
     "answer": "In discovery we learn about your business, processes, challenges, and goals. We then prepare a proposal defining the solution, scope, timeline, and investment for your review.",
     "featured": false,
@@ -101,7 +101,7 @@
   {
     "id": "how-are-revisions-handled",
     "icon": "ClipboardList",
-    "category": "Process and timeline",
+    "category": "Process",
     "question": "How are changes and revisions handled?",
     "answer": "Adjustments within the agreed scope are handled during design and development. Requests outside the agreed scope, such as new features, are discussed with you and scoped and quoted separately.",
     "featured": false,
@@ -112,7 +112,7 @@
   {
     "id": "how-do-we-communicate",
     "icon": "MessagesSquare",
-    "category": "Process and timeline",
+    "category": "Process",
     "question": "How will we communicate during the project?",
     "answer": "Communication channels and how often you receive progress updates are agreed at the start of each project, so you always know where things stand at each stage.",
     "featured": false,
@@ -123,7 +123,7 @@
   {
     "id": "who-owns-the-completed-project",
     "icon": "KeyRound",
-    "category": "Ownership and hosting",
+    "category": "Ownership",
     "question": "Who owns the completed project?",
     "answer": "Ownership of agreed custom deliverables is transferred to the client after full payment, subject to the agreed terms and applicable third-party licenses.",
     "featured": false,
@@ -134,7 +134,7 @@
   {
     "id": "do-we-receive-the-source-code",
     "icon": "Code",
-    "category": "Ownership and hosting",
+    "category": "Ownership",
     "question": "Do we receive the source code?",
     "answer": "Source code delivery is specified in your project agreement. Pre-existing and third-party components keep their original licensing.",
     "featured": false,
@@ -145,7 +145,7 @@
   {
     "id": "who-handles-hosting-and-deployment",
     "icon": "Globe",
-    "category": "Ownership and hosting",
+    "category": "Ownership",
     "question": "Who handles hosting and deployment?",
     "answer": "We recommend that your hosting, domain, and related accounts are owned by you, and we help with setup and deployment. Recurring service costs are paid by the client unless agreed otherwise.",
     "featured": false,
@@ -178,7 +178,7 @@
   {
     "id": "do-you-work-with-international-clients",
     "icon": "Globe",
-    "category": "Getting started",
+    "category": "Basics",
     "question": "Do you work with international clients?",
     "answer": "Yes. Ordacy works with both Philippine and international clients, and prices are available in PHP and USD.",
     "featured": false,
@@ -189,7 +189,7 @@
   {
     "id": "how-do-we-start-a-project",
     "icon": "Rocket",
-    "category": "Getting started",
+    "category": "Basics",
     "question": "How do we start a project?",
     "answer": "You can submit your project details through our contact form. We will use the information to understand your requirements and discuss the next steps.",
     "featured": true,

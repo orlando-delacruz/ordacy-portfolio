@@ -25,11 +25,13 @@ import { resolveIcon } from './icons'
 import { readStored } from './storage'
 import type {
   AdminNavGroup,
+  ClosingCtaData,
   Faq,
   FaqRecord,
   GalleryImageRecord,
   InquiryRecord,
   LegalDocument,
+  LegalDocumentRecord,
   PageRecord,
   PageSeo,
   Plan,
@@ -55,6 +57,44 @@ export { iconNames, resolveIcon } from './icons'
 export { readStored, STORAGE_PREFIX } from './storage'
 
 type SeoKey = keyof typeof seoJson
+
+/**
+ * Stored pages can predate sections added to the JSON seed. Keep every saved
+ * edit, but append any seed section the stored page does not have yet, so new
+ * content blocks appear without wiping browser-local edits.
+ */
+export function mergePageSections(
+  seedPages: readonly PageRecord[],
+  storedPages: readonly PageRecord[],
+): PageRecord[] {
+  const storedById = new Map(storedPages.map((page) => [page.id, page]))
+  return seedPages.map((seedPage) => {
+    const storedPage = storedById.get(seedPage.id)
+    if (!storedPage) return seedPage
+    const storedIds = new Set(storedPage.sections.map((section) => section.id))
+    const seedSections = new Map(
+      seedPage.sections.map((section) => [section.id, section]),
+    )
+    return {
+      ...storedPage,
+      header: storedPage.header ?? seedPage.header,
+      sections: [
+        ...storedPage.sections.map((section) => {
+          const seedSection = seedSections.get(section.id)
+          // Saved pages predate the mobile copy and CTA actions; fill them
+          // without losing edits.
+          const mobile = section.mobile ?? seedSection?.mobile
+          const actions = section.actions ?? seedSection?.actions
+          if (mobile === section.mobile && actions === section.actions) {
+            return section
+          }
+          return { ...section, mobile, actions }
+        }),
+        ...seedPage.sections.filter((section) => !storedIds.has(section.id)),
+      ],
+    }
+  })
+}
 
 /** Raw stored records: the seed for the admin data layer. */
 export const seed = {
@@ -82,6 +122,7 @@ export const seed = {
  */
 const storedSeo = readStored<(PageSeo & { id: string })[] | null>('seo', null)
 const storedSite = readStored('site', seed.site)
+const storedPages = readStored('pages', seed.pages)
 const current = {
   // Older saved edits may lack newer fields; fill them from the seed.
   site: {
@@ -92,7 +133,7 @@ const current = {
       ...(storedSite.profileStats ?? {}),
     },
   },
-  pages: readStored('pages', seed.pages),
+  pages: mergePageSections(seed.pages, storedPages),
   services: readStored('services', seed.services),
   plans: readStored('plans', seed.plans),
   faqs: readStored('faqs', seed.faqs),
@@ -118,7 +159,26 @@ const published = <T extends { isPublished: boolean }>(items: readonly T[]) =>
 
 export const site = current.site
 
-export const legal: Record<'privacy' | 'terms', LegalDocument> = legalJson
+const withLegalCta = (document: LegalDocumentRecord): LegalDocument => ({
+  ...document,
+  cta: {
+    ...document.cta,
+    actions: document.cta.actions.map((action) => ({
+      ...action,
+      icon: resolveIcon(action.icon),
+    })),
+  },
+})
+
+const legalSeed = legalJson as {
+  privacy: LegalDocumentRecord
+  terms: LegalDocumentRecord
+}
+
+export const legal: Record<'privacy' | 'terms', LegalDocument> = {
+  privacy: withLegalCta(legalSeed.privacy),
+  terms: withLegalCta(legalSeed.terms),
+}
 
 export const seo: Record<SeoKey, PageSeo> = current.seo
 
@@ -144,6 +204,23 @@ export function getSection(pageId: string, sectionId: string) {
 export function sectionCopy(pageId: string, sectionId: string) {
   const { title, description } = getSection(pageId, sectionId)
   return { title, description: description ?? undefined }
+}
+
+/** A closing CTA record with its action icons resolved. */
+export function closingCta(
+  pageId: string,
+  sectionId: string,
+): ClosingCtaData {
+  const section = getSection(pageId, sectionId)
+  return {
+    eyebrow: section.eyebrow,
+    title: section.title,
+    description: section.description,
+    actions: (section.actions ?? []).map((action) => ({
+      ...action,
+      icon: resolveIcon(action.icon),
+    })),
+  }
 }
 
 /** A page's `PageHeader` copy. */

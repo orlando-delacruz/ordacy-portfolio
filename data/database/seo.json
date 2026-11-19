@@ -59,6 +59,16 @@
     "ogImage": null,
     "noindex": false
   },
+  "faqs": {
+    "path": "/faqs",
+    "title": "FAQs | Ordacy",
+    "description": "Answers about how Ordacy works, what projects cost, timelines, ownership, hosting, support, and starting a project.",
+    "canonical": null,
+    "ogTitle": null,
+    "ogDescription": null,
+    "ogImage": null,
+    "noindex": false
+  },
   "privacy": {
     "path": "/privacy-policy",
     "title": "Privacy Policy | Ordacy",

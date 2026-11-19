@@ -38,7 +38,7 @@ export const Fieldset = styled.fieldset`
 export const Field = styled.div`
   display: grid;
   align-content: start;
-  gap: 0.375rem;
+  gap: ${({ theme }) => theme.spacing.sm};
   min-width: 0;
 `
 
@@ -147,8 +147,8 @@ export const Switch = styled.label`
       position: absolute;
       top: 2px;
       left: 2px;
-      width: 1.125rem;
-      height: 1.125rem;
+      width: 1.25rem;
+      height: 1.25rem;
       border-radius: ${({ theme }) => theme.radii.round};
       background: ${({ theme }) => theme.colors.text.secondary};
       content: '';

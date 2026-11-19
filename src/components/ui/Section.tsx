@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { SectionHead } from './SectionHead'
 import * as S from './styles/section.styled'
 
 type SectionProps = {
@@ -17,18 +18,16 @@ export function Section({
   children,
 }: SectionProps) {
   return (
-    <S.Wrapper id={id} aria-labelledby={id ? `${id}-title` : undefined}>
-      <S.Header $withAction={headerAction !== undefined}>
-        <S.HeaderText>
-          <S.Title id={id ? `${id}-title` : undefined} data-reveal="">
-            {title}
-          </S.Title>
-          {description && (
-            <S.Description data-reveal="1">{description}</S.Description>
-          )}
-        </S.HeaderText>
-        {headerAction && <div data-reveal="1">{headerAction}</div>}
-      </S.Header>
+    <S.Wrapper
+      id={id}
+      aria-labelledby={id ? `${id}-title` : undefined}
+    >
+      <SectionHead
+        id={id}
+        title={title}
+        description={description}
+        action={headerAction}
+      />
       {/* Content follows the heading in (scroll reveal, see GlobalStyles). */}
       <div data-reveal="2">{children}</div>
     </S.Wrapper>

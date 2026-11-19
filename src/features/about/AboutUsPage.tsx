@@ -1,95 +1,241 @@
-import { LayoutGrid, MessagesSquare } from 'lucide-react'
-import { PageHeader } from '@/components/common/PageHeader'
-import { ContentItems } from '@/components/ui/ContentItems'
-import { Section } from '@/components/ui/Section'
-import { SecondaryButton } from '@/components/ui/styles/buttons.styled'
-import {
-  getSection,
-  pageHeader,
-  problems,
-  sectionCopy,
-  seo,
-  site,
-  steps,
-} from '@/data'
+import { Info, Layers, Rocket } from 'lucide-react'
+import { useState } from 'react'
+import { useTheme } from 'styled-components'
+import { ClosingCta } from '@/components/ui/ClosingCta'
+import { PageHero } from '@/components/ui/PageHero'
+import { SectionHead } from '@/components/ui/SectionHead'
+import * as Hero from '@/components/ui/styles/page-hero.styled'
+import { closingCta, getSection, pageHeader, seo, services, steps } from '@/data'
+import type { PageSectionRecord } from '@/data'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { usePageMeta } from '@/hooks/usePageMeta'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { AddressExplorer } from './AddressExplorer'
+import { MobileServices } from './MobileServices'
+import { MobileSystems } from './MobileSystems'
 import { ServiceExplorer } from './ServiceExplorer'
+import {
+  Audience,
+  Expectations,
+  Principles,
+  ProcessPath,
+} from './about-sections'
 import * as S from './styles/about.styled'
 
-const items = (id: string) => getSection('about', id).items
+const header = pageHeader('about')
+const purpose = getSection('about', 'what-we-do')
+const address = getSection('about', 'services')
+const build = getSection('about', 'offerings')
+const approach = getSection('about', 'approach')
+const process = getSection('about', 'how-we-work')
+const who = getSection('about', 'who-we-help')
+const expectations = getSection('about', 'expectations')
+const closing = closingCta('about', 'work-with-us')
+
+// The H1's second line renders in teal; everything before it stays white.
+const ACCENT_PHRASE = 'Grow Further.'
+
+// Two paragraphs are stored in one description, separated by a blank line.
+const purposeParagraphs = (purpose.description ?? '')
+  .split('\n\n')
+  .filter(Boolean)
+
+type SectionText = {
+  title: string
+  description: string
+}
+
+/** Desktop keeps the stored copy; mobile uses its optional variants. */
+function sectionText(
+  section: PageSectionRecord,
+  isDesktop: boolean,
+): SectionText {
+  if (isDesktop) {
+    return {
+      title: section.title,
+      description: section.description ?? '',
+    }
+  }
+  return {
+    title: section.mobile?.title ?? section.title,
+    description: section.mobile?.description ?? section.description ?? '',
+  }
+}
 
 export function AboutUsPage() {
   usePageMeta(seo.about)
-  useScrollReveal()
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.lg})`)
+  useScrollReveal(isDesktop)
+
+  const [serviceId, setServiceId] = useState(services[0]?.id ?? '')
+
+  // "How Ordacy helps" links pick the service and move the reader to it.
+  const openService = (id: string) => {
+    setServiceId(id)
+    document
+      .getElementById('services')
+      ?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' })
+    const desktopTab = document.getElementById(`service-tab-${id}`)
+    if (desktopTab) {
+      desktopTab.focus({ preventScroll: true })
+      return
+    }
+    // Mobile has no service tabs; move focus to the section heading instead.
+    document.getElementById('services-title')?.focus({ preventScroll: true })
+  }
+
+  const purposeText = sectionText(purpose, isDesktop)
+  const buildText = sectionText(build, isDesktop)
+  const approachText = sectionText(approach, isDesktop)
+  const processText = sectionText(process, isDesktop)
+  const whoText = sectionText(who, isDesktop)
+  const expectationsText = sectionText(expectations, isDesktop)
 
   return (
-    <>
-      <PageHeader {...pageHeader('about')} />
+    <S.Page>
+      <PageHero
+        titleId="about-title"
+        eyebrow={header.eyebrow}
+        badgeIcon={Info}
+        title={header.title}
+        accent={ACCENT_PHRASE}
+        description={header.description}
+        actions={
+          <>
+            <Hero.PrimaryButton to="/contact">
+              <Rocket size={18} strokeWidth={2} aria-hidden="true" />
+              Get started
+            </Hero.PrimaryButton>
+            <Hero.GhostButton to="/about-us#services">
+              <Layers size={18} strokeWidth={2} aria-hidden="true" />
+              View services
+            </Hero.GhostButton>
+          </>
+        }
+      />
 
-      <Section id="what-we-do" {...sectionCopy('about', 'what-we-do')}>
-        <S.Lead>{site.description}</S.Lead>
-      </Section>
+      <S.Block id="what-we-do" aria-labelledby="what-we-do-title">
+        <SectionHead
+          id="what-we-do"
+          title={purposeText.title}
+          description={
+            isDesktop ? purposeParagraphs[0] : purposeText.description
+          }
+        />
+        {isDesktop ? (
+          purposeParagraphs.length > 1 && (
+            <S.WhyCopy data-reveal="1">
+              {purposeParagraphs.slice(1).map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </S.WhyCopy>
+          )
+        ) : (
+          <div data-reveal="1">
+            <MobileSystems onSelectService={openService} />
+          </div>
+        )}
+      </S.Block>
 
-      <Section id="problems" {...sectionCopy('about', 'problems')}>
-        <S.Services>
-          {problems.map((problem) => {
-            const Icon = problem.icon
-            return (
-              <S.Service key={problem.id}>
-                <Icon size={22} strokeWidth={2} aria-hidden="true" />
-                <div>
-                  <h3>{problem.title}</h3>
-                  <p>{problem.description}</p>
-                  <S.SolvedBy>Addressed by: {problem.solvedBy.join(', ')}</S.SolvedBy>
-                </div>
-              </S.Service>
-            )
-          })}
-        </S.Services>
-      </Section>
+      {isDesktop && (
+        <S.Block id="what-we-address" aria-labelledby="what-we-address-title">
+          <SectionHead
+            id="what-we-address"
+            title={address.title}
+            description={address.description ?? undefined}
+          />
+          <div data-reveal="1">
+            <AddressExplorer onSelectService={openService} />
+          </div>
+        </S.Block>
+      )}
 
-      <Section id="offerings" {...sectionCopy('about', 'offerings')}>
-        <ServiceExplorer />
-      </Section>
+      {/* `services` is the id Home and Projects link to. */}
+      <S.Block id="services" aria-labelledby="services-title">
+        <SectionHead
+          id="services"
+          title={isDesktop ? build.title : buildText.title}
+          description={
+            (isDesktop ? build.description : buildText.description) ??
+            undefined
+          }
+        />
+        <div data-reveal="1">
+          {isDesktop ? (
+            <ServiceExplorer activeId={serviceId} onSelect={setServiceId} />
+          ) : (
+            <MobileServices activeId={serviceId} onSelect={setServiceId} />
+          )}
+        </div>
+      </S.Block>
 
-      <Section id="approach" {...sectionCopy('about', 'approach')}>
-        <ContentItems items={items('approach')} variant="numbered" />
-      </Section>
+      <S.Block id="approach" aria-labelledby="approach-title">
+        <SectionHead
+          id="approach"
+          title={isDesktop ? approach.title : approachText.title}
+          description={
+            (isDesktop ? approach.description : approachText.description) ??
+            undefined
+          }
+        />
+        <div data-reveal="1">
+          <Principles items={approach.items ?? []} />
+        </div>
+      </S.Block>
 
-      <Section id="how-we-work" {...sectionCopy('about', 'how-we-work')}>
-        <S.Timeline>
-          {steps.map((step) => (
-            <S.TimelineItem key={step.id}>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
-              </div>
-            </S.TimelineItem>
-          ))}
-        </S.Timeline>
-      </Section>
+      <S.Block id="how-we-work" aria-labelledby="how-we-work-title">
+        <SectionHead
+          id="how-we-work"
+          title={isDesktop ? process.title : processText.title}
+          description={
+            (isDesktop ? process.description : processText.description) ??
+            undefined
+          }
+        />
+        <div data-reveal="1">
+          <ProcessPath steps={steps} />
+        </div>
+      </S.Block>
 
-      <Section id="who-we-help" {...sectionCopy('about', 'who-we-help')}>
-        <ContentItems items={items('who-we-help')} variant="ruled" />
-      </Section>
+      <S.Block id="who-we-help" aria-labelledby="who-we-help-title">
+        <SectionHead
+          id="who-we-help"
+          title={isDesktop ? who.title : whoText.title}
+          description={
+            (isDesktop ? who.description : whoText.description) ?? undefined
+          }
+        />
+        <div data-reveal="1">
+          <Audience items={who.items ?? []} />
+        </div>
+      </S.Block>
 
-      <Section id="expectations" {...sectionCopy('about', 'expectations')}>
-        <ContentItems items={items('expectations')} variant="checklist" />
-      </Section>
+      <S.Block id="expectations" aria-labelledby="expectations-title">
+        <SectionHead
+          id="expectations"
+          title={isDesktop ? expectations.title : expectationsText.title}
+          description={
+            (isDesktop
+              ? expectations.description
+              : expectationsText.description) ?? undefined
+          }
+        />
+        <div data-reveal="1">
+          <Expectations items={expectations.items ?? []} />
+        </div>
+      </S.Block>
 
-      <Section id="work-with-us" {...sectionCopy('about', 'work-with-us')}>
-        <S.Closing>
-          <S.PrimaryButton to="/contact">
-            <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
-            Start a project
-          </S.PrimaryButton>
-          <SecondaryButton to="/pricing">
-            <LayoutGrid size={18} strokeWidth={2} aria-hidden="true" />
-            See pricing
-          </SecondaryButton>
-        </S.Closing>
-      </Section>
-    </>
+      <ClosingCta
+        id="work-with-us"
+        titleId="work-with-us-title"
+        {...closing}
+      />
+    </S.Page>
   )
+}
+
+/** Smooth scrolling only when the visitor allows motion. */
+function reduceMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }

@@ -11,8 +11,10 @@ type LightboxProps = {
   returnFocusTo: HTMLButtonElement | null
   children: ReactNode
   closeLabel?: string
-  /** Image-only view: no card or visible title, just the content and a floating close button. */
+  /** Image-only view: no card, just the image with a slim bar and caption. */
   bare?: boolean
+  /** Optional visible description, announced to screen readers. */
+  caption?: string
   /** Dialog width: md (default) for content, sm for confirmations. */
   size?: 'md' | 'sm'
 }
@@ -24,6 +26,7 @@ export function Lightbox({
   children,
   closeLabel = 'Close image viewer',
   bare = false,
+  caption,
   size = 'md',
 }: LightboxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -120,15 +123,22 @@ export function Lightbox({
     return createPortal(
       <S.BareDialog
         ref={dialogRef}
-        aria-label={title}
+        aria-labelledby="lightbox-bare-title"
+        aria-describedby={caption ? 'lightbox-bare-caption' : undefined}
         $closing={closing}
         data-closing={closing || undefined}
         onClose={onClose}
         onClick={handleBackdropClick}
         onKeyDown={trapFocus}
       >
-        {closeButton}
+        <S.BareHeader>
+          <S.BareTitle id="lightbox-bare-title">{title}</S.BareTitle>
+          {closeButton}
+        </S.BareHeader>
         <S.BareBody onClick={handleBackdropClick}>{children}</S.BareBody>
+        {caption && (
+          <S.BareCaption id="lightbox-bare-caption">{caption}</S.BareCaption>
+        )}
       </S.BareDialog>,
       document.body,
     )

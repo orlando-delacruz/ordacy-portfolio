@@ -19,8 +19,8 @@ export const typography = {
     extrabold: 800,
   },
   lineHeights: {
-    tight: 1.15,
+    tight: 1.5,
     normal: 1.5,
-    relaxed: 1.7,
+    relaxed: 1.5,
   },
 } as const

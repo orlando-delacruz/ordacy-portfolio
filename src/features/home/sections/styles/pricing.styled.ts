@@ -1,10 +1,7 @@
 import styled, { css, keyframes } from 'styled-components'
 import { PrimaryButton } from '@/components/ui/styles/buttons.styled'
 
-export {
-  PrimaryButton,
-  SecondaryButton,
-} from '@/components/ui/styles/buttons.styled'
+export { PrimaryButton } from '@/components/ui/styles/buttons.styled'
 
 /*
  * Motion: the first time the section is seen (data-revealed on Stage, see
@@ -74,6 +71,16 @@ const glowPulse = keyframes`
   50% {
     opacity: 0.85;
     transform: translate(-50%, -50%) scale(1.08);
+  }
+`
+
+// Featured CTA halo: opacity only, so the keyframe needs no theme values.
+const buttonGlowPulse = keyframes`
+  0%, 100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
   }
 `
 
@@ -238,11 +245,15 @@ export const CurrencyGlyph = styled.span`
 
 /* ---------- Cards ---------- */
 
-// Below lg: a swipeable row with snap points; the next card peeks in to hint at scrolling.
+// Below lg: a fixed-width, swipeable card row with snap points. The fixed
+// widths guarantee horizontal scrolling even on the smallest screens, and the
+// next card stays partly visible as a scroll cue. lg+: a 3-column grid with
+// shared subgrid rows so prices and CTAs line up.
 export const Grid = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing.md};
   margin-top: ${({ theme }) => theme.spacing.lg};
+  /* Vertical room for the featured card's lift and shadow. */
   padding-block: ${({ theme }) => theme.spacing.lg};
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -260,17 +271,33 @@ export const Grid = styled.div`
   }
 
   & > * {
-    flex: 0 0 min(85%, 22rem);
+    flex: 0 0 15rem;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.sm}) {
+    & > * {
+      flex-basis: 18rem;
+    }
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    & > * {
+      flex-basis: 20rem;
+    }
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     padding-block: 0;
     overflow: visible;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: ${({ theme }) => theme.spacing.lg};
-    row-gap: 0;
+    scroll-snap-type: none;
+
+    & > * {
+      flex: initial;
+    }
   }
 `
 
@@ -376,6 +403,7 @@ export const Card = styled.article<{ $featured: boolean; $index: number }>`
     display: grid;
     grid-row: span 5;
     grid-template-rows: subgrid;
+    grid-template-columns: minmax(0, 1fr);
     row-gap: ${({ theme }) => theme.spacing.lg};
     padding: ${({ theme }) => theme.spacing.xl};
     transform: ${({ $featured, theme }) =>
@@ -513,8 +541,8 @@ export const FitIcon = styled.span`
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: ${({ theme }) => theme.radii.round};
   background: ${({ theme }) => theme.colors.text.accent};
   color: ${({ theme }) => theme.colors.text.inverse};
@@ -543,6 +571,53 @@ export const CardAction = styled.div`
 
   & > a {
     width: 100%;
+    /* Tighter side padding keeps long labels on one line in narrow cards. */
+    padding-inline: ${({ theme }) => theme.spacing.md};
+    /* If a card is still too narrow, wrap instead of spilling out. */
+    white-space: normal;
+    text-align: center;
+  }
+`
+
+// Growth's CTA stays primary but reads as the strongest action in the row.
+export const FeaturedButton = styled(PrimaryButton)`
+  position: relative;
+  isolation: isolate;
+  box-shadow:
+    0 0 0 2px ${({ theme }) => theme.colors.text.accent},
+    0 10px 24px
+      color-mix(in srgb, ${({ theme }) => theme.colors.text.accent} 30%, transparent);
+
+  &::after {
+    position: absolute;
+    inset: -4px;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: 0 0 20px
+      color-mix(in srgb, ${({ theme }) => theme.colors.text.accent} 55%, transparent);
+    opacity: 0.55;
+    content: '';
+    pointer-events: none;
+
+    ${noMotionPref} {
+      animation: ${buttonGlowPulse} 3.6s ease-in-out infinite;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 2px ${({ theme }) => theme.colors.text.accent},
+        0 14px 30px
+          color-mix(in srgb, ${({ theme }) => theme.colors.text.accent} 38%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
   }
 `
 
@@ -603,7 +678,8 @@ export const HelpText = styled.p`
   font-size: ${({ theme }) => theme.typography.fontSizes.sm};
 `
 
-// The paper plane takes off on hover.
+// Help CTA stays PrimaryButton teal per project mandate (the reference mock
+// shows navy, but all pricing CTAs are primary teal). The paper plane takes off on hover.
 export const HelpButton = styled(PrimaryButton)`
   svg {
     transition: transform ${({ theme }) => theme.transitions.base};

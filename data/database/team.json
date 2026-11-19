@@ -3,117 +3,148 @@
     "id": "orlando-dela-cruz",
     "slug": "orlando-dela-cruz",
     "name": "Orlando Dela Cruz",
-    "role": "Founder and Software Engineer",
+    "role": "Digital Solutions Developer",
     "initials": "OD",
-    "avatar": null,
-    "headline": "Founder and Software Engineer building custom business systems, websites, and dashboards.",
-    "summary": "Orlando founded Ordacy to replace scattered spreadsheets and chat threads with systems that fit. He plans each build around the client's process, then designs, develops, and hands over software the team can use every day.",
+    "avatar": {
+      "src": "/images/team/orlando-dela-cruz.jpg",
+      "darkSrc": "/images/team/orlando-dela-cruz-dark.jpg",
+      "alt": "Orlando Dela Cruz, Digital Solutions Developer"
+    },
+    "headline": "Digital solutions developer for growing businesses.",
+    "summary": "Orlando builds websites and digital solutions for growing businesses. He started Ordacy in 2025 and handles projects from requirements through deployment.",
     "facts": [
-      { "label": "Role", "value": "Founder" },
-      { "label": "Focus", "value": "Full-stack builds" },
+      { "label": "Focus", "value": "Automation" },
+      { "label": "Since", "value": "2025" },
       { "label": "Base", "value": "Philippines" }
     ],
-    "skills": [
-      "TypeScript",
-      "React",
-      "Node.js",
-      "REST API design",
-      "PostgreSQL",
-      "System design",
-      "Responsive UI implementation",
-      "Deployment and maintenance"
+    "skills": [],
+    "skillGroups": [
+      {
+        "label": "Frontend",
+        "items": [
+          "React",
+          "Next.js",
+          "TypeScript",
+          "JavaScript",
+          "Astro",
+          "React Router",
+          "Tailwind CSS",
+          "styled-components",
+          "Ant Design",
+          "Zustand",
+          "TanStack Query",
+          "React Hook Form",
+          "Framer Motion",
+          "GSAP"
+        ]
+      },
+      {
+        "label": "Backend and data",
+        "items": [
+          "Node.js",
+          "Laravel",
+          "Supabase",
+          "PostgreSQL",
+          "MySQL",
+          "MongoDB",
+          "GraphQL",
+          "REST APIs",
+          "zod"
+        ]
+      },
+      {
+        "label": "Platforms and delivery",
+        "items": [
+          "Vite",
+          "Vercel",
+          "AWS S3",
+          "Cloudflare Turnstile",
+          "Progressive Web Apps",
+          "Git",
+          "Turborepo"
+        ]
+      },
+      {
+        "label": "Craft",
+        "items": [
+          "Accessibility (WCAG)",
+          "Performance optimization",
+          "Responsive design",
+          "Testing (Vitest, Playwright)"
+        ]
+      }
     ],
     "experience": [
       {
-        "role": "Founder and Software Engineer",
+        "role": "Digital Solutions Developer",
         "organization": "Ordacy",
-        "period": "2023 — Present",
-        "summary": "Leads discovery, scoping, and delivery of business systems, booking tools, dashboards, and websites for startups and growing businesses."
+        "period": "Jan 2025 — Present",
+        "summary": "Builds websites and digital solutions for growing businesses, from requirements through deployment."
       },
       {
-        "role": "Freelance Web Developer",
-        "organization": "Independent",
-        "period": "2021 — 2023",
-        "summary": "Built marketing websites, admin dashboards, and internal tools for small businesses, from requirements to deployment and handover."
+        "role": "Full Stack App Developer",
+        "organization": "AFHomes Group of Companies",
+        "period": "Aug 2026 — Present",
+        "summary": ""
       },
       {
-        "role": "IT Support Specialist",
-        "organization": "Metro Manila service firm",
-        "period": "2019 — 2021",
-        "summary": "Maintained office systems and supported daily operations, learning how workflows break when tools do not fit."
+        "role": "Web Development Intern",
+        "organization": "Monte Carlo Technologies",
+        "period": "Feb 2025 — May 2025",
+        "summary": "Built responsive interfaces and Laravel/MySQL features for international client websites, and designed wireframes in Figma."
       }
     ],
     "education": [
       {
-        "credential": "BS Computer Science",
-        "school": "Polytechnic University of the Philippines",
-        "period": "2015 — 2019",
-        "details": "Software engineering, databases, and web development. Capstone: an inventory system for a local retailer."
+        "credential": "BS Information Technology",
+        "school": "Pamantasan ng Lungsod ng San Pablo",
+        "period": "2022 — 2026",
+        "details": "Cum Laude. Best Capstone Award — SANHS QC System."
       }
     ],
     "certifications": [
-      { "name": "Meta Front-End Developer Professional", "issuer": "Meta", "year": "2022" },
-      { "name": "AWS Certified Cloud Practitioner", "issuer": "Amazon Web Services", "year": "2023" }
+      {
+        "name": "TESDA National Certification II (NCII) — Computer Systems Servicing",
+        "issuer": "TESDA",
+        "year": "2022"
+      }
     ],
-    "languages": ["English", "Filipino"],
+    "languages": [],
     "displayOrder": 1,
     "isPublished": true,
     "createdAt": "2026-01-15T00:00:00.000Z",
-    "updatedAt": "2026-11-01T00:00:00.000Z"
+    "updatedAt": "2026-11-19T00:00:00.000Z"
   },
   {
     "id": "darcy-tabafunda",
     "slug": "darcy-tabafunda",
     "name": "Darcy Tabafunda",
-    "role": "Secretary",
+    "role": "Client Outreach",
     "initials": "DT",
-    "avatar": null,
-    "headline": "Secretary keeping projects organized, clients updated, and daily operations running smoothly.",
-    "summary": "Darcy keeps every Ordacy project organized from first inquiry to final handover. She coordinates schedules, prepares documents, and keeps clients updated at each stage.",
+    "avatar": {
+      "src": "/images/team/darcy-tabafunda.jpg",
+      "darkSrc": "/images/team/darcy-tabafunda-dark.jpg",
+      "alt": "Darcy Tabafunda, Client Outreach"
+    },
+    "headline": "Finding clients and briefing every project.",
+    "summary": "Darcy handles client outreach for Ordacy. She finds and talks with prospective clients, then briefs Orlando on what they need.",
     "facts": [
-      { "label": "Role", "value": "Secretary" },
-      { "label": "Focus", "value": "Coordination" },
+      { "label": "Focus", "value": "Outreach" },
       { "label": "Base", "value": "Philippines" }
     ],
     "skills": [
-      "Administrative support",
-      "Scheduling and coordination",
+      "Client outreach",
       "Client communication",
-      "Document preparation",
-      "Records management",
-      "Invoicing support",
-      "Meeting notes and follow-ups",
-      "File organization"
+      "Project briefs",
+      "Follow-ups"
     ],
-    "experience": [
-      {
-        "role": "Secretary",
-        "organization": "Ordacy",
-        "period": "2023 — Present",
-        "summary": "Manages inquiries, schedules, project documents, and client updates so every engagement stays on track."
-      },
-      {
-        "role": "Administrative Assistant",
-        "organization": "Quezon City business services office",
-        "period": "2020 — 2023",
-        "summary": "Supported daily operations through scheduling, records handling, billing help, and front-desk coordination."
-      }
-    ],
-    "education": [
-      {
-        "credential": "BS Business Administration",
-        "school": "University of the East",
-        "period": "2016 — 2020",
-        "details": "Management major with coursework in office administration and business communication."
-      }
-    ],
-    "certifications": [
-      { "name": "TESDA NC III in Events Management", "issuer": "TESDA", "year": "2021" }
-    ],
-    "languages": ["English", "Filipino"],
+    "experience": [],
+    "education": [],
+    "certifications": [],
+    "languages": [],
     "displayOrder": 2,
     "isPublished": true,
     "createdAt": "2026-01-15T00:00:00.000Z",
-    "updatedAt": "2026-11-01T00:00:00.000Z"
+    "updatedAt": "2026-11-19T00:00:00.000Z"
   }
 ]

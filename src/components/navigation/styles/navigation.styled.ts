@@ -56,11 +56,22 @@ export const desktopItemStyles = css<{ $collapsed: boolean }>`
   text-align: left;
   text-decoration: none;
   transition:
-    background ${({ theme }) => theme.transitions.fast},
-    color ${({ theme }) => theme.transitions.fast};
+    background ${({ theme }) => theme.transitions.base},
+    border-color ${({ theme }) => theme.transitions.base},
+    color ${({ theme }) => theme.transitions.base};
 
+  /* Hover previews a stronger active surface; bold stays active-only. */
   &:hover {
-    background: ${({ theme }) => theme.colors.background.subtle};
+    border-color: color-mix(
+      in srgb,
+      ${({ theme }) => theme.colors.text.accent} 22%,
+      ${({ theme }) => theme.colors.border.default}
+    );
+    background: color-mix(
+      in srgb,
+      ${({ theme }) => theme.colors.text.accent} 10%,
+      ${({ theme }) => theme.colors.surface.default}
+    );
     color: ${({ theme }) => theme.colors.text.accent};
   }
 
@@ -75,21 +86,18 @@ export const desktopItemStyles = css<{ $collapsed: boolean }>`
 `
 
 export const desktopItemActiveStyles = css`
-  border-color: ${({ theme }) => theme.colors.border.default};
-  background: ${({ theme }) => theme.colors.background.subtle};
+  border-color: color-mix(
+    in srgb,
+    ${({ theme }) => theme.colors.text.accent} 48%,
+    ${({ theme }) => theme.colors.border.default}
+  );
+  background: color-mix(
+    in srgb,
+    ${({ theme }) => theme.colors.text.accent} 18%,
+    ${({ theme }) => theme.colors.surface.default}
+  );
   color: ${({ theme }) => theme.colors.text.accent};
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
-
-  &::before {
-    position: absolute;
-    top: 0.625rem;
-    bottom: 0.625rem;
-    left: 0.375rem;
-    width: 2px;
-    border-radius: 2px;
-    background: ${({ theme }) => theme.colors.text.accent};
-    content: '';
-  }
 `
 
 export const mobileItemStyles = css`

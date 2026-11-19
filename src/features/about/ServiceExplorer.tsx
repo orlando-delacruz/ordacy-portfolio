@@ -1,105 +1,139 @@
-import { ArrowRight, Check, Users } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { ArrowRight, Award, Check } from 'lucide-react'
+import { useRef } from 'react'
 import type { KeyboardEvent } from 'react'
 import { services } from '@/data'
 import * as S from './styles/service-explorer.styled'
 
-/** Tabbed service detail: list of services, one detailed panel at a time. */
-export function ServiceExplorer() {
-  const [active, setActive] = useState(0)
-  const listRef = useRef<HTMLDivElement>(null)
-  const service = services[active]
+type ServiceExplorerProps = {
+  activeId: string
+  onSelect: (id: string) => void
+}
+
+/** Controlled vertical tablist of services with the selected service's detail. */
+export function ServiceExplorer({ activeId, onSelect }: ServiceExplorerProps) {
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const service = services.find((item) => item.id === activeId) ?? services[0]
 
   if (!service) return null
+
+  const activeIndex = services.findIndex((item) => item.id === service.id)
   const Icon = service.icon
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    const keys: Record<string, number> = {
-      ArrowDown: active + 1,
-      ArrowRight: active + 1,
-      ArrowUp: active - 1,
-      ArrowLeft: active - 1,
-      Home: 0,
-      End: services.length - 1,
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    let next: number
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        next = activeIndex + 1
+        break
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        next = activeIndex - 1
+        break
+      case 'Home':
+        next = 0
+        break
+      case 'End':
+        next = services.length - 1
+        break
+      default:
+        return
     }
-    if (!(event.key in keys)) return
+
     event.preventDefault()
-    const next = (keys[event.key] + services.length) % services.length
-    setActive(next)
-    listRef.current?.querySelectorAll<HTMLButtonElement>('[role=tab]')[next]?.focus()
+    const targetIndex = (next + services.length) % services.length
+    const target = services[targetIndex]
+    if (!target) return
+    onSelect(target.id)
+    tabRefs.current[targetIndex]?.focus()
   }
 
   return (
     <S.Explorer>
-      <S.TabList ref={listRef} role="tablist" aria-label="Services" aria-orientation="vertical" onKeyDown={onKeyDown}>
+      <S.TabList
+        role="tablist"
+        aria-label="Services"
+        aria-orientation="vertical"
+        onKeyDown={handleKeyDown}
+      >
         {services.map((item, index) => {
           const TabIcon = item.icon
           return (
             <S.Tab
               key={item.id}
+              ref={(node) => {
+                tabRefs.current[index] = node
+              }}
               id={`service-tab-${item.id}`}
               type="button"
               role="tab"
-              aria-selected={index === active}
+              aria-selected={item.id === service.id}
               aria-controls="service-panel"
-              tabIndex={index === active ? 0 : -1}
-              onClick={() => setActive(index)}
+              tabIndex={item.id === service.id ? 0 : -1}
+              onClick={() => onSelect(item.id)}
             >
-              <TabIcon size={18} strokeWidth={2} aria-hidden="true" />
+              <TabIcon size={20} strokeWidth={2} aria-hidden="true" />
               {item.title}
             </S.Tab>
           )
         })}
       </S.TabList>
 
-      <S.Panel id="service-panel" role="tabpanel" aria-labelledby={`service-tab-${service.id}`}>
+      <S.Panel
+        id="service-panel"
+        role="tabpanel"
+        aria-labelledby={`service-tab-${service.id}`}
+      >
         <S.PanelHead>
           <S.PanelIcon aria-hidden="true">
-            <Icon size={22} strokeWidth={2} />
+            <Icon size={24} strokeWidth={2} />
           </S.PanelIcon>
           <div>
             <S.PanelTitle>{service.title}</S.PanelTitle>
-            <S.PanelText>{service.description}</S.PanelText>
+            <S.PanelDescription>{service.description}</S.PanelDescription>
           </div>
         </S.PanelHead>
 
         <S.Problem>
-          <S.Label>The problem it solves</S.Label>
-          <p>{service.problem}</p>
+          <S.ProblemLabel>The problem it solves</S.ProblemLabel>
+          <S.ProblemText>{service.problem}</S.ProblemText>
         </S.Problem>
 
         <S.Columns>
           <div>
             <S.Label as="h4">What it can include</S.Label>
-            <S.Checks>
+            <S.List>
               {service.capabilities.map((capability) => (
                 <li key={capability}>
                   <Check size={16} strokeWidth={2.5} aria-hidden="true" />
                   {capability}
                 </li>
               ))}
-            </S.Checks>
+            </S.List>
           </div>
           <div>
             <S.Label as="h4">Typical use cases</S.Label>
-            <S.Bullets>
+            <S.List>
               {service.useCases.map((useCase) => (
-                <li key={useCase}>{useCase}</li>
+                <li key={useCase}>
+                  <Check size={16} strokeWidth={2.5} aria-hidden="true" />
+                  {useCase}
+                </li>
               ))}
-            </S.Bullets>
+            </S.List>
           </div>
         </S.Columns>
 
         <S.Footer>
           <S.Audience>
-            <Users size={18} strokeWidth={2} aria-hidden="true" />
+            <Award size={18} strokeWidth={2} aria-hidden="true" />
             <span>
               <strong>Best for:</strong> {service.audience}
             </span>
           </S.Audience>
           <S.Cta to="/contact">
-            <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
             Discuss this service
+            <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
           </S.Cta>
         </S.Footer>
       </S.Panel>

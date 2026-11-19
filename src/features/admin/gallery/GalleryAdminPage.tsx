@@ -71,7 +71,7 @@ export function GalleryAdminPage() {
       }
     >
       <S.UploadPlaceholder>
-        <CloudUpload size={22} strokeWidth={2} aria-hidden="true" />
+        <CloudUpload size={24} strokeWidth={2} aria-hidden="true" />
         <div>
           <strong>File uploads are not available yet.</strong>
           <p>

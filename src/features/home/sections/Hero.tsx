@@ -1,10 +1,9 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { FolderKanban, Phone, ThumbsUp } from 'lucide-react'
 import { useAppTheme } from '@/app/theme-context'
-import darkLogo from '@/assets/images/ordacy-logo-dark-mode.png'
-import lightLogo from '@/assets/images/ordacy-logo.png'
+import darkAvatar from '@/assets/images/ordacy-avatar-dark-mode.png'
+import lightAvatar from '@/assets/images/ordacy-avatar.png'
 import { Lightbox } from '@/components/ui/Lightbox'
-import { ProfileCoverArt } from '@/components/ui/ProfileCoverArt'
 import { TeamStrip } from '@/features/team/components/TeamStrip'
 import * as S from './styles/hero.styled'
 import { getSection, site } from '@/data'
@@ -28,20 +27,18 @@ const stats = [
 
 type LightboxContent = 'cover' | 'avatar' | null
 
-// Abstract cover artwork: rings, a bar, sparkles, and two floating mock UI cards.
-function CoverArt() {
-  return <ProfileCoverArt variant="brand" />
-}
-
 export function Hero() {
   const { theme } = useAppTheme()
   const [lightbox, setLightbox] = useState<LightboxContent>(null)
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null)
   const [liked, setLiked] = useState(readLiked)
+  // Remounts the icon so the pop animation restarts on every click.
+  const [likePulse, setLikePulse] = useState(0)
 
-  const logo = theme === 'dark' ? darkLogo : lightLogo
+  const avatar = theme === 'dark' ? darkAvatar : lightAvatar
 
   const toggleLike = () => {
+    setLikePulse((pulse) => pulse + 1)
     setLiked((prev) => {
       const next = !prev
       try {
@@ -69,9 +66,7 @@ export function Hero() {
           aria-label="Open cover image"
           onClick={openLightbox('cover')}
         >
-          <S.Cover aria-hidden="true">
-            <CoverArt />
-          </S.Cover>
+          <S.Cover $photo aria-hidden="true" />
         </S.CoverButton>
       </S.CoverBleed>
       <S.ProfileRow>
@@ -81,25 +76,24 @@ export function Hero() {
           aria-label="Open profile image"
           onClick={openLightbox('avatar')}
         >
-          <S.Avatar src={logo} alt="" aria-hidden="true" />
+          <S.Avatar $logo src={avatar} alt="" aria-hidden="true" />
           <S.OnlineDot title="Active" aria-hidden="true">
             <S.OnlinePulse aria-hidden="true" />
           </S.OnlineDot>
         </S.AvatarButton>
         <S.Identity>
-          <S.Name id="profile-name">
-            {site.name}
-          </S.Name>
-          <S.Bio>{getSection('home', 'hero').title}</S.Bio>
-          <S.Stats>
-            {stats.map((stat, index) => (
-              <Fragment key={stat.label}>
-                {index > 0 && <S.StatSeparator aria-hidden="true" />}
-                <S.Stat>
-                  <S.StatLabel>{stat.label}</S.StatLabel>
-                  <S.StatCount>{stat.value}</S.StatCount>
-                </S.Stat>
-              </Fragment>
+          <S.Intro>
+            <S.Name id="profile-name">
+              {site.name}
+            </S.Name>
+            <S.Bio>{getSection('home', 'hero').title}</S.Bio>
+          </S.Intro>
+          <S.Stats $row>
+            {stats.map((stat) => (
+              <S.Stat key={stat.label}>
+                <S.StatLabel>{stat.label}</S.StatLabel>
+                <S.StatCount>{stat.value}</S.StatCount>
+              </S.Stat>
             ))}
           </S.Stats>
         </S.Identity>
@@ -120,12 +114,9 @@ export function Hero() {
             title={liked ? 'Unlike' : 'Like'}
             onClick={toggleLike}
           >
-            <ThumbsUp
-              size={20}
-              strokeWidth={2}
-              fill={liked ? 'currentColor' : 'none'}
-              aria-hidden="true"
-            />
+            <S.LikeIcon key={likePulse} $pulse={likePulse > 0}>
+              <ThumbsUp size={20} strokeWidth={2} aria-hidden="true" />
+            </S.LikeIcon>
           </S.LikeButton>
         </S.Actions>
       </S.ProfileRow>
@@ -135,15 +126,18 @@ export function Hero() {
         <Lightbox
           bare
           title={lightbox === 'cover' ? 'Cover image' : 'Profile image'}
+          caption={lightbox === 'cover' ? 'Ordacy cover artwork' : 'Ordacy logo'}
           onClose={() => setLightbox(null)}
           returnFocusTo={trigger}
         >
           {lightbox === 'cover' ? (
-            <S.LightboxCover role="img" aria-label="Ordacy cover artwork">
-              <CoverArt />
-            </S.LightboxCover>
+            <S.LightboxCover
+              $photo
+              role="img"
+              aria-label="Ordacy cover artwork"
+            />
           ) : (
-            <S.LightboxImage src={logo} alt="Ordacy logo" />
+            <S.LightboxImage src={avatar} alt="Ordacy logo" />
           )}
         </Lightbox>
       )}

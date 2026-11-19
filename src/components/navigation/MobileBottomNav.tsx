@@ -10,6 +10,7 @@ export function MobileBottomNav() {
   return (
     <S.Nav
       $hidden={hidden && !focusWithin}
+      data-print-hide
       aria-label="Primary navigation"
       onFocusCapture={() => {
         setFocusWithin(true)
@@ -36,7 +37,7 @@ export function MobileBottomNav() {
             >
               {({ isActive }) => (
                 <Icon
-                  size={22}
+                  size={24}
                   weight={isActive ? 'fill' : 'regular'}
                   aria-hidden="true"
                 />
@@ -51,7 +52,7 @@ export function MobileBottomNav() {
               <>
                 <S.IconPill>
                   <Icon
-                    size={22}
+                    size={24}
                     weight={isActive ? 'fill' : 'regular'}
                     aria-hidden="true"
                   />

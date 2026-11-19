@@ -57,7 +57,7 @@ export function TopBar({ collapsed, onToggleSidebar }: TopBarProps) {
 
   return (
     <>
-      <S.Header>
+      <S.Header data-print-hide>
         <S.Inner>
           <S.BrandLink to="/" aria-label="Ordacy home">
             <BrandLogo />

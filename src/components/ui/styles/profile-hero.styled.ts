@@ -39,12 +39,15 @@ const pop = keyframes`
 `
 
 export const HeroSection = styled.section`
-  margin-top: calc(-1 * ${({ theme }) => theme.spacing.xl});
-  padding-bottom: ${({ theme }) => theme.spacing['2xl']};
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding-bottom: ${({ theme }) => theme.spacing['3xl']};
-  }
+  /*
+   * The box is pulled up behind the sticky top bar (plus the shell's own
+   * content padding it must cancel). The cover starts directly under the bar;
+   * only the bottom keeps the 40px section rhythm.
+   */
+  margin-top: calc(
+    -1 * var(--top-bar-height) - ${({ theme }) => theme.spacing.xl}
+  );
+  padding: var(--top-bar-height) 0 2.5rem;
 `
 
 export const CoverBleed = styled.div`
@@ -67,19 +70,30 @@ export const CoverButton = styled.button`
   }
 `
 
-export const Cover = styled.div`
+// `$compact` is for mastheads that need the brand cover as a band rather than
+// a full profile cover; profile heroes keep the default heights. `$photo`
+// swaps the generated dot grid for the brand cover photograph.
+export const Cover = styled.div<{ $compact?: boolean; $photo?: boolean }>`
   position: relative;
-  min-height: 12rem;
+  min-height: ${({ $compact }) => ($compact ? '7rem' : '12rem')};
   overflow: hidden;
-  background: #00243e;
-  background-image: radial-gradient(
-    rgba(254, 254, 254, 0.14) 1px,
-    transparent 1.5px
-  );
-  background-size: 1.5rem 1.5rem;
+  background-color: #00243e;
+  background-image: ${({ $photo }) =>
+    $photo
+      ? "url('/images/ordacy-home-hero.png')"
+      : `radial-gradient(
+          rgba(254, 254, 254, 0.14) 1px,
+          transparent 1.5px
+        )`};
+  background-repeat: no-repeat;
+  background-size: ${({ $photo }) => ($photo ? 'cover' : '1.5rem 1.5rem')};
+  background-position: ${({ $photo }) => ($photo ? 'center' : '0 0')};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    min-height: 17rem;
+    /* The photo is 2.25:1; let the cover grow with the viewport so the laptop
+       and pedestal are not cropped into a thin strip on wide screens. */
+    min-height: ${({ $compact, $photo }) =>
+      $compact ? '9.5rem' : $photo ? 'clamp(17rem, 34vw, 30rem)' : '17rem'};
     border-bottom-left-radius: ${({ theme }) => theme.radii.md};
     border-bottom-right-radius: ${({ theme }) => theme.radii.md};
   }
@@ -123,23 +137,33 @@ export const ProfileRow = styled.div`
     'identity'
     'actions';
 
+  /* Tablet/small laptop: the avatar spans the identity and actions rows so
+     the identity never gets squeezed by the fixed-width action group. */
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'avatar identity'
+      'avatar actions';
+    align-items: center;
+    gap: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+    padding-inline: ${({ theme }) => theme.spacing.xl};
+    /* Breathing room between the cover and the profile identity. */
+    padding-top: ${({ theme }) => theme.spacing.lg};
+  }
+
+  /* Wide desktop: the original single row. */
+  @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas: 'avatar identity actions';
-    align-items: center;
-    gap: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
-    padding-inline: ${({ theme }) => theme.spacing.xl};
-    /* Desktop breathing room between the cover and the profile identity. */
-    padding-top: ${({ theme }) => theme.spacing.lg};
   }
 `
 
-export const AvatarButton = styled.button`
+export const AvatarButton = styled.button<{ $strip?: boolean }>`
   grid-area: avatar;
   position: relative;
   width: 7.5rem;
   height: 7.5rem;
-  margin-top: -3.75rem;
+  margin-top: ${({ $strip }) => ($strip ? '0' : '-3.75rem')};
   padding: 0;
   border: 0;
   border-radius: ${({ theme }) => theme.radii.round};
@@ -159,13 +183,13 @@ export const AvatarButton = styled.button`
   }
 `
 
-export const AvatarFrame = styled.span`
+export const AvatarFrame = styled.span<{ $strip?: boolean }>`
   grid-area: avatar;
   position: relative;
   display: block;
   width: 7.5rem;
   height: 7.5rem;
-  margin-top: -3.75rem;
+  margin-top: ${({ $strip }) => ($strip ? '0' : '-3.75rem')};
 
   ${noMotionPref} {
     animation: ${pop} 650ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms backwards;
@@ -178,17 +202,37 @@ export const AvatarFrame = styled.span`
   }
 `
 
-export const Avatar = styled.img`
+export const Avatar = styled.img<{ $logo?: boolean }>`
   display: block;
   width: 100%;
   height: 100%;
-  /* Light gray ring in light mode; the theme's border tone in dark mode. */
-  border: 4px solid
-    ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.border.default : '#e9ecef'};
+  /* Super-thin ring; on hover the button lights a soft teal halo. */
+  border: 2px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.round};
   background: ${({ theme }) => theme.colors.surface.default};
-  object-fit: cover;
+  /* The brand mark must stay whole; member portraits fill the circle. */
+  object-fit: ${({ $logo }) => ($logo ? 'contain' : 'cover')};
+  transition:
+    border-color ${({ theme }) => theme.transitions.base},
+    box-shadow ${({ theme }) => theme.transitions.base};
+
+  button:hover &,
+  button:focus-visible & {
+    border-color: ${({ theme }) => theme.colors.text.accent};
+    box-shadow:
+      0 0 0 4px
+        color-mix(
+          in srgb,
+          ${({ theme }) => theme.colors.text.accent} 16%,
+          transparent
+        ),
+      0 0 20px
+        color-mix(
+          in srgb,
+          ${({ theme }) => theme.colors.text.accent} 45%,
+          transparent
+        );
+  }
 `
 
 // Initials fallback when a member has no photo yet.
@@ -197,9 +241,7 @@ export const AvatarFallback = styled.span`
   place-items: center;
   width: 100%;
   height: 100%;
-  border: 4px solid
-    ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.border.default : '#e9ecef'};
+  border: 2px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.round};
   background: ${({ theme }) => theme.colors.background.subtle};
   color: ${({ theme }) => theme.colors.text.accent};
@@ -211,10 +253,11 @@ export const AvatarFallback = styled.span`
 export const Identity = styled.div`
   display: grid;
   grid-area: identity;
-  gap: 0;
+  gap: ${({ theme }) => theme.spacing.lg};
   align-content: start;
 
-  /* Name, role, bio and stats rise one after another. */
+  /* Name and bio travel together; the gap above Stats separates the intro
+     group from the facts. */
   ${noMotionPref} {
     & > * {
       animation: ${rise} 550ms ease-out backwards;
@@ -227,20 +270,19 @@ export const Identity = styled.div`
     & > :nth-child(2) {
       animation-delay: 350ms;
     }
-
-    & > :nth-child(3) {
-      animation-delay: 450ms;
-    }
-
-    & > :nth-child(4) {
-      animation-delay: 550ms;
-    }
   }
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    gap: ${({ theme }) => theme.spacing.sm};
+    gap: ${({ theme }) => theme.spacing.lg};
     align-content: end;
   }
+`
+
+// Name plus bio on the home profile, grouped so the facts can sit apart.
+export const Intro = styled.div`
+  display: grid;
+  gap: 0;
+  min-width: 0;
 `
 
 export const Name = styled.h1`
@@ -253,7 +295,7 @@ export const Name = styled.h1`
   font-size: ${({ theme }) => theme.typography.fontSizes['2xl']};
   font-weight: ${({ theme }) => theme.typography.fontWeights.extrabold};
   letter-spacing: 0.02em;
-  line-height: 1;
+  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
     padding-bottom: 0;
@@ -267,40 +309,88 @@ export const Role = styled.p`
   font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
 `
 
-export const Stats = styled.dl`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
+export const Stats = styled.dl<{ $row?: boolean }>`
+  display: grid;
+  gap: 0.75rem;
   margin: 0;
+
+  /* Home profile: the company counts stay on one row at every width. */
+  ${({ $row }) =>
+    $row &&
+    css`
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      gap: 0;
+
+      & > div {
+        padding-inline: ${({ theme }) => theme.spacing.sm};
+
+        &:first-of-type {
+          padding-left: 0;
+        }
+
+        &:last-of-type {
+          padding-right: 0;
+        }
+
+        &:not(:first-of-type) {
+          border-left: 1px solid ${({ theme }) => theme.colors.border.default};
+        }
+      }
+    `}
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    /* One column per fact, so two facts fill a half each instead of leaving
+       an empty third track. */
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-template-columns: none;
+    gap: 0;
+
+    & > div {
+      padding-inline: ${({ theme }) => theme.spacing.md};
+
+      &:first-of-type {
+        padding-left: 0;
+      }
+
+      &:last-of-type {
+        padding-right: 0;
+      }
+
+      &:not(:first-of-type) {
+        border-left: 1px solid ${({ theme }) => theme.colors.border.default};
+      }
+    }
+  }
 `
 
 export const Stat = styled.div`
-  display: flex;
-  align-items: baseline;
+  display: grid;
   gap: ${({ theme }) => theme.spacing.xs};
+  min-width: 0;
 `
 
 export const StatCount = styled.dd`
   margin: 0;
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.lg};
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+
+  /* Keep three facts on one row at the 320px floor. */
+  @media (max-width: 24rem) {
+    font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+  }
 `
 
 export const StatLabel = styled.dt`
-  order: 2;
   color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-`
-
-export const StatSeparator = styled.span`
-  width: 0.375rem;
-  height: 0.375rem;
-  border-radius: ${({ theme }) => theme.radii.round};
-  background: ${({ theme }) => theme.colors.text.secondary};
-  opacity: 0.6;
-  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
+  letter-spacing: 0.08em;
+  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+  text-transform: uppercase;
 `
 
 export const Bio = styled.p`
@@ -319,6 +409,25 @@ export const Actions = styled.div`
   & > * {
     flex: 1 1 auto;
     white-space: nowrap;
+  }
+
+  /* Phones: links share the row evenly and the like toggle keeps its size, so
+     nothing drops onto a line by itself. */
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    flex-wrap: nowrap;
+
+    & > a {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
+
+  /* Above phones the buttons keep their natural width instead of stretching
+     across the wider stacked row. */
+  @media (min-width: ${({ theme }) => theme.breakpoints.sm}) {
+    & > * {
+      flex: 0 0 auto;
+    }
   }
 
   ${noMotionPref} {
@@ -340,42 +449,56 @@ const heroButtonSizing = css`
 /* Hero-specific compact sizing; colors come from the shared PrimaryButton. */
 export const ContactButton = styled(PrimaryButton)`
   ${heroButtonSizing}
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    padding-inline: ${({ theme }) => theme.spacing.sm};
+  }
 `
 
 export const ProjectsButton = styled(SecondaryButton)`
   ${heroButtonSizing}
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    padding-inline: ${({ theme }) => theme.spacing.sm};
+  }
 `
 
-// Full-view images for the bare lightbox: as large as the viewport allows.
+// Full-view images for the bare lightbox: leave room for the top bar, the
+// caption, and the body padding so the image never runs under them.
 export const LightboxImage = styled.img`
   display: block;
   width: auto;
   max-width: min(100%, 40rem);
-  max-height: 80vh;
-  max-height: 80dvh;
+  max-height: calc(100vh - 14rem);
+  max-height: calc(100dvh - 14rem);
   border-radius: ${({ theme }) => theme.radii.lg};
   box-shadow: ${({ theme }) => theme.shadows.lg};
   object-fit: contain;
 `
 
-export const LightboxCover = styled.div`
+export const LightboxCover = styled.div<{ $photo?: boolean }>`
   position: relative;
   width: min(92vw, 80rem);
-  max-height: 80vh;
-  max-height: 80dvh;
+  max-height: calc(100vh - 14rem);
+  max-height: calc(100dvh - 14rem);
   aspect-ratio: 16 / 6;
-  min-height: 14rem;
+  min-height: min(14rem, 30dvh);
   overflow: hidden;
   border-radius: ${({ theme }) => theme.radii.lg};
   box-shadow: ${({ theme }) => theme.shadows.lg};
-  background: #00243e;
-  background-image: radial-gradient(
-    rgba(254, 254, 254, 0.14) 1px,
-    transparent 1.5px
-  );
-  background-size: 1.5rem 1.5rem;
+  background-color: #00243e;
+  background-image: ${({ $photo }) =>
+    $photo
+      ? "url('/images/ordacy-home-hero.png')"
+      : `radial-gradient(
+          rgba(254, 254, 254, 0.14) 1px,
+          transparent 1.5px
+        )`};
+  background-repeat: no-repeat;
+  background-size: ${({ $photo }) => ($photo ? 'cover' : '1.5rem 1.5rem')};
+  background-position: ${({ $photo }) => ($photo ? 'center' : '0 0')};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    min-height: 22rem;
+    min-height: min(22rem, 40dvh);
   }
 `

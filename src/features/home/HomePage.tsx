@@ -5,8 +5,6 @@ import { Hero } from './sections/Hero'
 import { Pricing } from './sections/Pricing'
 import { Process } from './sections/Process'
 import { Projects } from './sections/Projects'
-import { SiteFooter } from './sections/SiteFooter'
-import { Systems } from './sections/Systems'
 import { Testimonials } from './sections/Testimonials'
 import { seo } from '@/data'
 import { organizationJsonLd, usePageMeta } from '@/hooks/usePageMeta'
@@ -22,14 +20,12 @@ export function HomePage() {
   return (
     <>
       <Hero />
-      <Systems />
       <Pricing />
       <Projects />
       <Testimonials />
       <Process />
-      <Faq expandable />
+      <Faq />
       <FinalCta />
-      <SiteFooter />
     </>
   )
 }

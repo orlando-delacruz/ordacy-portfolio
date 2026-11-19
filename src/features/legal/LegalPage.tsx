@@ -1,9 +1,15 @@
-import { ChevronRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { PageHeader } from '@/components/common/PageHeader'
+import { FileText, Home, MessagesSquare, ShieldCheck } from 'lucide-react'
+import { useMemo } from 'react'
+import { ClosingCta } from '@/components/ui/ClosingCta'
+import { PageHero } from '@/components/ui/PageHero'
+import * as Hero from '@/components/ui/styles/page-hero.styled'
 import type { LegalDocument, PageSeo } from '@/data'
+import { useActiveSection } from '@/hooks/useActiveSection'
 import { usePageMeta } from '@/hooks/usePageMeta'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { LegalMeta } from './components/LegalMeta'
+import { LegalSection } from './components/LegalSection'
+import { LegalToc } from './components/LegalToc'
 import * as S from './styles/legal.styled'
 
 type LegalPageProps = {
@@ -18,55 +24,67 @@ const formatDate = (iso: string) =>
     year: 'numeric',
   })
 
-/** Long-form legal layout: table of contents beside the document. */
+/** Long-form legal layout: document meta, an active TOC, and readable copy. */
 export function LegalPage({ seo, document }: LegalPageProps) {
   usePageMeta(seo)
   useScrollReveal()
 
+  const sectionIds = useMemo(
+    () => document.sections.map((section) => section.id),
+    [document],
+  )
+  const activeId = useActiveSection(sectionIds)
+
   return (
     <>
-      <PageHeader
+      <PageHero
+        titleId="legal-title"
         eyebrow={`Last updated ${formatDate(document.updated)}`}
+        badgeIcon={seo.path === '/privacy-policy' ? ShieldCheck : FileText}
         title={document.title}
-        description={document.intro}
+        description={document.heroDescription}
+        actions={
+          <>
+            <Hero.PrimaryButton to="/contact">
+              <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
+              Contact us
+            </Hero.PrimaryButton>
+            <Hero.GhostButton to="/">
+              <Home size={18} strokeWidth={2} aria-hidden="true" />
+              Go home
+            </Hero.GhostButton>
+          </>
+        }
       />
 
-      <S.Layout>
-        <S.Toc aria-labelledby="legal-toc-title">
-          <h2 id="legal-toc-title">On this page</h2>
-          <ol>
-            {document.sections.map((section) => (
-              <li key={section.id}>
-                <a href={`#${section.id}`}>
-                  <ChevronRight size={14} strokeWidth={2.25} aria-hidden="true" />
-                  {section.title}
-                </a>
-              </li>
-            ))}
-          </ol>
-        </S.Toc>
+      <S.Doc>
+        <LegalMeta document={document} />
 
-        <S.Body>
-          {document.sections.map((section) => (
-            <section key={section.id} id={section.id} aria-labelledby={`${section.id}-title`}>
-              <h2 id={`${section.id}-title`}>{section.title}</h2>
-              {section.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-              {section.items && (
-                <ul>
-                  {section.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          ))}
-          <p>
-            Questions? <Link to="/contact">Contact us</Link>.
-          </p>
-        </S.Body>
-      </S.Layout>
+        <S.Layout>
+          <LegalToc sections={document.sections} activeId={activeId} />
+
+          <S.Body>
+            <S.PrintHeader>
+              <S.PrintTitle>{document.title}</S.PrintTitle>
+              <S.PrintMeta>
+                Last updated {formatDate(document.updated)}
+              </S.PrintMeta>
+            </S.PrintHeader>
+
+            <S.Lead>{document.intro}</S.Lead>
+
+            {document.sections.map((section, index) => (
+              <LegalSection
+                key={section.id}
+                section={section}
+                index={index}
+              />
+            ))}
+          </S.Body>
+        </S.Layout>
+      </S.Doc>
+
+      <ClosingCta titleId="legal-cta-title" {...document.cta} />
     </>
   )
 }

@@ -47,6 +47,11 @@ export const Content = styled.div<{ $collapsed: boolean }>`
     max-width: ${({ $collapsed, theme }) =>
       `calc(${theme.layout.appMaxWidth} - ${$collapsed ? sidebarWidths.collapsed : sidebarWidths.expanded})`};
   }
+  @media print {
+    margin-left: 0 !important;
+    margin-right: 0;
+    max-width: none;
+  }
 `
 
 export const Main = styled.main`

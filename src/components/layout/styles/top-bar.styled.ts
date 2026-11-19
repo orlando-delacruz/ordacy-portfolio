@@ -15,13 +15,10 @@ export const Inner = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
   width: 100%;
   max-width: ${({ theme }) => theme.layout.contentMaxWidth};
-  min-height: 3.5rem;
+  /* Total height always equals --top-bar-height (border-box includes padding). */
+  min-height: calc(var(--top-bar-height) - env(safe-area-inset-top, 0px));
   margin-inline: auto;
   padding: env(safe-area-inset-top) ${({ theme }) => theme.spacing.lg} 0;
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    min-height: 4rem;
-  }
 `
 
 export const BrandLink = styled(Link)`

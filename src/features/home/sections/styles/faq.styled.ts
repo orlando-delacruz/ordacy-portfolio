@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components'
 
 export {
-  SecondaryAction as ShowAll,
+  PrimaryButton,
   SecondaryButton,
 } from '@/components/ui/styles/buttons.styled'
 
@@ -25,34 +25,18 @@ const itemRise = keyframes`
   }
 `
 
-const iconPop = keyframes`
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  40% {
-    transform: scale(1.15) rotate(-8deg);
-  }
-  70% {
-    transform: scale(0.96) rotate(4deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
-`
-
-// Below xl reads top to bottom: heading, questions, contact. xl+: heading and
-// contact share the left column, questions run down the right.
+// Below xl reads top to bottom: questions, then contact. xl+: the questions
+// run down the left and the contact actions sit in the right column.
 export const Layout = styled.div`
   display: grid;
-  grid-template-areas: 'intro' 'list' 'aside';
+  grid-template-areas: 'list' 'aside';
   gap: ${({ theme }) => theme.spacing.xl};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: auto 1fr;
-    grid-template-areas: 'intro list' 'aside list';
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas: 'list aside';
     column-gap: ${({ theme }) => theme.spacing['3xl']};
-    row-gap: ${({ theme }) => theme.spacing.xl};
+    align-items: start;
   }
 `
 
@@ -79,33 +63,16 @@ export const Item = styled.div<{ $index: number }>`
       animation: ${itemRise} 500ms ease-out ${({ $index }) => $index * 70}ms
         backwards;
     }
+
+    ${List}[data-static] & {
+      opacity: 1;
+      animation: none;
+    }
   }
 `
 
 export const ItemHeading = styled.h3`
   margin: 0;
-`
-
-export const QuestionIcon = styled.span<{ $open: boolean }>`
-  display: grid;
-  flex-shrink: 0;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: ${({ $open, theme }) =>
-    $open ? theme.colors.text.accent : theme.colors.background.subtle};
-  color: ${({ $open, theme }) =>
-    $open ? theme.colors.background.default : theme.colors.text.accent};
-  transition:
-    background ${({ theme }) => theme.transitions.base},
-    color ${({ theme }) => theme.transitions.base};
-
-  @media (prefers-reduced-motion: no-preference) {
-    svg {
-      animation: ${({ $open }) => ($open ? iconPop : 'none')} 500ms ease-out;
-    }
-  }
 `
 
 export const QuestionText = styled.span`
@@ -148,7 +115,8 @@ export const Question = styled.button`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
   width: 100%;
-  padding: ${({ theme }) => theme.spacing.lg} 0;
+  padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.sm}
+    ${({ theme }) => theme.spacing.lg} 0;
   border: 0;
   background: transparent;
   color: ${({ theme }) => theme.colors.text.primary};
@@ -167,19 +135,6 @@ export const Question = styled.button`
 
   &:hover ${Toggle} {
     border-color: ${({ theme }) => theme.colors.text.accent};
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    ${QuestionIcon} {
-      transition:
-        background ${({ theme }) => theme.transitions.base},
-        color ${({ theme }) => theme.transitions.base},
-        transform ${({ theme }) => theme.transitions.base};
-    }
-
-    &:hover ${QuestionIcon} {
-      transform: translateY(-2px);
-    }
   }
 
   &:focus-visible {
@@ -240,11 +195,17 @@ export const Aside = styled.div`
   justify-items: start;
 `
 
-export const AsideText = styled.p`
-  margin: 0;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.md};
-  line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
+export const AsideActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing.sm};
+
+  /* Compact enough for both FAQ actions to share one row in the aside column. */
+  & > a {
+    min-height: 2.75rem;
+    padding-inline: ${({ theme }) => theme.spacing.md};
+    font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+  }
 `
 
 // Category label shown above the first question of each group in the full list.

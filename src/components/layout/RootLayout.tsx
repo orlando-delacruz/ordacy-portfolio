@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { DesktopSidebar } from '@/components/navigation/DesktopSidebar'
 import { MobileBottomNav } from '@/components/navigation/MobileBottomNav'
 import { usePageScrollRestoration } from '@/hooks/usePageScrollRestoration'
+import { SiteFooter } from './SiteFooter'
 import { TopBar } from './TopBar'
 import * as S from './styles/root-layout.styled'
 
@@ -25,6 +26,7 @@ export function RootLayout() {
         <S.Main id="main-content" tabIndex={-1}>
           <S.MainInner>
             <Outlet />
+            <SiteFooter />
           </S.MainInner>
         </S.Main>
       </S.Content>

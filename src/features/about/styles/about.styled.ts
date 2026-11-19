@@ -1,123 +1,306 @@
 import styled from 'styled-components'
 
-export { PrimaryButton } from '@/components/ui/styles/buttons.styled'
+/* ---------- Hero ---------- */
 
-export const Lead = styled.p`
-  max-width: 44rem;
-  margin: 0;
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.xl};
-  line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
+export const Page = styled.div`
+  /* Soft mint wash at the page edges, as in the About reference. */
+  background:
+    radial-gradient(
+      36rem 20rem at 0% 100%,
+      color-mix(
+        in srgb,
+        ${({ theme }) => theme.colors.brand.primary} 8%,
+        transparent
+      ),
+      transparent 72%
+    ),
+    radial-gradient(
+      28rem 18rem at 100% 0%,
+      color-mix(
+        in srgb,
+        ${({ theme }) => theme.colors.brand.primary} 6%,
+        transparent
+      ),
+      transparent 72%
+    );
 `
 
-// Ruled list instead of cards: each service is a row with its icon.
-export const Services = styled.ul`
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: ${({ theme }) => theme.spacing['2xl']};
-  }
+export const Hero = styled.header`
+  /* Cancel the shell's top padding so the band sits under the Top Bar. */
+  margin-top: calc(-1 * ${({ theme }) => theme.spacing.xl});
 `
 
-export const Service = styled.li`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: ${({ theme }) => theme.spacing.md};
-  padding-block: ${({ theme }) => theme.spacing.lg};
-  border-top: 1px solid ${({ theme }) => theme.colors.border.default};
-
-  svg {
-    margin-top: 0.125rem;
-    color: ${({ theme }) => theme.colors.text.accent};
-  }
-
-  h3 {
-    margin: 0;
-    color: ${({ theme }) => theme.colors.text.primary};
-    font-size: ${({ theme }) => theme.typography.fontSizes.md};
-    font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
-  }
-
-  p {
-    margin: ${({ theme }) => theme.spacing.xs} 0 0;
-    color: ${({ theme }) => theme.colors.text.secondary};
-    line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
-  }
-`
-
-// Vertical timeline: a rail with numbered markers.
-export const Timeline = styled.ol`
+export const HeroBand = styled.div`
   position: relative;
-  display: grid;
-  gap: ${({ theme }) => theme.spacing.xl};
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: step;
+  isolation: isolate;
+  padding: ${({ theme }) => theme.spacing.lg};
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: #00243e url('/images/ordacy-hero-wave.png') no-repeat;
+  background-size: cover;
+  background-position: 65% center;
 
   &::before {
     position: absolute;
-    top: 1rem;
-    bottom: 1rem;
-    left: 1rem;
-    width: 2px;
-    background: ${({ theme }) => theme.colors.border.default};
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    /* Mobile keeps the laptop visible while the copy stays on the dark side. */
+    background: linear-gradient(
+      100deg,
+      rgba(0, 36, 62, 0.97) 0%,
+      rgba(0, 36, 62, 0.9) 55%,
+      rgba(0, 36, 62, 0.72) 100%
+    );
+    content: '';
+    pointer-events: none;
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing.xl} ${({ theme }) => theme.spacing['2xl']};
+    background-position: right center;
+
+    &::before {
+      background: linear-gradient(
+        to right,
+        rgba(0, 36, 62, 0.92) 0%,
+        rgba(0, 36, 62, 0.62) 46%,
+        rgba(0, 36, 62, 0.18) 100%
+      );
+    }
+  }
+
+  /* Keep the lead over the dark part of the art at mid widths. */
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) and (max-width: 87.5rem) {
+    &::before {
+      background: linear-gradient(
+        to right,
+        rgba(0, 36, 62, 0.95) 0%,
+        rgba(0, 36, 62, 0.82) 52%,
+        rgba(0, 36, 62, 0.5) 100%
+      );
+    }
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.xl}) {
+    padding-inline: ${({ theme }) => theme.spacing['3xl']};
+  }
+`
+
+export const HeroCopy = styled.div`
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.sm};
+  justify-items: start;
+  max-width: 34rem;
+`
+
+export const HeroBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
+  border: 1px solid
+    color-mix(
+      in srgb,
+      ${({ theme }) => theme.colors.brand.primary} 45%,
+      transparent
+    );
+  border-radius: ${({ theme }) => theme.radii.pill};
+  background: color-mix(
+    in srgb,
+    ${({ theme }) => theme.colors.brand.primary} 18%,
+    transparent
+  );
+  color: ${({ theme }) => theme.colors.brand.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`
+
+export const HeroTitle = styled.h1`
+  max-width: 34rem;
+  margin: 0;
+  color: ${({ theme }) => theme.colors.brand.white};
+  font-size: ${({ theme }) => theme.typography.fontSizes['3xl']};
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: clamp(
+      ${({ theme }) => theme.typography.fontSizes['4xl']},
+      4.2vw,
+      3.5rem
+    );
+  }
+`
+
+export const HeroAccent = styled.span`
+  display: block;
+  color: ${({ theme }) => theme.colors.brand.primary};
+`
+
+export const HeroLead = styled.p`
+  max-width: 32rem;
+  margin: 0;
+  color: color-mix(
+    in srgb,
+    ${({ theme }) => theme.colors.brand.white} 78%,
+    transparent
+  );
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
+  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.typography.fontSizes.lg};
+  }
+`
+
+/* ---------- Sections ---------- */
+
+// The About reference uses a tighter rhythm than the site's 40px default,
+// with a hairline between every block.
+export const Block = styled.section`
+  padding-block: ${({ theme }) => theme.spacing.lg};
+  border-top: 1px solid ${({ theme }) => theme.colors.border.default};
+
+  /* The mobile composition separates sections with eyebrows and whitespace. */
+  @media (max-width: 63.999rem) {
+    border-top: 0;
+  }
+`
+
+/* ---------- Mobile section heading ---------- */
+
+export const MobileStack = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.spacing.lg};
+  min-width: 0;
+
+  & > * {
+    min-width: 0;
+  }
+`
+
+export const MobileSection = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.spacing.md};
+  min-width: 0;
+
+  & > * {
+    min-width: 0;
+  }
+`
+
+export const MobileHead = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.sm};
+  justify-items: start;
+`
+
+export const MobileEyebrow = styled.p`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.accent};
+  font-size: ${({ theme }) => theme.typography.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+
+  &::before {
+    display: block;
+    width: 1.25rem;
+    height: 2px;
+    border-radius: 2px;
+    background: ${({ theme }) => theme.colors.brand.primary};
     content: '';
   }
 `
 
-export const TimelineItem = styled.li`
-  position: relative;
+export const MobileTitle = styled.h2`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes['2xl']};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: -0.02em;
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+`
+
+export const MobileDescription = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+  line-height: 1.6;
+`
+
+export const BlockHead = styled.div<{ $flush?: boolean }>`
   display: grid;
-  grid-template-columns: 2rem 1fr;
-  gap: ${({ theme }) => theme.spacing.md};
-  counter-increment: step;
+  gap: ${({ theme }) => theme.spacing.sm};
+  justify-items: start;
+  max-width: 44rem;
+  margin-bottom: ${({ $flush, theme }) =>
+    $flush ? '0' : theme.spacing.lg};
+`
 
-  &::before {
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: ${({ theme }) => theme.radii.round};
-    background: ${({ theme }) => theme.colors.background.subtle};
-    box-shadow: inset 0 0 0 2px ${({ theme }) => theme.colors.text.accent};
-    color: ${({ theme }) => theme.colors.text.accent};
-    font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-    font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
-    content: counter(step);
-  }
+export const Rule = styled.span`
+  display: block;
+  width: 9rem;
+  height: 4px;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  background: ${({ theme }) => theme.colors.brand.primary};
+`
 
-  h3 {
-    margin: 0;
-    color: ${({ theme }) => theme.colors.text.primary};
-    font-size: ${({ theme }) => theme.typography.fontSizes.lg};
-    font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+export const BlockTitle = styled.h2`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: clamp(
+    ${({ theme }) => theme.typography.fontSizes['3xl']},
+    3.2vw,
+    ${({ theme }) => theme.typography.fontSizes['4xl']}
+  );
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: -0.02em;
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+`
+
+export const BlockDescription = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
+  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+`
+
+/* ---------- Why Ordacy exists ---------- */
+
+export const Why = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.lg};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
+    gap: ${({ theme }) => theme.spacing['2xl']};
+    align-items: start;
   }
+`
+
+export const WhyCopy = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.sm};
+  max-width: 60ch;
 
   p {
-    margin: ${({ theme }) => theme.spacing.xs} 0 0;
-    max-width: 40rem;
+    margin: 0;
     color: ${({ theme }) => theme.colors.text.secondary};
+    font-size: ${({ theme }) => theme.typography.fontSizes.md};
     line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
   }
 `
 
-export const Closing = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.md};
-  padding-bottom: ${({ theme }) => theme.spacing['3xl']};
-`
-
-export const SolvedBy = styled.span`
-  display: block;
-  margin-top: ${({ theme }) => theme.spacing.sm};
-  color: ${({ theme }) => theme.colors.text.accent};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
-`
+/* ---------- Closing ---------- */

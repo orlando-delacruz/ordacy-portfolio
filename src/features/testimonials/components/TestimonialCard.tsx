@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, Star } from 'lucide-react'
+import { ArrowRight, ChevronUp, Star } from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { Testimonial } from '@/data'
 import * as S from '../styles/testimonial-card.styled'
@@ -39,26 +39,37 @@ export function TestimonialCard({
   }
 
   const quoteId = `testimonial-${testimonial.id}-quote`
-  const ToggleIcon = expanded ? ChevronUp : ChevronDown
+  const ToggleIcon = expanded ? ChevronUp : ArrowRight
 
   return (
     <S.Card $layout={layout} aria-hidden={hidden || undefined}>
-      <S.QuoteMark size={40} strokeWidth={2} aria-hidden="true" />
-      {testimonial.isSample && <S.SampleBadge>Sample</S.SampleBadge>}
+      <S.Top>
+        {testimonial.rating !== null ? (
+          <S.Rating>
+            <S.Stars
+              role="img"
+              aria-label={`${testimonial.rating} out of 5 stars`}
+            >
+              {Array.from({ length: testimonial.rating }).map((_, index) => (
+                <Star
+                  key={index}
+                  size={16}
+                  strokeWidth={2}
+                  fill="currentColor"
+                  aria-hidden="true"
+                />
+              ))}
+            </S.Stars>
+            <S.RatingValue>{testimonial.rating}.0</S.RatingValue>
+          </S.Rating>
+        ) : testimonial.isSample ? (
+          <S.SampleBadge>Sample</S.SampleBadge>
+        ) : (
+          <span aria-hidden="true" />
+        )}
 
-      {testimonial.rating !== null && (
-        <S.Stars role="img" aria-label={`${testimonial.rating} out of 5 stars`}>
-          {Array.from({ length: testimonial.rating }).map((_, index) => (
-            <Star
-              key={index}
-              size={16}
-              strokeWidth={2}
-              fill="currentColor"
-              aria-hidden="true"
-            />
-          ))}
-        </S.Stars>
-      )}
+        <S.QuoteMark size={32} strokeWidth={2} aria-hidden="true" />
+      </S.Top>
 
       <S.Quotation ref={quoteRef} id={quoteId} $expanded={expanded}>
         {testimonial.quote}

@@ -1,11 +1,14 @@
 import { useParams } from 'react-router-dom'
 import { NotFoundPage } from '@/app/NotFoundPage'
-import { seo, teamMemberBySlug } from '@/data'
+import { ClosingCta } from '@/components/ui/ClosingCta'
+import { closingCta, seo, teamMemberBySlug } from '@/data'
 import { usePageMeta } from '@/hooks/usePageMeta'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { personJsonLd } from './personJsonLd'
 import { TeamHero } from './sections/TeamHero'
 import { TeamResume } from './sections/TeamResume'
+
+const cta = closingCta('team', 'cta')
 
 export function TeamMemberPage() {
   const { slug = '' } = useParams()
@@ -34,6 +37,7 @@ export function TeamMemberPage() {
     <>
       <TeamHero member={member} />
       <TeamResume member={member} />
+      <ClosingCta id="cta" titleId="team-cta-title" {...cta} />
     </>
   )
 }

@@ -1,5 +1,4 @@
 import {
-  ChevronDown,
   ExternalLink,
   Menu,
   Moon,
@@ -101,7 +100,6 @@ function ProfileMenu() {
           <UserRound size={16} strokeWidth={2} />
         </S.Avatar>
         <S.ProfileName>Administrator</S.ProfileName>
-        <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
       </S.ProfileButton>
 
       {open && (

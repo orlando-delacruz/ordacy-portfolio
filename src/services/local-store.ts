@@ -56,8 +56,11 @@ export type Collection<T extends { id: string }> = {
 export function createCollection<T extends { id: string }>(
   key: string,
   seed: readonly T[],
+  /** Fills fields/sections added after the saved copy was written. */
+  normalize?: (records: T[]) => T[],
 ): Collection<T> {
   let records = load<T[]>(key, [...seed])
+  if (normalize) records = normalize(records)
 
   const commit = (next: T[]) => {
     records = next

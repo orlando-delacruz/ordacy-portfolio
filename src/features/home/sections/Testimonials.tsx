@@ -99,10 +99,10 @@ function TestimonialsMarquee() {
       </S.Viewport>
 
       <S.Actions>
-        <S.SecondaryButton to="/testimonials">
+        <S.PrimaryButton to="/testimonials">
           <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
           View All Testimonials
-        </S.SecondaryButton>
+        </S.PrimaryButton>
       </S.Actions>
     </Section>
   )

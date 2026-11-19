@@ -1,13 +1,22 @@
 import {
   AlertCircle,
+  Building2,
+  CalendarDays,
   CheckCircle2,
+  Layers,
   Loader2,
+  Lock,
+  Mail,
+  PencilLine,
   RotateCcw,
   Send,
+  User,
+  Wallet,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { plans, services } from '@/data'
+import { plans, sectionCopy, services } from '@/data'
+import { SelectField } from '@/components/ui/SelectField'
 import { submitInquiry } from '@/services'
 import type { InquiryInput } from '@/services'
 import * as S from './styles/contact.styled'
@@ -18,13 +27,27 @@ type Status = 'idle' | 'sending' | 'sent' | 'failed'
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const fieldOrder: Field[] = ['name', 'email', 'message']
+const formCopy = sectionCopy('contact', 'form')
 
 // Budget ranges come from the approved plan prices; nothing is converted.
 const budgetOptions = plans.map((plan) =>
-  plan.prices.PHP && plan.prices.USD
-    ? `${plan.name}: from ${plan.prices.PHP} / ${plan.prices.USD}`
-    : `${plan.name}: quoted per project`,
+  plan.prices.PHP
+    ? `${plan.name}: ${plan.prices.PHP}`
+    : `${plan.name}: quote`,
 )
+
+const serviceOptions = [
+  { value: '', label: 'Not sure yet' },
+  ...services.map((service) => ({
+    value: service.title,
+    label: service.title,
+  })),
+]
+
+const planOptions = [
+  { value: '', label: 'Not sure yet' },
+  ...budgetOptions.map((option) => ({ value: option, label: option })),
+]
 
 const today = () => new Date().toISOString().slice(0, 10)
 
@@ -58,6 +81,7 @@ export function ContactForm() {
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<Status>('idle')
   const successRef = useRef<HTMLDivElement>(null)
+  const failureRef = useRef<HTMLParagraphElement>(null)
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -100,29 +124,50 @@ export function ContactForm() {
       requestAnimationFrame(() => successRef.current?.focus())
     } catch {
       setStatus('failed')
+      // The submit button was disabled mid-send; move focus to the alert.
+      requestAnimationFrame(() => failureRef.current?.focus())
     }
   }
 
+  const cardHeader = (
+    <S.FormHeader>
+      <S.FormIcon aria-hidden="true">
+        <Send size={24} strokeWidth={2} />
+      </S.FormIcon>
+      <div>
+        <S.FormTitle>{formCopy.title}</S.FormTitle>
+        {formCopy.description && (
+          <S.FormLead>{formCopy.description}</S.FormLead>
+        )}
+      </div>
+    </S.FormHeader>
+  )
+
   if (status === 'sent') {
     return (
-      <S.Success ref={successRef} tabIndex={-1} role="status">
-        <CheckCircle2 size={32} strokeWidth={2} aria-hidden="true" />
-        <h2>Thank you for sharing your project details.</h2>
-        <p>
-          We review your details and follow up to discuss scope, timeline, and
-          next steps.
-        </p>
-        <S.SecondaryAction
-          type="button"
-          onClick={() => {
-            setErrors({})
-            setStatus('idle')
-          }}
-        >
-          <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
-          Send another inquiry
-        </S.SecondaryAction>
-      </S.Success>
+      <S.FormCard>
+        {cardHeader}
+        <S.Success ref={successRef} tabIndex={-1} role="status">
+          <CheckCircle2 size={32} strokeWidth={2} aria-hidden="true" />
+          <h2>Thank you for sharing your project details.</h2>
+          <p>
+            Your inquiry is saved in this browser. No message has been sent.
+          </p>
+          <S.SecondaryAction
+            type="button"
+            onClick={() => {
+              setErrors({})
+              setStatus('idle')
+              requestAnimationFrame(() =>
+                document.getElementById('contact-name')?.focus(),
+              )
+            }}
+          >
+            <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
+            Send again
+          </S.SecondaryAction>
+        </S.Success>
+      </S.FormCard>
     )
   }
 
@@ -130,125 +175,161 @@ export function ContactForm() {
     errors[key] ? `contact-${key}-error` : undefined
 
   return (
-    <S.Form onSubmit={onSubmit} noValidate>
-      <S.Row>
+    <S.FormCard>
+      {cardHeader}
+
+      <S.Form onSubmit={onSubmit} noValidate>
+        <S.Row>
+          <S.Field>
+            <S.Label htmlFor="contact-name">
+              Full name
+              <S.Required aria-hidden="true">*</S.Required>
+            </S.Label>
+            <S.Control>
+              <User size={16} strokeWidth={2} aria-hidden="true" />
+              <S.Input
+                id="contact-name"
+                name="name"
+                autoComplete="name"
+                placeholder="Your full name"
+                required
+                $invalid={!!errors.name}
+                aria-invalid={!!errors.name}
+                aria-describedby={describedBy('name')}
+              />
+            </S.Control>
+            {errors.name && (
+              <FieldError id="contact-name-error">{errors.name}</FieldError>
+            )}
+          </S.Field>
+          <S.Field>
+            <S.Label htmlFor="contact-email">
+              Email address
+              <S.Required aria-hidden="true">*</S.Required>
+            </S.Label>
+            <S.Control>
+              <Mail size={16} strokeWidth={2} aria-hidden="true" />
+              <S.Input
+                id="contact-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@company.com"
+                required
+                $invalid={!!errors.email}
+                aria-invalid={!!errors.email}
+                aria-describedby={describedBy('email')}
+              />
+            </S.Control>
+            {errors.email && (
+              <FieldError id="contact-email-error">{errors.email}</FieldError>
+            )}
+          </S.Field>
+        </S.Row>
+
         <S.Field>
-          <S.Label htmlFor="contact-name">Full name</S.Label>
-          <S.Input
-            id="contact-name"
-            name="name"
-            autoComplete="name"
-            required
-            $invalid={!!errors.name}
-            aria-invalid={!!errors.name}
-            aria-describedby={describedBy('name')}
+          <S.Label htmlFor="contact-business">
+            Business or company
+            <S.Optional>(optional)</S.Optional>
+          </S.Label>
+          <S.Control>
+            <Building2 size={16} strokeWidth={2} aria-hidden="true" />
+            <S.Input
+              id="contact-business"
+              name="business"
+              autoComplete="organization"
+              placeholder="Company name"
+            />
+          </S.Control>
+        </S.Field>
+
+        <S.Row>
+          <SelectField
+            id="contact-service"
+            name="service"
+            label="Project type"
+            optional
+            icon={Layers}
+            options={serviceOptions}
+            defaultValue=""
           />
-          {errors.name && (
-            <FieldError id="contact-name-error">{errors.name}</FieldError>
+          <SelectField
+            id="contact-plan"
+            name="plan"
+            label="Budget range"
+            optional
+            icon={Wallet}
+            options={planOptions}
+            defaultValue=""
+          />
+        </S.Row>
+
+        <S.Field>
+          <S.Label htmlFor="contact-message">
+            Project details
+            <S.Required aria-hidden="true">*</S.Required>
+          </S.Label>
+          <S.Control $alignTop>
+            <PencilLine size={16} strokeWidth={2} aria-hidden="true" />
+            <S.Textarea
+              id="contact-message"
+              name="message"
+              placeholder="Tell us about your project, goals, and any important details..."
+              required
+              $invalid={!!errors.message}
+              aria-invalid={!!errors.message}
+              aria-describedby={describedBy('message')}
+            />
+          </S.Control>
+          {errors.message && (
+            <FieldError id="contact-message-error">{errors.message}</FieldError>
           )}
         </S.Field>
+
         <S.Field>
-          <S.Label htmlFor="contact-email">Email address</S.Label>
-          <S.Input
-            id="contact-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            $invalid={!!errors.email}
-            aria-invalid={!!errors.email}
-            aria-describedby={describedBy('email')}
-          />
-          {errors.email && (
-            <FieldError id="contact-email-error">{errors.email}</FieldError>
+          <S.Label htmlFor="contact-launch">
+            Target launch date
+            <S.Optional>(optional)</S.Optional>
+          </S.Label>
+          <S.Control>
+            <CalendarDays size={16} strokeWidth={2} aria-hidden="true" />
+            <S.Input
+              id="contact-launch"
+              name="launchDate"
+              type="date"
+              min={today()}
+            />
+          </S.Control>
+        </S.Field>
+
+        <S.Trap aria-hidden="true">
+          <label>
+            Leave this field empty
+            <input name="website" tabIndex={-1} autoComplete="off" />
+          </label>
+        </S.Trap>
+
+        {status === 'failed' && (
+          <S.ErrorText ref={failureRef} tabIndex={-1} role="alert">
+            <AlertCircle size={16} strokeWidth={2.25} aria-hidden="true" />
+            Something went wrong while sending. Please try again.
+          </S.ErrorText>
+        )}
+
+        <S.Submit type="submit" disabled={status === 'sending'}>
+          {status === 'sending' ? (
+            <Loader2 size={18} strokeWidth={2} aria-hidden="true" />
+          ) : (
+            <Send size={18} strokeWidth={2} aria-hidden="true" />
           )}
-        </S.Field>
-      </S.Row>
+          {status === 'sending' ? 'Sending…' : 'Send inquiry'}
+        </S.Submit>
 
-      <S.Field>
-        <S.Label htmlFor="contact-business">
-          Business or company <S.Optional>(optional)</S.Optional>
-        </S.Label>
-        <S.Input
-          id="contact-business"
-          name="business"
-          autoComplete="organization"
-        />
-      </S.Field>
-
-      <S.Row>
-        <S.Field>
-          <S.Label htmlFor="contact-service">
-            Project type <S.Optional>(optional)</S.Optional>
-          </S.Label>
-          <S.Select id="contact-service" name="service" defaultValue="">
-            <option value="">Not sure yet</option>
-            {services.map((service) => (
-              <option key={service.title}>{service.title}</option>
-            ))}
-          </S.Select>
-        </S.Field>
-        <S.Field>
-          <S.Label htmlFor="contact-plan">
-            Budget range <S.Optional>(optional)</S.Optional>
-          </S.Label>
-          <S.Select id="contact-plan" name="plan" defaultValue="">
-            <option value="">Not sure yet</option>
-            {budgetOptions.map((option) => (
-              <option key={option}>{option}</option>
-            ))}
-          </S.Select>
-        </S.Field>
-      </S.Row>
-
-      <S.Field>
-        <S.Label htmlFor="contact-message">Project details</S.Label>
-        <S.Textarea
-          id="contact-message"
-          name="message"
-          required
-          $invalid={!!errors.message}
-          aria-invalid={!!errors.message}
-          aria-describedby={describedBy('message')}
-        />
-        {errors.message && (
-          <FieldError id="contact-message-error">{errors.message}</FieldError>
-        )}
-      </S.Field>
-
-      <S.Field>
-        <S.Label htmlFor="contact-launch">
-          Target launch date <S.Optional>(optional)</S.Optional>
-        </S.Label>
-        <S.Input id="contact-launch" name="launchDate" type="date" min={today()} />
-      </S.Field>
-
-      <S.Trap aria-hidden="true">
-        <label>
-          Leave this field empty
-          <input name="website" tabIndex={-1} autoComplete="off" />
-        </label>
-      </S.Trap>
-
-      {status === 'failed' && (
-        <S.ErrorText role="alert">
-          <AlertCircle size={16} strokeWidth={2.25} aria-hidden="true" />
-          Something went wrong while sending. Please try again.
-        </S.ErrorText>
-      )}
-
-      <S.PrimaryAction type="submit" disabled={status === 'sending'}>
-        {status === 'sending' ? (
-          <Loader2 size={18} strokeWidth={2} aria-hidden="true" />
-        ) : (
-          <Send size={18} strokeWidth={2} aria-hidden="true" />
-        )}
-        {status === 'sending' ? 'Sending…' : 'Send inquiry'}
-      </S.PrimaryAction>
-
-      <S.Note>
-        We only use what you share here to respond to your inquiry.
-      </S.Note>
-    </S.Form>
+        <S.Note>
+          <Lock size={14} strokeWidth={2} aria-hidden="true" />
+          We only use what you share here to respond to your inquiry.
+        </S.Note>
+      </S.Form>
+    </S.FormCard>
   )
 }

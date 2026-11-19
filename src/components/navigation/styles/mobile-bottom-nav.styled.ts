@@ -34,7 +34,7 @@ export const Nav = styled.nav<{ $hidden: boolean }>`
   }
 `
 
-// Icon sits in a small pill that fills in for the active page (and tints on hover).
+// Fixed-size box that keeps every icon aligned in the row.
 export const IconPill = styled.span`
   display: grid;
   place-items: center;
@@ -42,7 +42,6 @@ export const IconPill = styled.span`
   height: 1.75rem;
   border-radius: ${({ theme }) => theme.radii.pill};
   background: transparent;
-  transition: background ${({ theme }) => theme.transitions.fast};
 `
 
 export const Label = styled.span`
@@ -55,17 +54,16 @@ export const Label = styled.span`
 export const Item = styled(NavLink)`
   ${nav.mobileItemStyles}
 
-  &:hover ${IconPill} {
-    background: ${({ theme }) => theme.colors.surface.subtle};
+  /* Hover and keyboard focus preview the active type: teal and bold. The pill
+     behind the icon stays transparent so no ghost surface appears. */
+  &:hover,
+  &:focus-visible {
+    color: ${({ theme }) => theme.colors.text.accent};
+    font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   }
 
   &[aria-current='page'] {
     ${nav.mobileItemActiveStyles}
-  }
-
-  &[aria-current='page'] ${IconPill} {
-    background: ${({ theme }) => theme.colors.background.subtle};
-    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.colors.border.default};
   }
 `
 

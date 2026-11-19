@@ -6,6 +6,7 @@ import type {
   TeamExperienceRecord,
   TeamFact,
   TeamMemberRecord,
+  TeamSkillGroup,
 } from '@/data'
 import { createId, teamService } from '@/services'
 import { AdminPage } from '../components/AdminPage'
@@ -42,6 +43,9 @@ const educationToText = (entries: readonly TeamEducationRecord[]) =>
 
 const certificationsToText = (entries: readonly TeamCertificationRecord[]) =>
   entries.map((entry) => `${entry.name} | ${entry.issuer} | ${entry.year}`).join('\n')
+
+const skillGroupsToText = (groups: readonly TeamSkillGroup[]) =>
+  groups.map((group) => `${group.label} | ${group.items.join(', ')}`).join('\n')
 
 const parseFacts = (value: string): TeamFact[] =>
   lines(value).map((line) => {
@@ -80,6 +84,20 @@ const parseCertifications = (value: string): TeamCertificationRecord[] =>
     return { name: name.trim(), issuer: issuer.trim(), year: rest.join('|').trim() }
   })
 
+/** "Label | item, item" per line. */
+const parseSkillGroups = (value: string): TeamSkillGroup[] =>
+  lines(value).map((line) => {
+    const [label = '', ...rest] = line.split('|')
+    return {
+      label: label.trim(),
+      items: rest
+        .join('|')
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean),
+    }
+  })
+
 const isImageRef = (value: string) =>
   value.startsWith('/') || isHttpUrl(value)
 
@@ -103,15 +121,22 @@ function validate(data: FormData, others: TeamMemberRecord[]): FieldErrors {
   if (avatarSrc && !text(data, 'avatarAlt')) {
     errors.avatarAlt = 'Describe the photo for screen reader users.'
   }
+  const avatarDarkSrc = text(data, 'avatarDarkSrc')
+  if (avatarDarkSrc && !avatarSrc) {
+    errors.avatarDarkSrc = 'Add the photo URL above before the dark-mode photo.'
+  } else if (avatarDarkSrc && !isImageRef(avatarDarkSrc)) {
+    errors.avatarDarkSrc = 'Enter a full image URL (https://…) or a /path, or leave it empty.'
+  }
   if (parseFacts(text(data, 'facts')).some((fact) => !fact.label || !fact.value)) {
     errors.facts = 'Each line needs "Label | Value".'
   }
   if (
     parseExperience(text(data, 'experience')).some(
-      (entry) => !entry.role || !entry.organization || !entry.period || !entry.summary,
+      (entry) => !entry.role || !entry.organization || !entry.period,
     )
   ) {
-    errors.experience = 'Each line needs "Role | Organization | Period | Summary".'
+    errors.experience =
+      'Each line needs "Role | Organization | Period", with an optional Summary after the last pipe.'
   }
   if (
     parseEducation(text(data, 'education')).some(
@@ -127,6 +152,13 @@ function validate(data: FormData, others: TeamMemberRecord[]): FieldErrors {
   ) {
     errors.certifications = 'Each line needs "Name | Issuer | Year".'
   }
+  if (
+    parseSkillGroups(text(data, 'skillGroups')).some(
+      (group) => !group.label || group.items.length === 0,
+    )
+  ) {
+    errors.skillGroups = 'Each line needs "Label | item, item".'
+  }
   return errors
 }
 
@@ -140,16 +172,24 @@ export function TeamAdminPage() {
     const name = text(data, 'name')
     const slug = slugify(text(data, 'slug') || name)
     const avatarSrc = text(data, 'avatarSrc')
+    const avatarDarkSrc = text(data, 'avatarDarkSrc')
     const fields = {
       slug,
       name,
       role: text(data, 'role'),
       initials: text(data, 'initials'),
-      avatar: avatarSrc ? { src: avatarSrc, alt: text(data, 'avatarAlt') } : null,
+      avatar: avatarSrc
+        ? {
+            src: avatarSrc,
+            darkSrc: avatarDarkSrc || undefined,
+            alt: text(data, 'avatarAlt'),
+          }
+        : null,
       headline: text(data, 'headline'),
       summary: text(data, 'summary'),
       facts: parseFacts(text(data, 'facts')),
       skills: lines(text(data, 'skills')),
+      skillGroups: parseSkillGroups(text(data, 'skillGroups')),
       experience: parseExperience(text(data, 'experience')),
       education: parseEducation(text(data, 'education')),
       certifications: parseCertifications(text(data, 'certifications')),
@@ -368,6 +408,16 @@ function MemberFields({ record, errors }: MemberFieldsProps) {
           />
           <TextField
             idPrefix={p}
+            name="avatarDarkSrc"
+            label="Dark-mode photo URL"
+            optional
+            type="url"
+            hint="Shown in dark theme. Empty uses the photo above."
+            defaultValue={record?.avatar?.darkSrc}
+            error={errors.avatarDarkSrc}
+          />
+          <TextField
+            idPrefix={p}
             name="avatarAlt"
             label="Photo alt text"
             optional
@@ -423,8 +473,19 @@ function MemberFields({ record, errors }: MemberFieldsProps) {
           optional
           multiline
           rows={4}
-          hint="One skill per line. Shown as pills."
+          hint="One skill per line. Used when no skill groups are set."
           defaultValue={record ? joinLines(record.skills) : ''}
+        />
+        <TextField
+          idPrefix={p}
+          name="skillGroups"
+          label="Skill groups"
+          optional
+          multiline
+          rows={4}
+          hint='"Label | item, item" per line. Replaces Skills as a full-width band.'
+          defaultValue={record ? skillGroupsToText(record.skillGroups ?? []) : ''}
+          error={errors.skillGroups}
         />
         <TextField
           idPrefix={p}
@@ -433,7 +494,7 @@ function MemberFields({ record, errors }: MemberFieldsProps) {
           optional
           multiline
           rows={4}
-          hint='"Role | Organization | Period | Summary" per line.'
+          hint='"Role | Organization | Period | Summary (optional)" per line.'
           defaultValue={record ? experienceToText(record.experience) : ''}
           error={errors.experience}
         />

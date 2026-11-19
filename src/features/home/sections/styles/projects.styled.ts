@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from 'styled-components'
-import { SecondaryButton } from '@/components/ui/styles/buttons.styled'
+import { PrimaryButton } from '@/components/ui/styles/buttons.styled'
 
 export {
   PrimaryAnchor,
@@ -102,12 +102,18 @@ export const Slide = styled.div<{ $offset: number; $instant: boolean }>`
       ? 'none'
       : `transform 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${theme.transitions.slow}`};
 
-  /* Desktop: five square cards, centre plus two on each side. */
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    width: min(28%, 19rem);
+  /* Tablet: five cards (centre plus two each side), so the row fills the same
+     content rail as the other sections instead of collapsing to a narrow fan. */
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    width: min(36%, 20rem);
     opacity: ${({ $offset }) => (Math.abs($offset) <= 2 ? 1 : 0)};
     pointer-events: ${({ $offset }) => (Math.abs($offset) <= 2 ? 'auto' : 'none')};
     transform: ${({ $offset }) => slideTransform($offset, [104, 190], 110, 30)};
+  }
+
+  /* Desktop: five square cards (see Card), centre plus two on each side. */
+  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
+    width: min(28%, 19rem);
   }
 
   /* Side cards dim more the further out they sit, so the centre card reads first. */
@@ -144,25 +150,60 @@ export const Slide = styled.div<{ $offset: number; $instant: boolean }>`
  * identical in both themes, so the overlay reads the same in light and
  * dark mode.
  */
-// data-active (set in Projects.tsx) lets the image, shine and overlay react to the active card.
-export const Card = styled.article`
+// data-active (carousel) drives the active-image zoom and overlay rise.
+// Carousel cards are image-led with a navy scrim; grid cards are white
+// editorial cards with the photo on top and the copy on white below.
+export const Card = styled.article<{ $layout: 'carousel' | 'grid' | 'row' }>`
   /* Card contents size themselves to the card's own width (container queries). */
   container-type: inline-size;
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  /* Taller portrait on mobile/tablet, square on desktop. */
-  aspect-ratio: 3 / 5;
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.radii.lg};
-  background: ${({ theme }) => theme.colors.brand.navy};
-  box-shadow: ${({ theme }) => theme.shadows.lg};
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    aspect-ratio: 1;
-  }
+  ${({ $layout, theme }) =>
+    $layout === 'carousel'
+      ? css`
+          justify-content: flex-end;
+          aspect-ratio: 3 / 5;
+          background: ${theme.colors.brand.navy};
+          box-shadow: ${theme.shadows.lg};
+
+          @media (min-width: ${theme.breakpoints.lg}) {
+            aspect-ratio: 1;
+          }
+        `
+      : $layout === 'row'
+        ? css`
+            justify-content: flex-start;
+            background: ${theme.colors.surface.default};
+            box-shadow: ${theme.shadows.sm};
+            transition:
+              border-color ${theme.transitions.fast},
+              box-shadow ${theme.transitions.fast};
+
+            &:hover,
+            &:focus-within {
+              border-color: ${theme.colors.text.accent};
+              box-shadow: ${theme.shadows.md};
+            }
+          `
+        : css`
+          justify-content: flex-start;
+          background: ${theme.colors.surface.default};
+          box-shadow: ${theme.shadows.sm};
+          transition:
+            border-color ${theme.transitions.fast},
+            box-shadow ${theme.transitions.fast};
+
+          &:hover,
+          &:focus-within {
+            border-color: ${theme.colors.text.accent};
+            box-shadow: ${theme.shadows.md};
+          }
+        `}
 `
 
 export const CardImage = styled.img`
@@ -180,6 +221,116 @@ export const CardImage = styled.img`
       transform: scale(1.08);
       transition: transform 8s ease-out;
     }
+  }
+`
+
+/* ---------- Grid (white editorial) card pieces ---------- */
+
+// Photo area of a grid card: the image fills it and the badges anchor to it.
+export const GridMedia = styled.div`
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.brand.navy};
+`
+
+export const GridImage = styled.img`
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  ${noMotionPref} {
+    transition: transform 600ms ease-out;
+
+    ${Card}:hover &,
+    ${Card}:focus-within & {
+      transform: scale(1.04);
+    }
+  }
+`
+
+// White body below the photo: title, summary, then the action row.
+export const GridBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${({ theme }) => theme.spacing.lg};
+  background: ${({ theme }) => theme.colors.surface.default};
+`
+
+export const GridTitle = styled.h3`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.lg};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: -0.01em;
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+`
+
+// The two actions share the row equally; 44px tall with bold labels.
+export const GridActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  width: 100%;
+  margin-top: ${({ theme }) => theme.spacing.xs};
+
+  & > a,
+  & > button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 2.75rem;
+    font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+  }
+
+  & svg {
+    flex: none;
+  }
+`
+
+export const VisitArrow = styled.span`
+  display: inline-grid;
+`
+
+// Light outline Details button for white cards (the frosted DetailsButton
+// below is for the dark carousel overlay only). Icon-only on small cards so
+// Visit keeps room; icon + label once the card is wide.
+export const GridDetailsButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  min-width: 2.75rem;
+  padding: 0 ${({ theme }) => theme.spacing.sm};
+  white-space: nowrap;
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: ${({ theme }) => theme.colors.surface.default};
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-family: inherit;
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  cursor: pointer;
+  transition:
+    border-color ${({ theme }) => theme.transitions.fast},
+    color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.text.accent};
+    color: ${({ theme }) => theme.colors.text.accent};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.border.focus};
+    outline-offset: 2px;
+  }
+`
+
+export const GridDetailsLabel = styled.span`
+  display: none;
+
+  @container (min-width: 20rem) {
+    display: inline;
   }
 `
 
@@ -242,15 +393,10 @@ export const Image = styled.img`
   object-fit: cover;
 `
 
-export const Category = styled.span`
-  --inset: clamp(
-    ${({ theme }) => theme.spacing.sm},
-    5cqi,
-    ${({ theme }) => theme.spacing.md}
-  );
+// Frosted pill shared by the category and concept badges.
+const badgeBase = css`
   position: absolute;
   top: var(--inset);
-  left: var(--inset);
   z-index: 1;
   display: inline-flex;
   align-items: center;
@@ -291,13 +437,77 @@ export const Category = styled.span`
 
   /* Narrow cards: tighten tracking/padding so long labels fit instead of overflowing. */
   @container (max-width: 14rem) {
-    gap: calc(${({ theme }) => theme.spacing.xs} / 2);
+    gap: ${({ theme }) => theme.spacing.xs};
     padding: ${({ theme }) => theme.spacing.xs};
     letter-spacing: 0.04em;
 
     & > svg {
-      width: 10px;
-      height: 10px;
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+  }
+`
+
+export const Category = styled.span`
+  --inset: clamp(
+    ${({ theme }) => theme.spacing.sm},
+    5cqi,
+    ${({ theme }) => theme.spacing.md}
+  );
+  left: var(--inset);
+  ${badgeBase}
+
+  /* Grid cards carry a Concept tag on the right, so the category yields room
+     instead of running underneath it. */
+  ${Card}[data-layout='grid'] & {
+    max-width: calc(100% - 2 * var(--inset) - 5.5rem);
+    font-size: calc(${({ theme }) => theme.typography.fontSizes.xs} * 0.92);
+    letter-spacing: 0.02em;
+  }
+
+  /* Smaller cards get a smaller label so the longest category still fits. */
+  @container (max-width: 22rem) {
+    ${Card}[data-layout='grid'] & {
+      font-size: 0.625rem;
+    }
+  }
+
+  /* Phones drop the Concept tag (the section heading carries the label), so
+     the category can use the full width instead of truncating. */
+  @container (max-width: 20.75rem) {
+    ${Card}[data-layout='grid'] & {
+      max-width: calc(100% - 2 * var(--inset));
+    }
+  }
+`
+
+// Every published project is a concept; the tag keeps that label per card
+// without squeezing the category into a truncated "Concept · ..." string.
+export const ConceptTag = styled.span`
+  --inset: clamp(
+    ${({ theme }) => theme.spacing.sm},
+    5cqi,
+    ${({ theme }) => theme.spacing.md}
+  );
+  right: var(--inset);
+  ${badgeBase}
+
+  ${Card}[data-layout='grid'] & {
+    font-size: calc(${({ theme }) => theme.typography.fontSizes.xs} * 0.92);
+    letter-spacing: 0.06em;
+  }
+
+  @container (max-width: 22rem) {
+    ${Card}[data-layout='grid'] & {
+      padding-inline: ${({ theme }) => theme.spacing.sm};
+      font-size: 0.625rem;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  @container (max-width: 20.75rem) {
+    ${Card}[data-layout='grid'] & {
+      display: none;
     }
   }
 `
@@ -320,22 +530,6 @@ export const Title = styled.h3`
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   letter-spacing: -0.02em;
   line-height: ${({ theme }) => theme.typography.lineHeights.tight};
-`
-
-// Two lines max; the full text lives in the Details dialog.
-export const Summary = styled.p`
-  display: -webkit-box;
-  margin: 0;
-  overflow: hidden;
-  color: color-mix(
-    in srgb,
-    ${({ theme }) => theme.colors.brand.white} 88%,
-    transparent
-  );
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 `
 
 // Always one row. Mobile-first: Visit stretches long while Details is
@@ -516,18 +710,7 @@ export const ArrowButton = styled.button`
   }
 `
 
-export const ViewAllArrow = styled.span`
-  display: inline-grid;
-  transition: transform ${({ theme }) => theme.transitions.base};
-`
-
-export const ViewAllButton = styled(SecondaryButton)`
-  ${noMotionPref} {
-    &:hover ${ViewAllArrow} {
-      transform: translateX(3px);
-    }
-  }
-`
+export const ViewAllButton = styled(PrimaryButton)``
 
 export const SrOnly = styled.span`
   position: absolute;
@@ -658,9 +841,116 @@ export const FeatureIcon = styled.span`
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: ${({ theme }) => theme.radii.round};
   background: ${({ theme }) => theme.colors.text.accent};
   color: ${({ theme }) => theme.colors.text.inverse};
 `
+
+/* ---------- Row (horizontal) card pieces ---------- */
+
+// Horizontal mobile-first card: square thumb on the left, copy on the right.
+// Reuses the grid action row so touch targets stay 44px.
+export const RowInner = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${({ theme }) => theme.spacing.sm};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing.lg};
+  }
+`
+
+export const RowThumb = styled.div`
+  position: relative;
+  display: block;
+  flex: none;
+  align-self: stretch;
+  width: 7rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.radii.md};
+
+  & img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Narrow cards: slimmer thumb so the longest category pill fits uncut. */
+  @container (max-width: 22rem) {
+    width: 6.25rem;
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.sm}) {
+    width: 8.5rem;
+  }
+
+  ${noMotionPref} {
+    & img {
+      transition: transform 600ms ease-out;
+    }
+
+    ${Card}:hover & img,
+    ${Card}:focus-within & img {
+      transform: scale(1.04);
+    }
+  }
+`
+
+export const RowContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  min-width: 0;
+`
+
+// Mint pill: accent-tinted background with a plain (not uppercase) label.
+export const RowCategory = styled.span`
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: ${({ theme }) => theme.spacing.xs};
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0.125rem ${({ theme }) => theme.spacing.sm};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  background: color-mix(
+    in srgb,
+    ${({ theme }) => theme.colors.text.accent} 14%,
+    ${({ theme }) => theme.colors.surface.default}
+  );
+  color: ${({ theme }) => theme.colors.text.accent};
+  font-size: ${({ theme }) => theme.typography.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+
+  & > svg {
+    flex: none;
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  /* Narrow cards: smaller pill text so the longest category fits uncut. */
+  @container (max-width: 22rem) {
+    padding-inline: ${({ theme }) => theme.spacing.sm};
+    font-size: 0.6875rem;
+  }
+`
+
+export const RowTitle = styled.h3`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.typography.fontSizes.md};
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: -0.01em;
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+`
+

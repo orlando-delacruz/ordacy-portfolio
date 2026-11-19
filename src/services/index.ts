@@ -1,6 +1,6 @@
 // Data access layer for the admin (and the contact form). UI code calls these
 // functions only; today they use the browser-local store, later an API client.
-import { seed } from '@/data'
+import { mergePageSections, seed } from '@/data'
 import type {
   FaqRecord,
   GalleryImageRecord,
@@ -47,7 +47,11 @@ export const teamService = createCollection<TeamMemberRecord>(
   'team',
   seed.team,
 )
-export const pagesService = createCollection<PageRecord>('pages', seed.pages)
+export const pagesService = createCollection<PageRecord>(
+  'pages',
+  seed.pages,
+  (records) => mergePageSections(seed.pages, records),
+)
 export const seoService = createCollection<SeoRecord>(
   'seo',
   Object.entries(seed.seo).map(([id, page]) => ({ id, ...page })),

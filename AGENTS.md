@@ -18,6 +18,7 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 - `src/features/<route>/` — one folder per page. All pages are built; Home lives under `src/features/home/` (`sections/`, shared `components/`, copy/data in `home.data.ts`); content comes from `data/database/*.json` via `@/data`; shared UI is in `src/components/ui`.
 - `src/styles/theme.ts` — design tokens; `src/types/styled.d.ts` — styled-components theme typing.
 - `RootLayout` owns the shell (sidebar, Top Bar, mobile bottom nav, skip link, content width). Pages render content only.
+- Shared surfaces: `src/components/ui/CtaBanner.tsx` is the teal closing banner used by Home and Projects; `src/features/projects/components/ProjectCard.tsx` is the image-led card used by the Home 3D carousel (`ProjectsCarousel.tsx`), the Projects desktop white-card grid, and the Projects mobile horizontal row list (below `md`, with segmented filter bar + pagination).
 - Shared logic: `src/hooks` (`useDialogFocusTrap` for any modal dialog, `useMediaQuery`, `useScrollDirection`), `useHomePageMeta` (`src/features/home`). Theme state lives in `src/app/ThemeProvider.tsx` (always starts light, see below).
 
 `README.md`'s status sections predate the homepage build: it still claims all pages are placeholders and that there is no Git repository. Trust `src/` and `package.json` over it.
@@ -62,6 +63,14 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 - A few deliberate hex values remain for dark-mode teal surfaces and cover art; follow the existing comments rather than adding new hardcoded colors.
 - Preserve `aria-*`, `tabIndex`, focus styles, and the skip link when editing layout/navigation.
 - Custom JS animations (theme overlay, lightbox) guard `prefers-reduced-motion` themselves; `GlobalStyles` only covers CSS animations.
+
+## Spacing and sizing (4/8-point grid)
+
+- Spacing and fixed sizes are multiples of **4px**; prefer **8px** steps at 16px and above. Allowed: 4, 8, 12, 16, 24, 32, 40, 48, 64, 96. Use `theme.spacing` tokens where one exists; no new tokens for one-offs.
+- Fixed widths/heights follow the same steps. Control heights stay 44px public / 40px admin.
+- **Exempt, by rule**: container widths and column layouts, fluid/`clamp()`/percentage dimensions, font sizes and line heights (separate type scale), 1–3px borders and hairlines, optical radii, and background/position percentages. Dynamic card widths follow the column system — never fix a width just to satisfy the grid.
+- **Icons**: multiples of 4 (16/20/24/28/32). **14 and 18 are approved optical sizes** for inline and button icons; never introduce new off-grid icon sizes.
+- True optical exceptions carry a `grid-exempt: <reason>` comment so `npm run check:grid` skips them.
 
 ## Pricing section notes
 

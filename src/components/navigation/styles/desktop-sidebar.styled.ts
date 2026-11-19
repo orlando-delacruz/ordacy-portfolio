@@ -63,20 +63,48 @@ export const BrandWordmark = styled.span<{ $collapsed: boolean }>`
   white-space: nowrap;
 `
 
-export const Nav = styled.nav`
+export const NavScroll = styled.div`
   display: flex;
   min-height: 0;
+  flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.xs};
   overflow-y: auto;
 `
 
-export const Divider = styled.hr`
-  width: 100%;
-  height: 1px;
-  margin: ${({ theme }) => theme.spacing.xs} 0;
+export const Nav = styled.nav`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.xs};
+`
+
+// Small caps section label above each nav group. Collapses to zero height so
+// the icon rail keeps its even rhythm when the sidebar is closed.
+export const GroupLabel = styled.p<{ $collapsed: boolean }>`
+  max-height: ${({ $collapsed }) => ($collapsed ? '0' : '1.25rem')};
+  margin: ${({ $collapsed, theme }) =>
+    $collapsed ? '0' : `0 0 ${theme.spacing.xs}`};
+  padding-inline: ${({ $collapsed, theme }) =>
+    $collapsed ? '0' : theme.spacing.lg};
+  overflow: hidden;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: 0.6875rem;
+  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
+  letter-spacing: 0.12em;
+  line-height: ${({ theme }) => theme.typography.lineHeights.normal};
+  opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
+  text-transform: uppercase;
+  transition:
+    max-height ${({ theme }) => theme.transitions.slow},
+    margin ${({ theme }) => theme.transitions.slow},
+    opacity ${({ theme }) => theme.transitions.fast};
+  white-space: nowrap;
+`
+
+export const NavDivider = styled.hr<{ $collapsed: boolean }>`
+  display: ${({ $collapsed }) => ($collapsed ? 'none' : 'block')};
+  margin: ${({ theme }) => `${theme.spacing.sm} 0 ${theme.spacing.md}`};
   border: 0;
-  background: ${({ theme }) => theme.colors.border.default};
+  border-top: 1px solid ${({ theme }) => theme.colors.border.default};
 `
 
 export const NavItem = styled(NavLink)<{ $collapsed: boolean }>`
@@ -84,6 +112,33 @@ export const NavItem = styled(NavLink)<{ $collapsed: boolean }>`
 
   &[aria-current='page'] {
     ${nav.desktopItemActiveStyles}
+  }
+`
+
+export const ItemIcon = styled.span`
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: ${({ theme }) => theme.radii.sm};
+  transition: background ${({ theme }) => theme.transitions.base};
+
+  a:hover &,
+  a:focus-visible & {
+    background: color-mix(
+      in srgb,
+      ${({ theme }) => theme.colors.text.accent} 14%,
+      transparent
+    );
+  }
+
+  a[aria-current='page'] & {
+    background: color-mix(
+      in srgb,
+      ${({ theme }) => theme.colors.text.accent} 24%,
+      transparent
+    );
   }
 `
 

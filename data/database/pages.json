@@ -14,14 +14,6 @@
         "items": null
       },
       {
-        "id": "services",
-        "label": "Problems and services",
-        "eyebrow": null,
-        "title": "What We Address.",
-        "description": "Problems solved, systems built.",
-        "items": null
-      },
-      {
         "id": "work",
         "label": "Projects",
         "eyebrow": null,
@@ -58,7 +50,7 @@
         "label": "Sample testimonials (shown when no real testimonials exist)",
         "eyebrow": null,
         "title": "What Working With Us Can Feel Like.",
-        "description": "Illustrative feedback from sample individuals, not real quotes. Real feedback appears here only with permission.",
+        "description": "Illustrative examples, not real quotes.",
         "items": null
       },
       {
@@ -100,6 +92,18 @@
         "eyebrow": "Let's work together",
         "title": "Build Better Together.",
         "description": "Tell us about your project. We will propose a solution that fits how you work.",
+        "actions": [
+          {
+            "label": "Get started",
+            "to": "/contact",
+            "icon": "Rocket"
+          },
+          {
+            "label": "Our services",
+            "to": "/about-us#services",
+            "icon": "Compass"
+          }
+        ],
         "items": null
       }
     ]
@@ -111,7 +115,7 @@
     "header": {
       "eyebrow": "About Ordacy",
       "title": "Build Better. Grow Further.",
-      "description": "Ordacy builds custom systems and websites for startups and businesses in the Philippines and abroad."
+      "description": "Systems built for how you work."
     },
     "sections": [
       {
@@ -119,15 +123,20 @@
         "label": "Purpose",
         "eyebrow": null,
         "title": "Why Ordacy exists.",
-        "description": "Many businesses run on tools never designed for them. We build systems that fit.",
+        "description": "Many businesses run on tools never designed for them. We build systems that fit.\n\nOrdacy builds custom systems that help businesses run operations, serve customers, and grow with clarity.",
+        "mobile": {
+          "eyebrow": "Why Ordacy exists",
+          "title": "Why Ordacy exists.",
+          "description": "Many businesses run on tools never designed for them. We build systems that fit."
+        },
         "items": null
       },
       {
-        "id": "problems",
-        "label": "Problems we address",
+        "id": "services",
+        "label": "Problems and services",
         "eyebrow": null,
-        "title": "The problems we help solve.",
-        "description": "Common challenges that slow businesses down, and the systems that address them.",
+        "title": "What We Address.",
+        "description": "Problems solved, systems built.",
         "items": null
       },
       {
@@ -136,6 +145,11 @@
         "eyebrow": null,
         "title": "What we build.",
         "description": "Six kinds of work, each designed around your processes. Select a service to see more.",
+        "mobile": {
+          "eyebrow": "What we build",
+          "title": "Custom systems for real business needs.",
+          "description": "Six kinds of work, each designed around your processes."
+        },
         "items": null
       },
       {
@@ -144,6 +158,11 @@
         "eyebrow": null,
         "title": "How we approach every project.",
         "description": "Principles that shape how we plan, build, and hand over each solution.",
+        "mobile": {
+          "eyebrow": "How we approach every project",
+          "title": "Our project approach.",
+          "description": "Principles that shape how we plan, build, and hand over each solution."
+        },
         "items": [
           {
             "title": "Start with the problem",
@@ -173,6 +192,11 @@
         "eyebrow": null,
         "title": "How we work.",
         "description": "A clear path from the first conversation to a finished project.",
+        "mobile": {
+          "eyebrow": "How we work",
+          "title": "Our process.",
+          "description": "A clear path from the first conversation to a finished project."
+        },
         "items": null
       },
       {
@@ -181,6 +205,11 @@
         "eyebrow": null,
         "title": "Who we work with.",
         "description": "Businesses at every stage that need systems that fit.",
+        "mobile": {
+          "eyebrow": "Who we work with",
+          "title": "Businesses we support.",
+          "description": "Businesses at every stage that need systems that fit."
+        },
         "items": [
           {
             "title": "Startups",
@@ -206,6 +235,11 @@
         "eyebrow": null,
         "title": "What you can expect.",
         "description": "The terms that apply to every project unless agreed otherwise in writing.",
+        "mobile": {
+          "eyebrow": "What you can expect",
+          "title": "Our commitment to your project.",
+          "description": "The terms that apply to every project unless agreed otherwise."
+        },
         "items": [
           {
             "title": "A written proposal",
@@ -236,9 +270,21 @@
       {
         "id": "work-with-us",
         "label": "Call to action",
-        "eyebrow": null,
+        "eyebrow": "Let's work together",
         "title": "Work with us.",
         "description": "Tell us what you need. We will talk through the right scope together.",
+        "actions": [
+          {
+            "label": "Get started",
+            "to": "/contact",
+            "icon": "Rocket"
+          },
+          {
+            "label": "See pricing",
+            "to": "/pricing",
+            "icon": "Wallet"
+          }
+        ],
         "items": null
       }
     ]
@@ -248,17 +294,17 @@
     "label": "Projects",
     "path": "/projects",
     "header": {
-      "eyebrow": "Projects",
+      "eyebrow": "OUR PROJECTS",
       "title": "Systems built around real business needs.",
-      "description": "Concept projects showing how we approach booking, inventory, dashboards, CRMs, and websites. Filter to explore."
+      "description": "Six concept systems for real businesses."
     },
     "sections": [
       {
         "id": "work",
         "label": "Project grid",
-        "eyebrow": null,
-        "title": "Concept projects.",
-        "description": "Built around realistic business scenarios. Open one to see its challenge, solution, and screens.",
+        "eyebrow": "BROWSE PROJECTS",
+        "title": "Concept Projects.",
+        "description": "Open one to see its challenge, solution, and screens.",
         "items": null
       },
       {
@@ -272,9 +318,21 @@
       {
         "id": "start",
         "label": "Call to action",
-        "eyebrow": null,
+        "eyebrow": "Let's work together",
         "title": "Have something similar in mind?",
-        "description": "Tell us about your project. We will suggest the right scope.",
+        "description": "Tell us about your project. We will suggest the right scope, approach, and solution.",
+        "actions": [
+          {
+            "label": "Get started",
+            "to": "/contact",
+            "icon": "Rocket"
+          },
+          {
+            "label": "See pricing",
+            "to": "/pricing",
+            "icon": "Wallet"
+          }
+        ],
         "items": null
       }
     ]
@@ -286,9 +344,30 @@
     "header": {
       "eyebrow": "Testimonials",
       "title": "What working with Ordacy looks like.",
-      "description": "Client feedback appears here only with permission, alongside what every client can expect."
+      "description": "Feedback shared only with permission."
     },
     "sections": [
+      {
+        "id": "hero",
+        "label": "Hero highlights",
+        "eyebrow": null,
+        "title": "What working with Ordacy looks like.",
+        "description": null,
+        "items": [
+          {
+            "title": "Feedback with permission",
+            "text": ""
+          },
+          {
+            "title": "Projects across real business needs",
+            "text": ""
+          },
+          {
+            "title": "Samples clearly labelled",
+            "text": ""
+          }
+        ]
+      },
       {
         "id": "principles",
         "label": "Working principles",
@@ -349,9 +428,61 @@
       {
         "id": "cta",
         "label": "Call to action",
-        "eyebrow": null,
+        "eyebrow": "Let's work together",
         "title": "Ready to talk about your project?",
         "description": "Share your goals. We will propose a solution that fits how you work.",
+        "actions": [
+          {
+            "label": "Let's talk",
+            "to": "/contact",
+            "icon": "MessagesSquare"
+          },
+          {
+            "label": "View projects",
+            "to": "/projects",
+            "icon": "FolderKanban"
+          }
+        ],
+        "items": null
+      }
+    ]
+  },
+  {
+    "id": "faqs",
+    "label": "FAQs",
+    "path": "/faqs",
+    "header": {
+      "eyebrow": "FAQs",
+      "title": "Questions, answered.",
+      "description": "Answers on process, pricing, and support."
+    },
+    "sections": [
+      {
+        "id": "questions",
+        "label": "All FAQs",
+        "eyebrow": null,
+        "title": "Browse every question.",
+        "description": "Grouped by topic, with answers written to be read in full.",
+        "items": null
+      },
+      {
+        "id": "cta",
+        "label": "FAQ call to action",
+        "eyebrow": "Let's work together",
+        "title": "Still have a question?",
+        "description": "Send it over and we'll reply with a clear answer.",
+        "actions": [
+          {
+            "label": "Contact us",
+            "to": "/contact",
+            "icon": "MessagesSquare"
+          },
+          {
+            "label": "See pricing",
+            "to": "/pricing",
+            "icon": "Wallet"
+          }
+        ],
         "items": null
       }
     ]
@@ -409,6 +540,26 @@
         "title": "Work with us.",
         "description": "Tell us about your project. We will suggest the right scope together.",
         "items": null
+      },
+      {
+        "id": "cta",
+        "label": "Call to action",
+        "eyebrow": "Let's work together",
+        "title": "Work with us.",
+        "description": "Tell us what you need. We will talk through the right scope together.",
+        "actions": [
+          {
+            "label": "Get started",
+            "to": "/contact",
+            "icon": "Rocket"
+          },
+          {
+            "label": "See pricing",
+            "to": "/pricing",
+            "icon": "Wallet"
+          }
+        ],
+        "items": null
       }
     ]
   },
@@ -419,7 +570,7 @@
     "header": {
       "eyebrow": "Pricing",
       "title": "Clear starting prices, scoped to fit.",
-      "description": "Every project is quoted after discovery. These starting prices show where websites and systems typically begin."
+      "description": "Starting prices for websites and systems."
     },
     "sections": [
       {
@@ -470,6 +621,26 @@
         "title": "Pricing questions, answered.",
         "description": "Costs, timelines, and what happens after launch.",
         "items": null
+      },
+      {
+        "id": "cta",
+        "label": "Call to action",
+        "eyebrow": "Let's work together",
+        "title": "Start from a clear price.",
+        "description": "Choose a starting point, then we will scope the rest together.",
+        "actions": [
+          {
+            "label": "Let's talk",
+            "to": "/contact",
+            "icon": "MessagesSquare"
+          },
+          {
+            "label": "View projects",
+            "to": "/projects",
+            "icon": "FolderKanban"
+          }
+        ],
+        "items": null
       }
     ]
   },
@@ -480,7 +651,7 @@
     "header": {
       "eyebrow": "Contact",
       "title": "Let's talk about your project.",
-      "description": "Share a few details about your project. We review them before our first conversation."
+      "description": "Tell us what you need."
     },
     "sections": [
       {
@@ -503,6 +674,63 @@
             "text": "We follow up to talk through scope, timeline, and investment."
           }
         ]
+      },
+      {
+        "id": "assurances",
+        "label": "Service assurances",
+        "eyebrow": null,
+        "title": "Service assurances",
+        "description": null,
+        "items": [
+          {
+            "title": "Confidential & secure",
+            "text": ""
+          },
+          {
+            "title": "Quick response",
+            "text": ""
+          },
+          {
+            "title": "Work directly with our team",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "id": "callout",
+        "label": "Prefer to talk first",
+        "eyebrow": null,
+        "title": "Prefer to talk first?",
+        "description": "Send your inquiry and we'll get in touch to schedule a quick, no-obligation conversation.",
+        "items": null
+      },
+      {
+        "id": "form",
+        "label": "Inquiry form",
+        "eyebrow": null,
+        "title": "Send an inquiry",
+        "description": "Tell us about your project and we'll get back to you soon.",
+        "items": null
+      },
+      {
+        "id": "cta",
+        "label": "Call to action",
+        "eyebrow": "Let's work together",
+        "title": "Send us the details.",
+        "description": "Tell us about your project and we'll reply with a clear next step.",
+        "actions": [
+          {
+            "label": "Send inquiry",
+            "to": "#inquiry-form",
+            "icon": "MessagesSquare"
+          },
+          {
+            "label": "See pricing",
+            "to": "/pricing",
+            "icon": "Wallet"
+          }
+        ],
+        "items": null
       }
     ]
   },
@@ -513,8 +741,29 @@
     "header": {
       "eyebrow": "Error 404",
       "title": "This page could not be found.",
-      "description": "The link may be broken or the page moved. These pages are a good place to continue."
+      "description": "This link is broken or moved."
     },
-    "sections": []
+    "sections": [
+      {
+        "id": "cta",
+        "label": "Call to action",
+        "eyebrow": "Let's work together",
+        "title": "Let's get you back on track.",
+        "description": "Head back home or tell us what you were looking for.",
+        "actions": [
+          {
+            "label": "Go home",
+            "to": "/",
+            "icon": "House"
+          },
+          {
+            "label": "Contact",
+            "to": "/contact",
+            "icon": "MessagesSquare"
+          }
+        ],
+        "items": null
+      }
+    ]
   }
 ]

@@ -23,6 +23,19 @@ export const baseStyles = css`
     border-color ${({ theme }) => theme.transitions.fast},
     transform ${({ theme }) => theme.transitions.fast};
 
+  /* One shared icon gesture: the icon lifts diagonally on hover. The pricing
+     help CTA keeps its looping paper plane; this is the quiet default. */
+  svg {
+    transition: transform ${({ theme }) => theme.transitions.base};
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &:hover svg,
+    &:focus-visible svg {
+      transform: translate(2px, -2px);
+    }
+  }
+
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     padding: ${({ theme }) => theme.spacing.sm}
       ${({ theme }) => theme.spacing.md};

@@ -3,6 +3,8 @@
     "id": "manual-processes",
     "icon": "ClipboardList",
     "title": "Manual Processes",
+    "summary": "Repetitive tasks, spreadsheets, and manual coordination.",
+    "mobileSummary": "Repetitive tasks, spreadsheets, and manual coordination.",
     "description": "Repetitive tasks, spreadsheets, and manual coordination can slow down everyday operations.",
     "solvedBy": [
       "Custom Business Management Systems",
@@ -14,6 +16,8 @@
     "id": "disconnected-tools",
     "icon": "Layers",
     "title": "Disconnected Tools",
+    "summary": "Important business information scattered across different tools.",
+    "mobileSummary": "Important business information scattered across systems.",
     "description": "Important business information scattered across different platforms makes workflows harder to manage.",
     "solvedBy": [
       "Custom Business Management Systems",
@@ -25,6 +29,8 @@
     "id": "limited-visibility",
     "icon": "Eye",
     "title": "Limited Visibility",
+    "summary": "Without centralized information, monitoring business performance is difficult.",
+    "mobileSummary": "Without centralized information, monitoring is harder.",
     "description": "Without centralized information, monitoring business activities and making informed decisions becomes difficult.",
     "solvedBy": [
       "Internal Dashboards and Admin Tools",
@@ -34,8 +40,10 @@
   },
   {
     "id": "inefficient-customer-management",
-    "icon": "Inbox",
+    "icon": "Users",
     "title": "Inefficient Customer Management",
+    "summary": "Managing inquiries, appointments, customer records, and follow-ups can be time-consuming.",
+    "mobileSummary": "Managing inquiries, appointments, and customer records.",
     "description": "Managing inquiries, appointments, customer records, and follow-ups manually can become overwhelming.",
     "solvedBy": [
       "CRM and Customer Management Systems",
@@ -45,8 +53,10 @@
   },
   {
     "id": "lack-of-business-specific-tools",
-    "icon": "Puzzle",
+    "icon": "Code",
     "title": "Lack of Business-Specific Tools",
+    "summary": "Generic software may not support the unique processes of your business.",
+    "mobileSummary": "Generic software may not support unique processes.",
     "description": "Generic software may not support the unique processes and requirements of every business.",
     "solvedBy": [
       "Custom Business Management Systems",

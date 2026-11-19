@@ -8,6 +8,9 @@ import {
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 import {
   CircleDollarSign,
+  CircleHelp,
+  Compass,
+  Files,
   FolderKanban,
   House,
   Info,
@@ -69,6 +72,12 @@ const about = {
   icon: Info,
 } satisfies NavigationItem
 
+const faqs = {
+  label: 'FAQs',
+  to: '/faqs',
+  icon: CircleHelp,
+} satisfies NavigationItem
+
 const privacy = {
   label: 'Privacy Policy',
   to: '/privacy-policy',
@@ -76,7 +85,7 @@ const privacy = {
 } satisfies NavigationItem
 
 const terms = {
-  label: 'Terms and Conditions',
+  label: 'Terms',
   to: '/terms-of-service',
   icon: ScrollText,
 } satisfies NavigationItem
@@ -99,6 +108,7 @@ export const mobileNavItems: readonly MobileNavigationItem[] = [
 
 export const secondaryNavItems: readonly NavigationItem[] = [
   about,
+  faqs,
   privacy,
   terms,
 ]
@@ -107,6 +117,11 @@ export const allNavItems: readonly NavigationItem[] = [
   ...primaryNavItems,
   ...secondaryNavItems,
 ]
+
+export const footerGroups = [
+  { title: 'Explore', area: 'explore', icon: Compass, items: primaryNavItems },
+  { title: 'Pages', area: 'pages', icon: Files, items: secondaryNavItems },
+] as const
 
 export const moreNavItem = {
   label: 'More',

@@ -15,7 +15,7 @@ const spacing = {
 }
 
 const radii = {
-  sm: '0.625rem',
+  sm: '0.5rem',
   md: '0.75rem',
   lg: '1rem',
   pill: '999px',
@@ -59,13 +59,13 @@ const lightColors = {
     white: '#FEFEFE',
   },
   background: {
-    default: '#FAFCFB',
-    subtle: '#F4F8F7',
+    default: '#F1F7F4',
+    subtle: '#E8F1EE',
     inverse: '#00243E',
   },
   surface: {
     default: '#FFFFFF',
-    subtle: '#F4F8F7',
+    subtle: '#E8F1EE',
   },
   text: {
     primary: '#0B2233',
@@ -74,7 +74,7 @@ const lightColors = {
     inverse: '#FEFEFE',
   },
   border: {
-    default: '#E2E9E7',
+    default: '#DDE8E4',
     focus: '#006B5E',
   },
   // Small accent cues only: brand navy for problems, brand teal for solutions.

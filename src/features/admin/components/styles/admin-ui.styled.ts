@@ -349,7 +349,7 @@ export type Tone = 'info' | 'warning' | 'success' | 'neutral' | 'danger'
 export const Badge = styled.span<{ $tone: Tone }>`
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: ${({ theme }) => theme.spacing.sm};
   padding: 0.125rem ${({ theme }) => theme.spacing.sm};
   border-radius: ${({ theme }) => theme.radii.pill};
   background: ${({ $tone, theme }) =>
@@ -361,8 +361,8 @@ export const Badge = styled.span<{ $tone: Tone }>`
   white-space: nowrap;
 
   &::before {
-    width: 0.4rem;
-    height: 0.4rem;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: ${({ theme }) => theme.radii.round};
     background: currentColor;
     content: '';
