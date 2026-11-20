@@ -39,7 +39,7 @@ export function GalleryAdminPage() {
       title: text(data, 'title'),
       alt: text(data, 'alt'),
       caption: text(data, 'caption') || null,
-      isPublished: !record?.isSample && data.get('isPublished') === 'on',
+      isPublished: data.get('isPublished') === 'on',
     }
     return record
       ? mutate(() => galleryService.update(record.id, fields), 'Image details saved.')
@@ -48,7 +48,6 @@ export function GalleryAdminPage() {
             galleryService.create({
               id: createId('image'),
               ...fields,
-              isSample: false,
               displayOrder: images.length + 1,
               createdAt: new Date().toISOString(),
             }),
@@ -99,8 +98,7 @@ export function GalleryAdminPage() {
                 <p>{image.title}</p>
                 {image.caption && <span>{image.caption}</span>}
                 <U.Badges>
-                  {image.isSample && <U.Badge $tone="neutral">Sample</U.Badge>}
-                  {!image.isPublished && !image.isSample && <U.Badge $tone="neutral">Hidden</U.Badge>}
+                  {!image.isPublished && <U.Badge $tone="neutral">Hidden</U.Badge>}
                 </U.Badges>
               </S.Meta>
               <U.RowActions>
@@ -108,8 +106,6 @@ export function GalleryAdminPage() {
                   <input
                     type="checkbox"
                     checked={image.isPublished}
-                    disabled={image.isSample}
-                    title={image.isSample ? 'Sample record. Replace it with real content to publish.' : undefined}
                     aria-label={`Show ${image.title}`}
                     onChange={() =>
                       mutate(
@@ -175,11 +171,9 @@ export function GalleryAdminPage() {
                   type="checkbox"
                   name="isPublished"
                   defaultChecked={dialog.record?.isPublished ?? true}
-                  disabled={dialog.record?.isSample}
                 />
                 Visible
               </F.Switch>
-              {dialog.record?.isSample && <F.Hint>Sample record. Replace it with real content to publish.</F.Hint>}
             </>
           )}
         </FormDialog>

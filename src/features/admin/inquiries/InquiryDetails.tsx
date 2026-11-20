@@ -1,4 +1,4 @@
-import { Mail, TriangleAlert } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { Lightbox } from '@/components/ui/Lightbox'
 import type { InquiryRecord, InquiryStatus } from '@/data'
 import { inquiryStatuses } from '@/services'
@@ -31,13 +31,6 @@ export function InquiryDetails({
       returnFocusTo={returnFocusTo}
     >
       <U.DialogBody>
-        {inquiry.isSample && (
-          <U.Notice $tone="warning">
-            <TriangleAlert size={16} strokeWidth={2} aria-hidden="true" />
-            <span>Sample record, not a real inquiry.</span>
-          </U.Notice>
-        )}
-
         <U.DefinitionList>
           <div>
             <dt>Full name</dt>

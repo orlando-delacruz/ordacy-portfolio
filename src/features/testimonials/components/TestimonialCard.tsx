@@ -11,8 +11,7 @@ type TestimonialCardProps = {
   onExpandedChange?: (expanded: boolean) => void
 }
 
-// Shared testimonial card: quote, author, optional rating, and a Sample badge
-// on illustrative records. Real testimonials never show the badge.
+// Shared testimonial card: quote, author, and optional rating.
 export function TestimonialCard({
   testimonial,
   layout = 'marquee',
@@ -62,8 +61,6 @@ export function TestimonialCard({
             </S.Stars>
             <S.RatingValue>{testimonial.rating}.0</S.RatingValue>
           </S.Rating>
-        ) : testimonial.isSample ? (
-          <S.SampleBadge>Sample</S.SampleBadge>
         ) : (
           <span aria-hidden="true" />
         )}

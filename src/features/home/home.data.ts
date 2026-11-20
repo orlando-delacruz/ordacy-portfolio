@@ -1,7 +1,7 @@
-// Home content now lives in /data/database and is read through `@/data`.
-// Projects still run on illustrative concept data (swap in real,
-// permissioned work before launch). Testimonials show clearly labeled sample
-// cards until real, approved client feedback exists.
+// Home content lives in /data/database and is read through `@/data`.
+// Projects and testimonials use only real published records; the Projects
+// section shows its empty state and the testimonials section is hidden until
+// real client feedback is approved.
 export {
   faqs,
   plans,
@@ -9,7 +9,6 @@ export {
   services,
   showcaseProjects,
   steps,
-  sampleTestimonials,
   testimonials,
 } from '@/data'
 export type {

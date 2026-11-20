@@ -1,8 +1,8 @@
 # Phase 00 — Content cleanup
 
-**Goal:** an honest site before any backend work. Remove every sample record, every
-concept showcase project, and the machinery built to handle them. Public pages show
-their existing empty states until real content exists.
+**Goal:** an honest site before any backend work. Remove every sample record, the six
+concept showcase projects, and the sample machinery built to handle them. Public pages
+show their existing empty states until real content exists.
 
 **Prerequisites:** none. This phase runs on the committed state system (`c12a5bf`).
 
@@ -15,7 +15,17 @@ their existing empty states until real content exists.
 - Remove the `isSample` field from types and all code paths. No sample badges, locks,
   fallbacks, counts, or copy remain.
 - Gallery has no public usage today (admin only); its page still gets the cleanup.
-- Keep `problems`, `process`, `legal`, `states`, `admin-navigation` untouched.
+- Keep `problems`, `process`, and `states` untouched. `legal` and
+  `admin-navigation` receive only the approved concept-demo copy corrections.
+- Reset browser-local storage to `ordacy-cms:v3:`. Edits saved under v2 from the
+  sample era are intentionally discarded; the cleaned JSON seed is canonical
+  (locked decision: seed from JSON only).
+- Approved review copy corrections: the Projects and Testimonials SEO descriptions
+  are trimmed; the legal "Site information" sentence states that client projects are
+  permissioned and concept demos are clearly labeled; the Projects admin-navigation
+  description drops "concept"; the Home `work` description, Projects header
+  description, and Projects `work` title are neutral; the Testimonials hero highlight
+  says real feedback only; the Projects carousel aria-label is "Projects carousel".
 - Fix the stale comment at the top of `src/features/home/home.data.ts` (Projects and
   Testimonials now read real data only).
 
@@ -70,18 +80,22 @@ their existing empty states until real content exists.
   - Any now-unused `Badge`/`Hint` imports go with the code.
 
 - [ ] **6. AGENTS.md:** update "Content integrity" and "Admin" wording — the sample
-  system no longer exists; empty states are the honest fallback; remove "Sample"
-  references from the admin bullets and copy-budget line.
+  system no longer exists; empty states are the honest fallback; only real client
+  feedback and permissioned projects are stored, with concept demos labeled as
+  concept work; remove "Sample" references from the admin bullets and copy-budget
+  line.
 
 ## Verification
 
 - [ ] `npm run typecheck`, `npm run lint`, `npm run check:grid`, `npm run build` all
   pass.
 - [ ] `grep -ri "isSample\|sampleTestimonials" src/` returns nothing.
+- [ ] No `ordacy-cms:v2:` reference remains in `src/`; restoring original content
+  clears the current `ordacy-cms:v3:` keys.
 - [ ] Browser at 320, 768, 1440: `/` hides testimonials and shows the Projects empty
   panel; `/projects` and `/testimonials` show their empty states with working actions;
-  `/faqs`, `/about-us`, `/contact`, legal pages unchanged; no console errors; no
-  horizontal overflow.
+  `/faqs`, `/about-us`, `/contact`, and legal pages render (Terms shows the corrected
+  Site information sentence); no console errors; no horizontal overflow.
 - [ ] Admin at 768: dashboard, projects, testimonials, gallery, inquiries pages render
   with empty states; create a draft record and delete it (browser-local, throwaway);
   no sample badges anywhere; no console errors.
@@ -95,9 +109,12 @@ consider real was removed (the six concept projects are gone by design).
 
 ## Review criteria
 
-Scope confined to the files above; no semantic change to CRUD behavior, publishing
-rules, ordering, or design language; empty states use the shared `PageState`/`StatePanel`
-already in place; AGENTS.md updated.
+- Scope confined to the files above; no semantic change to CRUD behavior, publishing
+  rules, ordering, or design language.
+- Empty states use the shared `PageState`/`StatePanel` already in place.
+- AGENTS.md updated, including the browser-local v3 reset.
+- No stale concept claims or sample copy remain; the `ProjectType` union and
+  concept-demo labels are expected.
 
 ## Commit
 

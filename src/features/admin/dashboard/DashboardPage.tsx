@@ -48,7 +48,7 @@ async function loadDashboard() {
     {
       label: 'Approved testimonials',
       value: of(
-        testimonials.filter((t) => t.status === 'approved' && !t.isSample).length,
+        testimonials.filter((t) => t.status === 'approved').length,
         testimonials.length,
       ),
       to: '/admin/testimonials',
@@ -69,12 +69,7 @@ async function loadDashboard() {
       to: '/admin/gallery',
     },
   ]
-  const sampleContent =
-    projects.filter((p) => p.isSample).length +
-    testimonials.filter((t) => t.isSample).length +
-    gallery.filter((image) => image.isSample).length
-
-  return { stats, content, sampleContent }
+  return { stats, content }
 }
 
 type DashboardData = Awaited<ReturnType<typeof loadDashboard>>
@@ -129,17 +124,10 @@ export function DashboardPage() {
 }
 
 function Dashboard({ data }: { data: DashboardData }) {
-  const { stats, content, sampleContent } = data
+  const { stats, content } = data
 
   return (
     <>
-      {stats.sampleCount > 0 && (
-        <S.Caption>
-          Includes {stats.sampleCount} sample{' '}
-          {stats.sampleCount === 1 ? 'inquiry' : 'inquiries'}.
-        </S.Caption>
-      )}
-
       <S.Columns>
         <U.Panel aria-labelledby="dash-inbox">
           <U.PanelHeader>
@@ -221,12 +209,6 @@ function Dashboard({ data }: { data: DashboardData }) {
                 </li>
               ))}
             </S.ContentList>
-            {sampleContent > 0 && (
-              <U.PanelText>
-                Includes {sampleContent} sample records. Sample content is never
-                published.
-              </U.PanelText>
-            )}
           </U.Panel>
 
           <U.Panel aria-labelledby="dash-actions">

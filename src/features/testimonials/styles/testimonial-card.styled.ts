@@ -34,7 +34,7 @@ export const Card = styled.li<{ $layout: 'marquee' | 'grid' }>`
 `
 
 // Rating on the left, decorative quote glyph on the right; the empty span keeps
-// the glyph flush right when a card has neither a rating nor a Sample badge.
+// the glyph flush right when a card has no rating.
 export const Top = styled.div`
   position: relative;
   display: flex;
@@ -55,19 +55,6 @@ export const RatingValue = styled.span`
   font-size: ${({ theme }) => theme.typography.fontSizes.sm};
   font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
   font-variant-numeric: tabular-nums;
-`
-
-// Small pill marking illustrative cards; never shown on real testimonials.
-export const SampleBadge = styled.span`
-  padding: 0.125rem ${({ theme }) => theme.spacing.sm};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.radii.pill};
-  background: ${({ theme }) => theme.colors.background.subtle};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: ${({ theme }) => theme.typography.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 `
 
 // Faint quote glyph in the top row, purely decorative depth.

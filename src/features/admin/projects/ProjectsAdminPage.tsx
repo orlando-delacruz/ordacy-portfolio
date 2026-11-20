@@ -59,7 +59,6 @@ export function ProjectsAdminPage() {
   const { items, status, refresh, mutate } = useCollection(projectsService)
   const [dialog, setDialog] = useState<Dialog>(null)
   const projects = [...items].sort(byOrder)
-  const samples = projects.filter((project) => project.isSample).length
 
   const save = (record: ProjectRecord | null, data: FormData) => {
     const now = new Date().toISOString()
@@ -79,7 +78,7 @@ export function ProjectsAdminPage() {
       image: { src: text(data, 'imageSrc'), alt: text(data, 'imageAlt') },
       screenshots: parseShots(text(data, 'screenshots')),
       url: text(data, 'url') || null,
-      isPublished: !record?.isSample && data.get('isPublished') === 'on',
+      isPublished: data.get('isPublished') === 'on',
       updatedAt: now,
     }
     return record
@@ -89,7 +88,6 @@ export function ProjectsAdminPage() {
             projectsService.create({
               id: slug,
               ...fields,
-              isSample: false,
               displayOrder: projects.length + 1,
               createdAt: now,
             }),
@@ -111,13 +109,6 @@ export function ProjectsAdminPage() {
         </U.PrimaryAction>
       }
     >
-      {samples > 0 && (
-        <U.Caption>
-          Includes {samples} sample projects. Sample projects are never
-          published.
-        </U.Caption>
-      )}
-
       {status === 'loading' && <LoadingState label="Loading projects…" />}
       {status === 'error' && <ErrorState onRetry={refresh} />}
       {status === 'ready' && projects.length === 0 && (
@@ -150,7 +141,6 @@ export function ProjectsAdminPage() {
                       <strong>{project.title}</strong>
                       <span>/{project.slug}</span>
                     </U.CellStrong>
-                    {project.isSample && <U.Badge $tone="neutral">Sample</U.Badge>}
                   </td>
                   <td data-label="Type">
                     <U.Badge $tone={project.type === 'concept-demo' ? 'warning' : 'info'}>
@@ -163,8 +153,6 @@ export function ProjectsAdminPage() {
                       <input
                         type="checkbox"
                         checked={project.isPublished}
-                        disabled={project.isSample}
-                        title={project.isSample ? 'Sample record. Replace it with real content to publish.' : undefined}
                         aria-label={`Publish ${project.title}`}
                         onChange={() =>
                           mutate(
@@ -178,7 +166,7 @@ export function ProjectsAdminPage() {
                         }
                       />
                       <span aria-hidden="true">
-                        {project.isSample ? 'Sample' : project.isPublished ? 'Live' : 'Draft'}
+                        {project.isPublished ? 'Live' : 'Draft'}
                       </span>
                     </F.Switch>
                   </td>
@@ -306,11 +294,9 @@ function ProjectFields({ record, errors, categories }: ProjectFieldsProps) {
                 type="checkbox"
                 name="isPublished"
                 defaultChecked={record?.isPublished ?? false}
-                disabled={record?.isSample}
               />
               Published on the site
             </F.Switch>
-            {record?.isSample && <F.Hint>Sample record. Replace it with real content to publish.</F.Hint>}
           </F.Field>
         </F.Grid>
       </F.Fieldset>

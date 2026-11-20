@@ -454,8 +454,8 @@ export const Category = styled.span`
   left: var(--inset);
   ${badgeBase}
 
-  /* Grid cards carry a Concept tag on the right, so the category yields room
-     instead of running underneath it. */
+  /* Concept-demo grid cards carry a Concept tag on the right, so the category
+     yields room instead of running underneath it. */
   ${Card}[data-layout='grid'] & {
     max-width: calc(100% - 2 * var(--inset) - 5.5rem);
     font-size: calc(${({ theme }) => theme.typography.fontSizes.xs} * 0.92);
@@ -469,8 +469,8 @@ export const Category = styled.span`
     }
   }
 
-  /* Phones drop the Concept tag (the section heading carries the label), so
-     the category can use the full width instead of truncating. */
+  /* Phones drop the Concept tag on concept-demo cards, so the category can use
+     the full width instead of truncating. */
   @container (max-width: 20.75rem) {
     ${Card}[data-layout='grid'] & {
       max-width: calc(100% - 2 * var(--inset));
@@ -478,7 +478,7 @@ export const Category = styled.span`
   }
 `
 
-// Every published project is a concept; the tag keeps that label per card
+// Concept-demo cards carry this tag so the concept-work label stays per card
 // without squeezing the category into a truncated "Concept · ..." string.
 export const ConceptTag = styled.span`
   --inset: clamp(

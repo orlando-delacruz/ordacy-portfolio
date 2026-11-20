@@ -18,7 +18,7 @@
         "label": "Projects",
         "eyebrow": null,
         "title": "Solutions in Practice.",
-        "description": "Concept projects built around realistic business scenarios.",
+        "description": "How we approach the systems we build.",
         "items": null
       },
       {
@@ -44,39 +44,6 @@
         "title": "What Clients Say.",
         "description": "Real feedback, published with permission.",
         "items": null
-      },
-      {
-        "id": "testimonial-samples",
-        "label": "Sample testimonials (shown when no real testimonials exist)",
-        "eyebrow": null,
-        "title": "What Working With Us Can Feel Like.",
-        "description": "Illustrative examples, not real quotes.",
-        "items": null
-      },
-      {
-        "id": "trust",
-        "label": "Working with Ordacy (shown until testimonials are published)",
-        "eyebrow": null,
-        "title": "How We Work With You.",
-        "description": "What every client can expect, from the first conversation to handover.",
-        "items": [
-          {
-            "title": "Understand before building",
-            "text": "Every project starts with discovery: your processes, challenges, and goals come first."
-          },
-          {
-            "title": "Clear scope and pricing",
-            "text": "You receive a written proposal covering the solution, features, scope, timeline, and investment."
-          },
-          {
-            "title": "Communication you can rely on",
-            "text": "Channels and update points are agreed at the start, so you always know the project status."
-          },
-          {
-            "title": "Transparent progress",
-            "text": "Work moves through defined stages, from design to testing. No surprises at handover."
-          }
-        ]
       },
       {
         "id": "faqs",
@@ -296,14 +263,14 @@
     "header": {
       "eyebrow": "OUR PROJECTS",
       "title": "Systems built around real business needs.",
-      "description": "Six concept systems for real businesses."
+      "description": "Client work published with permission; concept demos clearly labeled."
     },
     "sections": [
       {
         "id": "work",
         "label": "Project grid",
         "eyebrow": "BROWSE PROJECTS",
-        "title": "Concept Projects.",
+        "title": "Selected Work.",
         "description": "Open one to see its challenge, solution, and screens.",
         "items": null
       },
@@ -363,8 +330,8 @@
             "text": ""
           },
           {
-            "title": "Samples clearly labelled",
-            "text": ""
+            "title": "Real feedback only",
+            "text": "Only approved client feedback appears on this site."
           }
         ]
       },
@@ -407,14 +374,6 @@
         "eyebrow": null,
         "title": "In our clients' words.",
         "description": "Feedback shared by clients, published with their permission.",
-        "items": null
-      },
-      {
-        "id": "samples",
-        "label": "Sample testimonials (shown when no real testimonials exist)",
-        "eyebrow": null,
-        "title": "Sample feedback.",
-        "description": "Illustrative examples, not real quotes. Real feedback appears here only with permission.",
         "items": null
       },
       {

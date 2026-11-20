@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section'
 import {
   closingCta,
   pageHeader,
-  sampleTestimonials,
   sectionCopy,
   seo,
   steps,
@@ -20,10 +19,7 @@ import { TestimonialsHero } from './components/TestimonialsHero'
 import { TestimonialsSkeleton } from './skeletons/TestimonialsSkeleton'
 import * as S from './styles/testimonials-page.styled'
 
-// Real, approved testimonials when they exist; clearly labeled sample cards
-// until then.
-const hasReal = testimonials.length > 0
-const items = hasReal ? testimonials : sampleTestimonials
+const items = testimonials
 const PAGE_SIZE = 4
 const header = pageHeader('testimonials')
 const cta = closingCta('testimonials', 'cta')
@@ -66,9 +62,7 @@ export function TestimonialsPage() {
         {items.length > 0 && (
           <Section
             id="feedback"
-            {...(hasReal
-              ? sectionCopy('testimonials', 'feedback')
-              : sectionCopy('testimonials', 'samples'))}
+            {...sectionCopy('testimonials', 'feedback')}
           >
             <S.Grid>
               {visibleItems.map((testimonial) => (

@@ -252,20 +252,14 @@ export const steps: readonly Step[] = ordered(seed.process).map(withIcon)
 
 export const faqs: readonly Faq[] = ordered(published(current.faqs)).map(withIcon)
 
-// Sample records (`isSample`) are illustrative and never published.
 export const showcaseProjects: readonly ShowcaseProject[] = ordered(
-  published(current.projects).filter((project) => !project.isSample),
+  published(current.projects),
 ).map(withIcon)
 
-// Only approved, published, genuine (non-sample) testimonials are shown.
+// Only approved, published testimonials are shown.
 export const testimonials: readonly Testimonial[] = ordered(
   current.testimonials,
-).filter((t) => t.status === 'approved' && t.isPublished && !t.isSample)
-
-// Deliberate public fallback: clearly labeled sample cards, never real testimonials.
-export const sampleTestimonials: readonly Testimonial[] = ordered(
-  current.testimonials,
-).filter((testimonial) => testimonial.isSample)
+).filter((t) => t.status === 'approved' && t.isPublished)
 
 export const team: readonly TeamMember[] = ordered(
   published(current.team),
@@ -276,9 +270,7 @@ export function teamMemberBySlug(slug: string): TeamMember | undefined {
   return team.find((member) => member.slug === slug)
 }
 
-export const gallery = ordered(published(current.gallery)).filter(
-  (image) => !image.isSample,
-)
+export const gallery = ordered(published(current.gallery))
 
 /* ---------- Public page states ---------- */
 

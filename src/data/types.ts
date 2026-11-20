@@ -190,8 +190,6 @@ export type ProjectRecord = {
   screenshots: readonly ProjectShot[]
   /** Live site for the "Visit website" button, if there is one. */
   url: string | null
-  /** Illustrative record. Never published; replace with real work. */
-  isSample: boolean
   isPublished: boolean
   displayOrder: number
   createdAt: string
@@ -213,10 +211,8 @@ export type TestimonialRecord = {
   rating: number | null
   /** 1–2 letters shown in the avatar when there is no photo. */
   initials: string
-  /** Illustrative record, not a client endorsement. Never published. */
-  isSample: boolean
   status: TestimonialStatus
-  /** Shown publicly only when also approved and not a sample. */
+  /** Shown publicly only when also approved. */
   isPublished: boolean
   displayOrder: number
   createdAt: string
@@ -254,8 +250,6 @@ export type GalleryImageRecord = {
   title: string
   alt: string
   caption: string | null
-  /** Illustrative image. Never published; replace with real assets. */
-  isSample: boolean
   displayOrder: number
   isPublished: boolean
   createdAt: string
@@ -347,8 +341,6 @@ export type InquiryRecord = {
   targetLaunchDate: string | null
   status: InquiryStatus
   submittedAt: string
-  /** Illustrative record, not a real inquiry. */
-  isSample: boolean
 }
 
 /* ---------- SEO, legal, settings, admin navigation ---------- */

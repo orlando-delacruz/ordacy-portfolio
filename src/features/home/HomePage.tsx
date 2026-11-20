@@ -1,6 +1,6 @@
 import { PageState } from '@/components/state/PageState'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
-import { faqs, plans, sampleTestimonials, seo, steps, testimonials } from '@/data'
+import { faqs, plans, seo, steps, testimonials } from '@/data'
 import { organizationJsonLd, usePageMeta } from '@/hooks/usePageMeta'
 import { Faq } from './sections/Faq'
 import { FinalCta } from './sections/FinalCta'
@@ -12,8 +12,7 @@ import { Testimonials } from './sections/Testimonials'
 import { HomeSkeleton } from './skeletons/HomeSkeleton'
 
 const structuredData = organizationJsonLd()
-const hasTestimonials =
-  testimonials.length > 0 || sampleTestimonials.length > 0
+const hasTestimonials = testimonials.length > 0
 
 export function HomePage() {
   usePageMeta({ ...seo.home, structuredData })

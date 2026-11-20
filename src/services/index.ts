@@ -119,7 +119,6 @@ export async function queryInquiries({
 }
 
 export type InquiryStats = Record<InquiryStatus | 'total', number> & {
-  sampleCount: number
   recent: InquiryRecord[]
 }
 
@@ -134,7 +133,6 @@ export async function getInquiryStats(recentCount = 5): Promise<InquiryStats> {
     new: count('new'),
     'in-progress': count('in-progress'),
     completed: count('completed'),
-    sampleCount: all.filter((inquiry) => inquiry.isSample).length,
     recent: all.slice(0, recentCount),
   }
 }
@@ -167,6 +165,5 @@ export async function submitInquiry(input: InquiryInput): Promise<void> {
     targetLaunchDate: input.launchDate || null,
     status: 'new',
     submittedAt: new Date().toISOString(),
-    isSample: false,
   })
 }

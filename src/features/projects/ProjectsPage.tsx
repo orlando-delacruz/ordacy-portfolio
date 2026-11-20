@@ -267,7 +267,7 @@ export function ProjectsPage() {
             {!expanded ? (
               <ProjectsCarousel
                 projects={visible}
-                label="Concept projects carousel"
+                label="Projects carousel"
               />
             ) : isMobile ? (
               <>

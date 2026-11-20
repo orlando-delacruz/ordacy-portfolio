@@ -1,4 +1,4 @@
-import { Info, Plus, ShieldCheck } from 'lucide-react'
+import { MessagesSquare, Plus, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import type { TestimonialRecord, TestimonialStatus } from '@/data'
 import { createId, testimonialsService } from '@/services'
@@ -7,7 +7,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { FormDialog } from '../components/FormDialog'
 import type { FieldErrors } from '../components/FormDialog'
 import { EditDeleteButtons, OrderButtons } from '../components/RecordControls'
-import { ErrorState, LoadingState } from '../components/States'
+import { EmptyState, ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { TextField } from '../components/TextField'
@@ -45,8 +45,7 @@ export function TestimonialsAdminPage() {
   const { items, status, refresh, mutate } = useCollection(testimonialsService)
   const [dialog, setDialog] = useState<Dialog>(null)
   const testimonials = [...items].sort(byOrder)
-  const published = testimonials.filter((t) => !t.isSample && t.status === 'approved' && t.isPublished).length
-  const samples = testimonials.filter((t) => t.isSample).length
+  const published = testimonials.filter((t) => t.status === 'approved' && t.isPublished).length
 
   const save = (record: TestimonialRecord | null, data: FormData) => {
     const name = text(data, 'name')
@@ -55,12 +54,11 @@ export function TestimonialsAdminPage() {
       role: text(data, 'role'),
       company: text(data, 'company'),
       quote: text(data, 'quote'),
-      rating: record?.isSample ? null : Number(text(data, 'rating')) || null,
+      rating: Number(text(data, 'rating')) || null,
       initials: initialsOf(name),
-      // Placeholder copy can never be approved.
-      status: record?.isSample ? 'pending' : (text(data, 'status') as TestimonialStatus),
+      status: text(data, 'status') as TestimonialStatus,
       isPublished:
-        !record?.isSample && text(data, 'status') === 'approved' && data.get('isPublished') === 'on',
+        text(data, 'status') === 'approved' && data.get('isPublished') === 'on',
     }
     return record
       ? mutate(() => testimonialsService.update(record.id, fields), 'Testimonial saved.')
@@ -69,7 +67,6 @@ export function TestimonialsAdminPage() {
             testimonialsService.create({
               id: createId('testimonial'),
               ...fields,
-              isSample: false,
               displayOrder: testimonials.length + 1,
               createdAt: new Date().toISOString(),
             }),
@@ -96,13 +93,19 @@ export function TestimonialsAdminPage() {
         <span>
           Only add real feedback a client has agreed to share. Approved and
           published testimonials appear on the site ({published} right now).
-          Sample records ({samples}) stay unpublished and appear publicly only
-          as clearly labeled examples until real testimonials exist.
         </span>
       </U.Notice>
 
       {status === 'loading' && <LoadingState label="Loading testimonials…" />}
       {status === 'error' && <ErrorState onRetry={refresh} />}
+
+      {status === 'ready' && testimonials.length === 0 && (
+        <EmptyState
+          icon={MessagesSquare}
+          title="No testimonials yet."
+          text="Add feedback a client has agreed to share, then approve and publish it."
+        />
+      )}
 
       {status === 'ready' && testimonials.length > 0 && (
         <U.TableWrap>
@@ -137,7 +140,6 @@ export function TestimonialsAdminPage() {
                     <td data-label="Status">
                       <U.Badges>
                         <U.Badge $tone={meta.tone}>{meta.label}</U.Badge>
-                        {testimonial.isSample && <U.Badge $tone="neutral">Sample</U.Badge>}
                         {testimonial.isPublished && <U.Badge $tone="info">Published</U.Badge>}
                       </U.Badges>
                     </td>
@@ -178,15 +180,6 @@ export function TestimonialsAdminPage() {
         >
           {(errors) => (
             <>
-              {dialog.record?.isSample && (
-                <U.Notice>
-                  <Info size={16} strokeWidth={2} aria-hidden="true" />
-                  <span>
-                    Sample record, not a client endorsement. It stays pending
-                    and is never published.
-                  </span>
-                </U.Notice>
-              )}
               <F.Grid>
                 <TextField idPrefix="testimonial" name="name" label="Client name" defaultValue={dialog.record?.name} error={errors.name} />
                 <TextField idPrefix="testimonial" name="role" label="Role" defaultValue={dialog.record?.role} error={errors.role} />
@@ -209,7 +202,6 @@ export function TestimonialsAdminPage() {
                     id="testimonial-rating"
                     name="rating"
                     defaultValue={String(dialog.record?.rating ?? '')}
-                    disabled={dialog.record?.isSample}
                   >
                     <option value="">No rating</option>
                     {[5, 4, 3, 2, 1].map((value) => (
@@ -225,7 +217,6 @@ export function TestimonialsAdminPage() {
                     id="testimonial-status"
                     name="status"
                     defaultValue={dialog.record?.status ?? 'pending'}
-                    disabled={dialog.record?.isSample}
                   >
                     <option value="pending">Pending review</option>
                     <option value="approved">Approved by the client</option>
@@ -237,7 +228,6 @@ export function TestimonialsAdminPage() {
                       type="checkbox"
                       name="isPublished"
                       defaultChecked={dialog.record?.isPublished ?? false}
-                      disabled={dialog.record?.isSample}
                     />
                     Publish on the website (approved testimonials only)
                   </F.Switch>

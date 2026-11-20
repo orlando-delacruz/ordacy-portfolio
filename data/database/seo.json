@@ -12,7 +12,7 @@
   "projects": {
     "path": "/projects",
     "title": "Projects | Ordacy",
-    "description": "Concept projects showing how Ordacy approaches business systems, booking tools, dashboards, CRMs, and websites.",
+    "description": "How Ordacy approaches business systems, booking tools, dashboards, CRMs, and websites.",
     "canonical": null,
     "ogTitle": null,
     "ogDescription": null,
@@ -22,7 +22,7 @@
   "testimonials": {
     "path": "/testimonials",
     "title": "Working With Ordacy | Client Testimonials",
-    "description": "How Ordacy works with clients, from the first conversation to handover, and feedback shared by clients with their permission.",
+    "description": "Client feedback and the working journey behind Ordacy projects.",
     "canonical": null,
     "ogTitle": null,
     "ogDescription": null,

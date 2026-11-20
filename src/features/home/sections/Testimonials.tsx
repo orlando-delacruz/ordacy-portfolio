@@ -2,38 +2,18 @@ import { MessagesSquare, Pause, Play } from 'lucide-react'
 import { useState } from 'react'
 import { Section } from '@/components/ui/Section'
 import { TestimonialCard } from '@/features/testimonials/components/TestimonialCard'
-import { sampleTestimonials, testimonials } from '../home.data'
+import { testimonials } from '../home.data'
 import * as S from './styles/testimonials.styled'
-import { ContentItems } from '@/components/ui/ContentItems'
-import { getSection, sectionCopy } from '@/data'
+import { sectionCopy } from '@/data'
 
 // Pixels of marquee travel per second; duration is derived from this so the
 // perceived speed stays similar whatever the card count/width.
 const PX_PER_SECOND = 40
 const ESTIMATED_CARD_WIDTH = 320 // clamp() midpoint, in px
 
-const hasReal = testimonials.length > 0
-// Real, approved testimonials when they exist; clearly labeled sample cards
-// until then. The trust fallback below covers having neither.
-const items = hasReal ? testimonials : sampleTestimonials
-
-const trust = getSection('home', 'trust')
+const items = testimonials
 
 export function Testimonials() {
-  if (items.length === 0) {
-    return (
-      <Section id="testimonials" {...sectionCopy('home', 'trust')}>
-        <ContentItems items={trust.items} variant="numbered" />
-        <S.Actions>
-          <S.SecondaryButton to="/testimonials">
-            <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
-            How we work with clients
-          </S.SecondaryButton>
-        </S.Actions>
-      </Section>
-    )
-  }
-
   return <TestimonialsMarquee />
 }
 
@@ -51,9 +31,7 @@ function TestimonialsMarquee() {
   return (
     <Section
       id="testimonials"
-      {...(hasReal
-        ? sectionCopy('home', 'testimonials')
-        : sectionCopy('home', 'testimonial-samples'))}
+      {...sectionCopy('home', 'testimonials')}
       headerAction={
         <S.ScrollToggle
           type="button"
@@ -75,7 +53,7 @@ function TestimonialsMarquee() {
     >
       <S.Viewport
         role="region"
-        aria-label={hasReal ? 'Client testimonials, scrolling automatically' : 'Sample testimonials, scrolling automatically'}
+        aria-label="Client testimonials, scrolling automatically"
       >
         <S.Track
           as="ul"

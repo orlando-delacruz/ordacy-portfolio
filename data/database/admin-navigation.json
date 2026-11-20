@@ -35,7 +35,7 @@
         "label": "Projects",
         "path": "/admin/projects",
         "icon": "FolderKanban",
-        "description": "Client projects and concept demos shown on the site."
+        "description": "Client projects and demos shown on the site."
       },
       {
         "id": "testimonials",

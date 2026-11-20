@@ -13,6 +13,7 @@ import {
   SkeletonProjectCarousel,
   SkeletonSectionHead,
 } from '@/components/skeletons/SkeletonSections'
+import { testimonials } from '@/data'
 import * as Section from '@/components/ui/styles/section.styled'
 import * as TestimonialCard from '@/features/testimonials/styles/testimonial-card.styled'
 import * as Faq from '../sections/styles/faq.styled'
@@ -24,9 +25,10 @@ const processSteps = ['one', 'two', 'three', 'four']
 const faqRows = ['one', 'two', 'three', 'four', 'five']
 
 /**
- * Home page skeleton: profile hero, plans, project carousel, testimonial
- * marquee, process rail, FAQ list and closing CTA. The section compositions
- * reuse the real section styles so the placeholder keeps the page rhythm.
+ * Home page skeleton: profile hero, plans, project carousel, the testimonial
+ * marquee when testimonials exist, process rail, FAQ list and closing CTA. The
+ * section compositions reuse the real section styles so the placeholder keeps
+ * the page rhythm.
  */
 export function HomeSkeleton() {
   return (
@@ -35,41 +37,43 @@ export function HomeSkeleton() {
       <SkeletonPlanCards />
       <SkeletonProjectCarousel />
 
-      <Section.Wrapper>
-        <SkeletonSectionHead />
-        <Testimonials.Viewport>
-          <Testimonials.Track $duration={60} $paused as="div">
-            {marqueeCards.map((card) => (
-              <TestimonialCard.Card
-                key={card}
-                $layout="marquee"
-                as="div"
-              >
-                <TestimonialCard.Top>
-                  <SkeletonPill $w="5rem" />
-                  <SkeletonCircle $size="2rem" />
-                </TestimonialCard.Top>
-                <TestimonialCard.Quotation as="div" $expanded>
-                  <SkeletonLine $w="100%" />
-                  <SkeletonLine $w="94%" />
-                  <SkeletonLine $w="86%" />
-                  <SkeletonLine $w="62%" />
-                </TestimonialCard.Quotation>
-                <TestimonialCard.Author as="div">
-                  <SkeletonCircle $size="2.75rem" />
-                  <TestimonialCard.AuthorInfo>
-                    <SkeletonLine $w="55%" $h="0.75rem" />
-                    <SkeletonLine $w="75%" $h="0.75rem" />
-                  </TestimonialCard.AuthorInfo>
-                </TestimonialCard.Author>
-              </TestimonialCard.Card>
-            ))}
-          </Testimonials.Track>
-        </Testimonials.Viewport>
-        <Testimonials.Actions>
-          <SkeletonButton $w="12rem" />
-        </Testimonials.Actions>
-      </Section.Wrapper>
+      {testimonials.length > 0 && (
+        <Section.Wrapper>
+          <SkeletonSectionHead />
+          <Testimonials.Viewport>
+            <Testimonials.Track $duration={60} $paused as="div">
+              {marqueeCards.map((card) => (
+                <TestimonialCard.Card
+                  key={card}
+                  $layout="marquee"
+                  as="div"
+                >
+                  <TestimonialCard.Top>
+                    <SkeletonPill $w="5rem" />
+                    <SkeletonCircle $size="2rem" />
+                  </TestimonialCard.Top>
+                  <TestimonialCard.Quotation as="div" $expanded>
+                    <SkeletonLine $w="100%" />
+                    <SkeletonLine $w="94%" />
+                    <SkeletonLine $w="86%" />
+                    <SkeletonLine $w="62%" />
+                  </TestimonialCard.Quotation>
+                  <TestimonialCard.Author as="div">
+                    <SkeletonCircle $size="2.75rem" />
+                    <TestimonialCard.AuthorInfo>
+                      <SkeletonLine $w="55%" $h="0.75rem" />
+                      <SkeletonLine $w="75%" $h="0.75rem" />
+                    </TestimonialCard.AuthorInfo>
+                  </TestimonialCard.Author>
+                </TestimonialCard.Card>
+              ))}
+            </Testimonials.Track>
+          </Testimonials.Viewport>
+          <Testimonials.Actions>
+            <SkeletonButton $w="12rem" />
+          </Testimonials.Actions>
+        </Section.Wrapper>
+      )}
 
       <Section.Wrapper>
         <SkeletonSectionHead />

@@ -28,14 +28,14 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 - `/admin/*` lives in `src/features/admin/` with its own shell (not `RootLayout`); routes are lazy children in `router.tsx`, nav config in `data/database/admin-navigation.json`.
 - All content and records live in `data/database/*.json`. Admin UI reads and writes only through `src/services` (async; local store persisted to localStorage). Public pages read `@/data`, which overlays the same saved edits (`src/data/storage.ts`), so both views share one data model. Never put content or mock records in JSX.
 - No auth exists: keep noindex and robots `Disallow: /admin`; no "Demo mode" wording, but never claim authentication, a database, email, or uploads are connected (Settings lists them as "Not configured"). Edits are browser-local only.
-- Illustrative records carry `isSample: true`, show a "Sample" badge, and can never be approved or published as real; keep that lock and the public filters. Sample testimonials additionally appear publicly only through `sampleTestimonials`, with a visible `Sample` badge and sample-specific copy.
+- Empty collections show their empty states in the admin and on the public site. There are no sample or placeholder records, badges, locks, or fallbacks; only real client feedback, permissioned client projects, and clearly labeled concept demos are stored.
 
 ## Routing and content
 
 - Add a route in **both** `router.tsx` and `navigation.ts`. Top Bar titles, sidebar/mobile nav, and footer all derive from `navigation.ts`; an unlisted route makes the Top Bar show "Page not found". Bottom-nav entries additionally require a Phosphor `mobileIcon` (`MobileNavigationItem`). Dynamic routes (`/team/:slug`) are resolved in `getPageTitle()` via the published data.
 - Homepage `/#<id>` links rely on `HomePage`'s hash-scroll effect. New homepage sections should use `Section` with an `id` (e.g. `services`, `pricing`, `work`, `faqs`). The hero team strip uses `id="team"` on a plain `div`.
 - Every page calls `usePageMeta(seo.<page>)` for title, description, OG, canonical and noindex.
-- Content integrity: only genuine testimonials and permissioned projects; never invent quotes, client results, or case studies. The home Projects carousel and Testimonials marquee still run on placeholder data marked as such in `home.data.ts` (picsum screenshots included — swap in real assets before launch).
+- Content integrity: only real client feedback and permissioned projects are stored; never invent quotes, client results, or case studies. Concept demos, if any, are clearly labeled as concept work. With none, the public Projects and Testimonials empty states are the honest fallback.
 
 ## Public state system
 
@@ -62,7 +62,7 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 - In-page anchors (`/#id`) clear sticky bars via the global `scroll-margin-top` — no per-section offset hacks.
 - Scroll contract (`usePageScrollRestoration`, mounted in both shells): PUSH/REPLACE without a hash starts at the top; with a hash it jumps to the element; browser back/forward restores the exact saved position. `#more` is menu UI state, never an anchor — the manager ignores it. Never add per-page scroll effects or render `<ScrollRestoration />`.
 - Admin: `$sticky` toolbars for long lists, `TableSkeleton` for data tables, split-view (list + editor) for Website Content. Toasts: 3s success, 6s error. Tables stay paginated, so headers scroll with content.
-- Copy budgets: page header ≤110 chars, section description ≤80, card summary ≤100, FAQ answer ≤240, helper text only when it prevents an error. Legal/financial terms, warnings, and sample labels are never trimmed for brevity.
+- Copy budgets: page header ≤110 chars, section description ≤80, card summary ≤100, FAQ answer ≤240, helper text only when it prevents an error. Legal/financial terms and warnings are never trimmed for brevity.
 
 - styled-components only — no Tailwind, CSS modules, or inline style objects.
 - Component styles live in `styles/` folders next to their components (e.g. `sections/styles/hero.styled.ts`), imported as `import * as S from './styles/x.styled'`; keep JSX and coordination in the component file. Section styled files re-export shared pieces from `../components/styles/` (`buttons`, `icon-badge`, `empty-state`, `card`) — reuse them instead of duplicating.

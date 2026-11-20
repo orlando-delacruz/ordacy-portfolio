@@ -189,7 +189,6 @@ export function InquiriesPage() {
                         <strong>{inquiry.fullName}</strong>
                         <span>{inquiry.email}</span>
                       </U.CellStrong>
-                      {inquiry.isSample && <U.Badge $tone="neutral">Sample</U.Badge>}
                     </td>
                     <td data-label="Project">
                       {inquiry.projectType ?? <U.Muted>Not given</U.Muted>}

@@ -1,9 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 
-export {
-  PrimaryButton,
-  SecondaryButton,
-} from '@/components/ui/styles/buttons.styled'
+export { PrimaryButton } from '@/components/ui/styles/buttons.styled'
 
 /* ---------- Infinite horizontal marquee ---------- */
 
