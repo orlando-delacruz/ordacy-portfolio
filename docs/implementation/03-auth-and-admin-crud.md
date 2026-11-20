@@ -45,6 +45,9 @@ current screens; only the service layer changes.
     `PATCH ?id=` update, `DELETE ?id=`, `PUT` replace-all (reorder). Validates ids and
     payload shape; 404 on unknown records; 400 on shape errors.
   - `api/admin/documents/[key].ts` for `site` and `settings` (`GET`, `PUT`).
+    Whitelist the `SiteRecord` / `SettingsRecord` keys and rebuild `value`
+    field by field — never write the client payload verbatim (the JSON seeds
+    carry `_note` keys that must not enter the database).
   - camelCase ↔ snake_case mapping through `api/_lib/map.ts`; service-role client only
     inside these handlers.
 

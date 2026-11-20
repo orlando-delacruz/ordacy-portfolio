@@ -23,19 +23,24 @@ seeded from the cleaned JSON.
 
 - [ ] **2. Write `supabase/schema.sql`.** One table per editable collection, mirroring
   `src/data/types.ts` exactly:
-  - Collections (`id text primary key`, scalar columns typed, nested shapes `jsonb`,
-    `display_order integer`, `is_published boolean`, timestamps): `pages`, `services`,
-    `plans`, `faqs`, `projects`, `testimonials`, `team`, `gallery`, `inquiries`, `seo`.
+  - Collections (`id text primary key`, scalar columns typed, nested shapes `jsonb`;
+    `display_order` / `is_published` / timestamps only where the record type has
+    them — `pages` and `seo` do not): `pages`, `services`, `plans`, `faqs`,
+    `projects`, `testimonials`, `team`, `gallery`, `inquiries`, `seo`.
   - Documents: `site` and `settings`, single row keyed by a `key text primary key`
     (`'site'`, `'settings'`), `value jsonb`.
+  - Operational: `inquiry_throttle` (`ip_hash text primary key`, `window_start
+    timestamptz`, `request_count integer`), used by phase 04. Not seeded.
   - Every table: `alter table … enable row level security;` and **no policies** — anon
-    and authenticated clients get nothing directly; only the service role (functions)
-    reads and writes. This is deliberate: no RLS policy surface to get wrong.
+    and authenticated clients get nothing directly. Explicitly revoke their table
+    privileges and grant all to `service_role`, because some projects do not carry the
+    default grants; only the service role (functions) reads and writes.
   - Keep the project `type` column; no `is_sample` column exists anywhere.
   - Name columns in `snake_case`; the API maps them back to the camelCase TS records.
 
 - [ ] **3. Apply the schema.** Owner pastes `supabase/schema.sql` into the Supabase SQL
-  Editor and runs it (no CLI dependency). Confirm all 12 tables appear in Table Editor.
+  Editor and runs it (no CLI dependency). Confirm all 13 tables appear in Table Editor
+  (12 content tables plus `inquiry_throttle`).
 
 - [ ] **4. Write `scripts/seed-supabase.mjs`.**
   - Reads `VITE_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (run with

@@ -24,8 +24,10 @@ loses a lead or shows the visitor an error.
   - Validate: `name` 2–120 chars, `email` valid and ≤ 200 chars, `message` 10–5000
     chars, optional fields length-capped; reject with `400` and a field list.
   - Honeypot: a hidden `website` field; when filled, respond `201` and do nothing.
-  - Throttle: SHA-256 of the client IP with a server salt; more than 3 inquiries from
-    the same hash in 15 minutes → `429`.
+  - Throttle: SHA-256 of the client IP with a server salt, stored in the
+    `inquiry_throttle` table created in phase 01 (`ip_hash` primary key,
+    `window_start`, `request_count`); more than 3 inquiries from the same hash in
+    15 minutes → `429`. No schema change is needed in this phase.
   - Insert the inquiry (`status: 'new'`, ISO `submittedAt`, nulls for empty optional
     fields).
   - Then call EmailJS REST (`https://api.emailjs.com/api/v1.0/email/send`) with the
