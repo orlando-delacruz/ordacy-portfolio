@@ -3,6 +3,8 @@
 **Goal:** the public site renders published content from Postgres through one cached API
 endpoint, with a last-good browser fallback. Pages and their state system stay unchanged.
 
+**Status:** completed — commit `d9069a9`.
+
 **Prerequisites:** Phase 01 committed and seeded; Vercel environment variables set.
 
 ## Steps

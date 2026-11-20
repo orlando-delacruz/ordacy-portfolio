@@ -3,6 +3,8 @@
 **Goal:** a real Supabase Postgres database whose tables mirror the app's record types,
 seeded from the cleaned JSON.
 
+**Status:** completed — commit `007ff22`.
+
 **Prerequisites:** Phase 00 committed; a Supabase account (free, no card).
 
 ## Owner setup checklist (identity steps — the agent can drive the clicks)

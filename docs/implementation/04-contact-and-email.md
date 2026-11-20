@@ -4,8 +4,8 @@
 EmailJS. The inquiry is saved before the email is attempted; an email failure never
 loses a lead or shows the visitor an error.
 
-**Status:** implemented in code. EmailJS account setup and the real-inbox send are the
-owner's checkpoint steps below.
+**Status:** completed — commit `30c5ff5`. The EmailJS account setup and the real-inbox
+send were verified in the phase 05 sweep.
 
 **Prerequisites:** Phase 03 committed (admin can read the Inquiries page); the
 `inquiry_throttle` table from phase 01 (no schema change in this phase);

@@ -4,6 +4,8 @@
 concept showcase projects, and the sample machinery built to handle them. Public pages
 show their existing empty states until real content exists.
 
+**Status:** completed — commit `5a05023`.
+
 **Prerequisites:** none. This phase runs on the committed state system (`c12a5bf`).
 
 ## Decisions specific to this phase

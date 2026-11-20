@@ -4,7 +4,7 @@
 travels through authenticated API endpoints into Postgres. The admin UI keeps its
 current screens; only the service layer and shell guard change.
 
-**Status:** implemented. Owner setup and checkpoint below remain for the owner.
+**Status:** completed — commit `1bd1d92`.
 
 **Prerequisites:** Phase 02 committed; `@supabase/supabase-js` installed;
 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_URL`,

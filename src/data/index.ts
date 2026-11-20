@@ -25,6 +25,7 @@ import statesJson from '@data/states.json'
 import teamJson from '@data/team.json'
 import testimonialsJson from '@data/testimonials.json'
 import type { LucideIcon } from 'lucide-react'
+import { createIconFallback } from './icon-fallback.mjs'
 import { resolveIcon } from './icons'
 import type {
   AdminNavGroup,
@@ -103,7 +104,30 @@ const CONTENT_ENDPOINT = '/api/content'
 const CONTENT_CACHE_KEY = 'ordacy-content:v1'
 const CONTENT_TIMEOUT_MS = 8000
 
-const withIcon = <T extends { icon: string }>(item: T) => ({
+const fallbackIcon = resolveIcon('MessagesSquare')
+const fallbackIconFor = createIconFallback(fallbackIcon)
+
+/**
+ * Resolves an icon read from the database. An unknown name (for example a
+ * record saved before its icon left the allowlist) keeps the item and warns
+ * once per field and value instead of failing the whole payload.
+ */
+function contentIcon(name: string, field: string): LucideIcon {
+  try {
+    return resolveIcon(name)
+  } catch {
+    return fallbackIconFor(name, field)
+  }
+}
+
+const withIcon = <T extends { icon: string }>(item: T, field: string) => ({
+  ...item,
+  icon: contentIcon(item.icon, field),
+})
+
+// Seed records are authored in this repo, so a bad icon name is a code
+// defect: keep the strict resolver for them.
+const withSeedIcon = <T extends { icon: string }>(item: T) => ({
   ...item,
   icon: resolveIcon(item.icon),
 })
@@ -129,14 +153,18 @@ export let seo: Record<SeoKey, PageSeo> = seed.seo
 function hydratePublicContent(content: PublicContent) {
   site = content.site
   pages = content.pages
-  services = ordered(content.services).map(withIcon)
+  services = ordered(content.services).map((service) =>
+    withIcon(service, 'services.icon'),
+  )
   plans = ordered(content.plans).map((plan) => ({
     ...plan,
-    icon: resolveIcon(plan.icon),
-    ctaIcon: resolveIcon(plan.ctaIcon),
+    icon: contentIcon(plan.icon, 'plans.icon'),
+    ctaIcon: contentIcon(plan.ctaIcon, 'plans.ctaIcon'),
   }))
-  faqs = ordered(content.faqs).map(withIcon)
-  projects = ordered(content.projects).map(withIcon)
+  faqs = ordered(content.faqs).map((faq) => withIcon(faq, 'faqs.icon'))
+  projects = ordered(content.projects).map((project) =>
+    withIcon(project, 'projects.icon'),
+  )
   testimonials = ordered(content.testimonials)
   team = ordered(content.team)
   gallery = ordered(content.gallery)
@@ -283,9 +311,11 @@ export function pageHeader(pageId: string) {
   return header
 }
 
-export const problems: readonly Problem[] = ordered(seed.problems).map(withIcon)
+export const problems: readonly Problem[] = ordered(seed.problems).map(
+  withSeedIcon,
+)
 
-export const steps: readonly Step[] = ordered(seed.process).map(withIcon)
+export const steps: readonly Step[] = ordered(seed.process).map(withSeedIcon)
 
 /** Published member by URL slug, or undefined for unknown slugs. */
 export function teamMemberBySlug(slug: string): TeamMember | undefined {
