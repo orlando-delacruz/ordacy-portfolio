@@ -6,9 +6,9 @@
   "siteUrl": "https://ordacy.com",
   "siteUrlPending": true,
   "profileStats": {
-    "views": "",
-    "projects": "",
-    "likes": ""
+    "views": "0",
+    "projects": "0",
+    "likes": "0"
   },
   "contact": {
     "email": {
