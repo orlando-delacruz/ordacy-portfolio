@@ -41,7 +41,7 @@ const integrations: {
     name: 'Email notifications',
     status: 'Not configured',
     connected: false,
-    text: 'New inquiries do not trigger emails yet. The email service is not configured.',
+    text: 'Inquiries are saved to the database first. Add the EmailJS keys to the server environment to send the owner an email for each new inquiry.',
   },
   {
     icon: HardDrive,

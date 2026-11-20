@@ -119,7 +119,7 @@ All routes are implemented in `src/app/router.tsx`. Every page currently renders
 - **Projects:** portfolio rules (client permission, clearly labeled concept demos, no fabricated results, details in a modal) are **planned conventions, not enforced or implemented**.
 - **Testimonials:** only genuine testimonials may ever be published; fabrication is prohibited. The page currently publishes none.
 - **Pricing:** tiers (Starter / Growth / Custom), PHP/USD toggle, and contact-form CTAs are **planned, not built**. Treat any future prices as subject to verification.
-- **Contact:** the inquiry form (fields, validation, spam protection, submission, confirmation, thank-you page) is **planned, not built**. No backend, database, email provider, or spam-protection integration exists in the codebase.
+- **Contact:** the inquiry form (fields, validation, spam protection, submission, confirmation) is built; submissions save through `POST /api/inquiries` (database first, then EmailJS).
 
 ## Navigation system
 
@@ -203,7 +203,7 @@ Do not describe SEO as complete.
 ## Prerequisites
 
 - Node.js 20+ and npm (npm is the package manager; `package-lock.json` is committed).
-- No environment variables, secrets, or external services are required — the app currently has no backend, database, email, analytics, or CMS integrations.
+- Supabase and EmailJS values for the live backend, admin, and inquiry email; copy `.env.example` to `.env.local` and see [Environment configuration](#environment-configuration).
 
 ## Installation
 
@@ -224,7 +224,25 @@ All from `package.json` (verified — no other scripts exist):
 
 ## Environment configuration
 
-None. There are no `.env` files, no `.env.example`, and no `import.meta.env` usage in the source. If integrations (contact backend, analytics) are added later, document their variables here and provide an `.env.example` without secret values.
+`npm run dev` loads `.env.local` (`.gitignore`'s `*.local` covers it); copy
+`.env.example` and fill the values. Vercel needs the same names in project settings.
+Never put a server-only value behind a `VITE_` name.
+
+| Name | Scope | Source |
+| --- | --- | --- |
+| `VITE_SUPABASE_URL` | Client (public by design) | Supabase → Project Settings → API |
+| `VITE_SUPABASE_ANON_KEY` | Client (public by design) | Same page |
+| `SUPABASE_URL` | Server only | Same page |
+| `SUPABASE_ANON_KEY` | Server only | Same page |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server only | Same page, secret |
+| `ADMIN_USER_ID` | Server only | `node --env-file=.env.local scripts/auth-info.mjs`; unset denies every admin request |
+| `ADMIN_TOTP_FACTOR_ID` | Server only | Same script; re-record after any factor reset; unset denies every admin request |
+| `EMAILJS_SERVICE_ID` | Server only | EmailJS → Email Services |
+| `EMAILJS_TEMPLATE_ID` | Server only | EmailJS → Email Templates |
+| `EMAILJS_PUBLIC_KEY` | Server only | EmailJS → Account |
+| `EMAILJS_PRIVATE_KEY` | Server only | EmailJS → Account |
+| `INQUIRY_IP_SALT` | Server only | Any long random string; unset makes `/api/inquiries` fail closed |
+| `CRON_SECRET` | Server only | Phase 05 keep-alive and backup protection |
 
 ## Deployment
 
@@ -246,7 +264,7 @@ Intended platform is Vercel, but **no deployment configuration exists yet** (no 
 | Width constraints (1440 content / 1680 app) | Implemented |
 | All 8 public routes + 404 | Implemented (routes only) |
 | Page content (hero, pricing tiers, forms, copy) | Planned — all pages are placeholders |
-| Contact form + backend/email/spam protection | Planned — no integration exists |
+| Contact form + backend/email/spam protection | Implemented (EmailJS send pending owner setup) |
 | Pricing tiers, PHP/USD toggle | Planned |
 | Project modals, testimonials content | Planned (genuine content only) |
 | SEO (OG, sitemap, robots, structured data) | Missing |

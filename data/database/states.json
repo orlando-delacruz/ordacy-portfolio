@@ -77,8 +77,8 @@
         ]
       },
       "success": {
-        "title": "Thank you for sharing your project details.",
-        "description": "Your inquiry is saved in this browser. No message has been sent.",
+        "title": "Inquiry received.",
+        "description": "Thanks — we'll get back to you shortly.",
         "actions": []
       }
     },

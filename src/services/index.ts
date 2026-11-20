@@ -1,8 +1,7 @@
-// Data access layer for the admin (and the contact form). UI code calls these
-// functions only; every admin read and write now travels through the
-// authenticated `/api/admin` endpoint. The bearer token comes from the
-// Supabase browser session. The contact form stays browser-local until phase
-// 04 adds the public inquiries endpoint.
+// Data access layer for the admin. UI code calls these functions only; every
+// read and write travels through the authenticated `/api/admin` endpoint. The
+// bearer token comes from the Supabase browser session. The public contact
+// submission lives in `./inquiries.ts`.
 import type {
   FaqRecord,
   GalleryImageRecord,
@@ -169,85 +168,7 @@ export async function saveOrder<T extends { id: string; displayOrder: number }>(
   return collection.list()
 }
 
-/*
- * Contact submissions remain browser-local until phase 04. They use the key
- * the old local store wrote, so drafts saved before this phase are not lost.
- * Every other inquiry read/write goes to the authenticated API.
- */
-const INQUIRY_DRAFTS_KEY = 'ordacy-cms:v3:inquiries'
-
-function readInquiryDrafts(): InquiryRecord[] {
-  try {
-    const raw = localStorage.getItem(INQUIRY_DRAFTS_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed) ? (parsed as InquiryRecord[]) : []
-  } catch {
-    return []
-  }
-}
-
-// Returns false (never throws) when this browser cannot store the draft; the
-// caller turns that into a visible failure instead of a false success.
-function writeInquiryDrafts(records: InquiryRecord[]): boolean {
-  try {
-    localStorage.setItem(INQUIRY_DRAFTS_KEY, JSON.stringify(records))
-    return true
-  } catch {
-    return false
-  }
-}
-
-const draftStorageError = () =>
-  new Error('This browser could not store the inquiry. Please try again.')
-
-const remoteInquiries = createCollection<InquiryRecord>('inquiries')
-
-export const inquiriesService: Collection<InquiryRecord> = {
-  async list() {
-    const remote = await remoteInquiries.list()
-    const merged = new Map(remote.map((record) => [record.id, record]))
-    for (const draft of readInquiryDrafts()) merged.set(draft.id, draft)
-    return [...merged.values()]
-  },
-
-  async get(id) {
-    const draft = readInquiryDrafts().find((record) => record.id === id)
-    return draft ?? remoteInquiries.get(id)
-  },
-
-  async create(record) {
-    const saved = writeInquiryDrafts([
-      ...readInquiryDrafts().filter((item) => item.id !== record.id),
-      record,
-    ])
-    if (!saved) throw draftStorageError()
-    return record
-  },
-
-  async update(id, patch) {
-    const drafts = readInquiryDrafts()
-    const index = drafts.findIndex((record) => record.id === id)
-    if (index === -1) return remoteInquiries.update(id, patch)
-
-    const next = { ...drafts[index], ...patch, id }
-    drafts[index] = next
-    if (!writeInquiryDrafts(drafts)) throw draftStorageError()
-    return next
-  },
-
-  async remove(id) {
-    const drafts = readInquiryDrafts()
-    if (!drafts.some((record) => record.id === id)) {
-      return remoteInquiries.remove(id)
-    }
-    if (!writeInquiryDrafts(drafts.filter((record) => record.id !== id))) {
-      throw draftStorageError()
-    }
-  },
-
-  replaceAll: (records) => remoteInquiries.replaceAll(records),
-}
+export const inquiriesService = createCollection<InquiryRecord>('inquiries')
 
 export const projectsService = createCollection<ProjectRecord>('projects')
 export const testimonialsService =
@@ -340,33 +261,8 @@ export async function getInquiryStats(recentCount = 5): Promise<InquiryStats> {
   }
 }
 
-export type InquiryInput = {
-  name: string
-  email: string
-  business: string
-  service: string
-  plan: string
-  message: string
-  /** YYYY-MM-DD, or empty when not given. */
-  launchDate: string
-}
+// Existing contact-form imports keep working through this barrel; the module
+// itself stays free of the admin service layer.
+export { drainInquiryDrafts, submitInquiry } from './inquiries'
+export type { InquiryInput } from './inquiries'
 
-/**
- * Public contact form submission. Browser-local until phase 04 adds
- * `POST /api/inquiries`; a storage failure throws so the form's existing
- * failure panel appears rather than claiming a lost draft was received.
- */
-export async function submitInquiry(input: InquiryInput): Promise<void> {
-  await inquiriesService.create({
-    id: createId('inquiry'),
-    fullName: input.name,
-    email: input.email,
-    company: input.business || null,
-    projectType: input.service || null,
-    budgetRange: input.plan || null,
-    details: input.message,
-    targetLaunchDate: input.launchDate || null,
-    status: 'new',
-    submittedAt: new Date().toISOString(),
-  })
-}

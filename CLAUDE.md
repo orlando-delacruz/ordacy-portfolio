@@ -2,7 +2,7 @@
 
 Front-end SPA plus Vercel functions: React 19, TypeScript 6 (strict), Vite 8, React Router 7, styled-components 6, `lucide-react` (+ `@phosphor-icons/react` for the mobile bottom nav only), Supabase Postgres and Auth. npm only.
 
-Not implemented: analytics, EmailJS delivery, image uploads, CI config. The `/admin` CMS is authenticated with Supabase Auth (password + TOTP) and writes through the serverless API (see Admin).
+Not implemented: analytics, image uploads, CI config. The `/admin` CMS is authenticated with Supabase Auth (password + TOTP) and writes through the serverless API (see Admin).
 
 `AGENTS.md` holds the same conventions in more detail. If the two ever conflict, follow `AGENTS.md`. `README.md` status sections are stale (it claims no git repo and all pages are placeholders). Trust `src/` and `package.json`.
 
@@ -18,7 +18,7 @@ npm test
 
 ## Status
 
-- Built: all routes (Home, Projects, Testimonials, Pricing, Contact, About Us, Privacy, Terms) plus a custom `NotFoundPage`. Non-home pages are lazy-loaded in `router.tsx`. The contact form calls `submitInquiry`, which stores a browser-local draft until phase 04 adds the inquiries endpoint; a storage failure shows the form's failure panel.
+- Built: all routes (Home, Projects, Testimonials, Pricing, Contact, About Us, Privacy, Terms) plus a custom `NotFoundPage`. Non-home pages are lazy-loaded in `router.tsx`. The contact form posts to `/api/inquiries`, which saves the row before attempting the EmailJS notification; any non-2xx shows the form's failure panel.
 - Shell: fixed desktop sidebar (`lg`+, collapsible from TopBar), mobile bottom nav, skip link. Light and dark themes.
 - Team: compact strip inside the homepage hero (`id="team"`, no section title), with `/team/:slug` resume-style profile pages whose hero mirrors the homepage hero. There is no `/team` index and no Team nav item.
 - Admin: `/admin` (Dashboard, Inquiries, Website Content, Projects, Testimonials, Services, Pricing, FAQs, Gallery, SEO, Settings), own shell, lazy-loaded, noindex, `Disallow: /admin` in robots.txt.
@@ -30,7 +30,7 @@ npm test
 - `data/database/*.json` is the seed and the source for static content (site, pages, seo, services, plans, faqs, projects, testimonials, team, gallery, inquiries, settings, admin-navigation, legal...). Records are CMS-shaped (stable `id`, `displayOrder`, `isPublished`/`status`, ISO timestamps). `src/data` (`@/data`) exposes `seed` (raw records) plus published, ordered, icon-resolved exports for the public site; types in `src/data/types.ts` (`*Record` = stored shape). JSON stores Lucide icon names, mapped in `src/data/icons.ts`; the API validates against `data/icons.json`. `@data/*` aliases the JSON folder. Pending business facts (email, phone, domain) are `pending: true` and hidden until set.
 - Public page copy (headers, section headings/intros, item lists like principles, expectations, pricing notes, contact steps, 404) lives in `pages.json`, read via `pageHeader()`, `sectionCopy()`, `getSection()`; item lists render with `components/ui/ContentItems` (`numbered` | `ruled` | `checklist`). Don't put copy back in JSX.
 - Public and admin content lives in Supabase Postgres. Public pages read `GET /api/content` through `@/data`; admin reads and writes go through `src/services` → `/api/admin` and require a Supabase session with the owner allowlist plus the pinned TOTP factor. `data/database/*.json` is the seed and the source for static content.
-- `src/services/` data access layer: `index.ts` (typed services, `queryInquiries`, `getInquiryStats`, `submitInquiry`, `saveOrder`) and `supabase.ts` (lazy browser client + token). UI never touches storage or Supabase directly. Inquiry drafts in `ordacy-cms:v3:inquiries` are the only browser-local content path until phase 04.
+- `src/services/` data access layer: `index.ts` (typed admin services, `queryInquiries`, `getInquiryStats`, `saveOrder`), `inquiries.ts` (`submitInquiry` → `POST /api/inquiries` plus the one-time legacy draft drain), and `supabase.ts` (lazy browser client + token). UI never touches storage or Supabase directly. Pre-phase-04 drafts in `ordacy-cms:v3:inquiries` are read-only legacy data and are cleared only after the API confirms each one.
 - `src/features/admin/`: `layout/` shell, `components/` shared admin UI (`AdminPage`, `FormDialog`, `TextField`, `ConfirmDialog`, `Pagination`, `Tabs`, `States` including `TableSkeleton`, toasts), `hooks/useCollection`, one folder per admin page. Website Content uses a split view (page list + editor).
 - `src/features/<route>/` one folder per page. Page sections and sub-components stay inside it, not in `src/components`.
 - `src/features/team/`: `TeamMemberPage` (`/team/:slug`), `components/TeamStrip` (hero strip), `sections/TeamHero` + `TeamResume`. The `team` copy group in `pages.json` holds only profile resume headings (admin preview at `/#team`).
@@ -93,8 +93,8 @@ npm test
 
 ## Admin
 
-- No "Demo mode" wording anywhere in the UI. The admin is authenticated by Supabase Auth (password + TOTP) and every API request is server-checked against `ADMIN_USER_ID` and `ADMIN_TOTP_FACTOR_ID`; never claim Email or File storage is connected until their phases land (Settings lists both as "Not configured").
-- Admin edits persist in Supabase through `/api/admin` and appear on the public site after the content cache refreshes. Inquiry drafts are the only browser-local content path: the contact form writes `ordacy-cms:v3:inquiries` until phase 04, and a storage failure throws so the form shows its failure panel.
+- No "Demo mode" wording anywhere in the UI. The admin is authenticated by Supabase Auth (password + TOTP) and every API request is server-checked against `ADMIN_USER_ID` and `ADMIN_TOTP_FACTOR_ID`; Email notifications read "Connected (EmailJS)" only after the phase 04 checkpoint verifies a real send, and File storage stays "Not configured" until uploads land.
+- Admin edits persist in Supabase through `/api/admin` and appear on the public site after the content cache refreshes. Inquiries are stored separately from content: the contact form posts to `/api/inquiries`, which saves the row before attempting the EmailJS notification. `ordacy-cms:v3:inquiries` holds only pre-phase-04 drafts and is drained once per public load, clearing each draft only after the API confirms it.
 - There are no sample records: only real client feedback and permissioned client
   projects are stored. Public testimonials require `status: approved` +
   `isPublished`; with none, the public empty states are the honest fallback.
@@ -105,7 +105,7 @@ npm test
 
 ## Known limitations
 
-- Email delivery and image uploads are not connected; inquiries are saved to the database (or browser drafts) but nothing is emailed yet.
+- Image uploads are not connected; images are added by URL. EmailJS notification sends server-side when the `EMAILJS_*` keys are set; the owner's verified test send is the phase 04 checkpoint.
 - `vercel.json` rewrites all paths to `/index.html` (untested on a live deploy). `robots.txt`/`sitemap.xml` assume `https://ordacy.com`.
-- Legal pages reference the Philippine Data Privacy Act of 2012 but have not been reviewed by a lawyer (no in-page notice). The contact success message correctly says the inquiry is saved in the browser and no message has been sent; email delivery is not live: a launch blocker. No OG image yet.
+- Legal pages reference the Philippine Data Privacy Act of 2012 but have not been reviewed by a lawyer (no in-page notice). The contact success panel says "Inquiry received."; email delivery is server-side and pending the owner's checkpoint. No OG image yet.
 - `terser-brunch` in devDependencies looks unused (nothing in the repo references it) but its purpose is unconfirmed. Don't remove it without investigating and justifying.

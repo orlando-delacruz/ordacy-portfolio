@@ -87,6 +87,7 @@ Server only (Vercel env vars + local `.env.local`, which `.gitignore`'s `*.local
 | `EMAILJS_TEMPLATE_ID` | EmailJS → Email Templates |
 | `EMAILJS_PUBLIC_KEY` | EmailJS → Account |
 | `EMAILJS_PRIVATE_KEY` | EmailJS → Account (server-side sending) |
+| `INQUIRY_IP_SALT` | Any long random string; salts the contact form's IP hashes. Unset = `/api/inquiries` fails closed with `500` |
 | `CRON_SECRET` | Any long random string; protects the phase 05 cron endpoints |
 
 ## Local development

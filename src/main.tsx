@@ -4,6 +4,7 @@ import { AppThemeProvider } from '@/app/ThemeProvider'
 import { RouteErrorPage } from '@/app/RouteErrorPage'
 import { RouteLoading } from '@/app/RouteLoading'
 import { loadPublicContent } from '@/data'
+import { drainInquiryDrafts } from '@/services/inquiries'
 import { GlobalStyles } from '@/styles/GlobalStyles'
 
 // The scroll manager takes over from here; stop the browser from restoring
@@ -32,6 +33,9 @@ async function bootstrap() {
 
   try {
     if (!window.location.pathname.startsWith('/admin')) {
+      // One-time delivery of pre-phase-04 browser drafts. Never blocks or
+      // fails the page: failures stay in localStorage for the next load.
+      void drainInquiryDrafts()
       await loadPublicContent()
     }
     const { App } = await import('@/app/App')
