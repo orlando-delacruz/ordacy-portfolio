@@ -1,32 +1,60 @@
-import { Database, HardDrive, KeyRound, Mail, RotateCcw, Save } from 'lucide-react'
+import { Database, HardDrive, KeyRound, Mail, Save } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import type { FormEvent, MouseEvent } from 'react'
+import type { FormEvent } from 'react'
 import type { SettingsRecord, SiteRecord } from '@/data'
-import { restoreOriginalContent, settingsService, siteService } from '@/services'
+import { settingsService, siteService } from '@/services'
 import { AdminPage } from '../components/AdminPage'
-import { ConfirmDialog } from '../components/ConfirmDialog'
 import type { FieldErrors } from '../components/FormDialog'
 import { ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { TextField } from '../components/TextField'
-import { isHttpUrl, text } from '../format'
+import { isHttpsUrl, text } from '../format'
 import { useDocument } from '../hooks/useCollection'
 import * as S from './styles/settings.styled'
 
-// Each row states what is NOT connected yet. Update when a real integration lands.
-const integrations: { icon: LucideIcon; name: string; text: string }[] = [
-  { icon: KeyRound, name: 'Authentication', text: 'Sign-in and role-based access are not configured. Until they are, this admin must not hold real client data.' },
-  { icon: Database, name: 'Database', text: 'Content and inquiries live in this browser only. No database is connected.' },
-  { icon: Mail, name: 'Email notifications', text: 'New inquiries do not trigger emails. No email service is connected.' },
-  { icon: HardDrive, name: 'File storage', text: 'Image uploads are not available. Images are added by URL.' },
+// Status is a read-only fact here. Update a row when its integration lands.
+const integrations: {
+  icon: LucideIcon
+  name: string
+  status: string
+  connected: boolean
+  text: string
+}[] = [
+  {
+    icon: KeyRound,
+    name: 'Authentication',
+    status: 'Connected (Supabase Auth with TOTP)',
+    connected: true,
+    text: 'Password and authenticator-code sign-in protect the admin. Every request verifies the session and requires two-factor authentication.',
+  },
+  {
+    icon: Database,
+    name: 'Database',
+    status: 'Connected (Supabase)',
+    connected: true,
+    text: 'Content is stored in Supabase Postgres. Edits save through the authenticated API and appear on the public site after its cache refreshes.',
+  },
+  {
+    icon: Mail,
+    name: 'Email notifications',
+    status: 'Not configured',
+    connected: false,
+    text: 'New inquiries do not trigger emails yet. The email service is not configured.',
+  },
+  {
+    icon: HardDrive,
+    name: 'File storage',
+    status: 'Not configured',
+    connected: false,
+    text: 'Image uploads are not available. Images are added by URL.',
+  },
 ]
 
 export function SettingsAdminPage() {
   const siteDoc = useDocument(siteService)
   const settingsDoc = useDocument(settingsService)
-  const [resetTrigger, setResetTrigger] = useState<HTMLButtonElement | null>(null)
 
   return (
     <AdminPage navId="settings">
@@ -51,54 +79,22 @@ export function SettingsAdminPage() {
           <U.PanelTitle id="settings-integrations">Integrations and security</U.PanelTitle>
         </U.PanelHeader>
         <S.StatusList>
-          {integrations.map(({ icon: Icon, name, text: description }) => (
+          {integrations.map(({ icon: Icon, name, status, connected, text }) => (
             <li key={name}>
               <Icon size={18} strokeWidth={2} aria-hidden="true" />
               <div>
                 <strong>
-                  {name} <U.Badge $tone="neutral">Not configured</U.Badge>
+                  {name}{' '}
+                  <U.Badge $tone={connected ? 'success' : 'neutral'}>
+                    {status}
+                  </U.Badge>
                 </strong>
-                <p>{description}</p>
+                <p>{text}</p>
               </div>
             </li>
           ))}
         </S.StatusList>
       </U.Panel>
-
-      <U.Panel aria-labelledby="settings-storage">
-        <U.PanelHeader>
-          <U.PanelTitle id="settings-storage">Storage</U.PanelTitle>
-        </U.PanelHeader>
-        <U.PanelText>
-          Edits save in this browser and appear on the public site after a
-          reload. Other visitors never see them. Restoring returns every
-          record to its original content.
-        </U.PanelText>
-        <div>
-          <U.SecondaryAction
-            type="button"
-            aria-haspopup="dialog"
-            onClick={(event: MouseEvent<HTMLButtonElement>) => setResetTrigger(event.currentTarget)}
-          >
-            <RotateCcw size={16} strokeWidth={2} aria-hidden="true" />
-            Restore original content
-          </U.SecondaryAction>
-        </div>
-      </U.Panel>
-
-      {resetTrigger && (
-        <ConfirmDialog
-          title="Restore original content?"
-          message="Every change saved in this browser, including inquiries sent from the contact form here, will be discarded. The page reloads afterwards."
-          confirmLabel="Restore content"
-          onConfirm={async () => {
-            restoreOriginalContent()
-            return true
-          }}
-          onClose={() => setResetTrigger(null)}
-          returnFocusTo={resetTrigger}
-        />
-      )}
     </AdminPage>
   )
 }
@@ -111,7 +107,7 @@ function SiteForm({ site, onSave }: { site: SiteRecord; onSave: (next: SiteRecor
     const data = new FormData(event.currentTarget)
     const found: FieldErrors = {}
     if (!text(data, 'name')) found.name = 'Enter the business name.'
-    if (!isHttpUrl(text(data, 'siteUrl'))) found.siteUrl = 'Enter the full site address (https://…).'
+    if (!isHttpsUrl(text(data, 'siteUrl'))) found.siteUrl = 'Enter the full site address (https://…).'
     setErrors(found)
     if (Object.keys(found).length > 0) return
     void onSave({
@@ -212,6 +208,11 @@ function PreferencesForm({
   settings: SettingsRecord
   onSave: (next: SettingsRecord) => Promise<boolean>
 }) {
+  const standardSizes = [10, 15, 20]
+  const pageSizes = standardSizes.includes(settings.inquiriesPageSize)
+    ? standardSizes
+    : [...standardSizes, settings.inquiriesPageSize].sort((a, b) => a - b)
+
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -227,7 +228,7 @@ function PreferencesForm({
         <F.Field>
           <F.Label htmlFor="prefs-page-size">Inquiries per page</F.Label>
           <F.Select id="prefs-page-size" name="inquiriesPageSize" defaultValue={String(settings.inquiriesPageSize)}>
-            {[10, 15, 20].map((size) => (
+            {pageSizes.map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>

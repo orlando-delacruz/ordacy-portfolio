@@ -81,6 +81,8 @@ Server only (Vercel env vars + local `.env.local`, which `.gitignore`'s `*.local
 | `SUPABASE_URL` | Supabase → Project Settings → API |
 | `SUPABASE_ANON_KEY` | same |
 | `SUPABASE_SERVICE_ROLE_KEY` | same page, secret — **never** in client code |
+| `ADMIN_USER_ID` | Owner's `auth.users.id`; `node --env-file=.env.local scripts/auth-info.mjs` prints it. Unset = admin API denies everyone |
+| `ADMIN_TOTP_FACTOR_ID` | Owner's verified TOTP factor id from the same script; re-record after any factor reset. Unset = admin API denies everyone |
 | `EMAILJS_SERVICE_ID` | EmailJS → Email Services |
 | `EMAILJS_TEMPLATE_ID` | EmailJS → Email Templates |
 | `EMAILJS_PUBLIC_KEY` | EmailJS → Account |
@@ -92,7 +94,10 @@ Server only (Vercel env vars + local `.env.local`, which `.gitignore`'s `*.local
 `npm run dev` runs the app and the real `api/*.mjs` handlers: `scripts/api-dev.mjs` is a
 Vite plugin that loads `.env.local` (server variables included) and dispatches
 `/api/<name>` to `api/<name>.mjs`. Use `npx vercel dev` when you need to reproduce
-Vercel's own function runtime. The four checks stay:
+Vercel's own function runtime. `.env.local` is gitignored by `.gitignore`'s `*.local`;
+copy `.env.example` and fill both client and server values. The two owner values are
+server-only: `node --env-file=.env.local scripts/auth-info.mjs` prints `ADMIN_USER_ID`
+and the verified TOTP factor id after enrollment. The four checks stay:
 
 ```bash
 npm run typecheck

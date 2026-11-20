@@ -2,7 +2,7 @@ import { CircleAlert, Pencil, Save, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import type { PlanRecord } from '@/data'
-import { pagesService, plansService } from '@/services'
+import { pagesService, plansService, saveOrder } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import type { FieldErrors } from '../components/FormDialog'
 import { DataIcon, OrderButtons } from '../components/RecordControls'
@@ -40,7 +40,12 @@ export function PricingAdminPage() {
                 label={`${plan.name} plan`}
                 index={index}
                 count={plans.length}
-                onMove={(delta) => mutate(() => plansService.replaceAll(move(plans, index, delta)), 'Plan order updated.')}
+                onMove={(delta) =>
+                  mutate(
+                    () => saveOrder(plansService, plans, move(plans, index, delta)),
+                    'Plan order updated.',
+                  )
+                }
               />
             }
             onSave={(fields) =>

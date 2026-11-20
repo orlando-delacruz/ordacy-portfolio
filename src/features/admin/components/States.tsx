@@ -28,7 +28,7 @@ export function ErrorState({ onRetry }: { onRetry: () => void }) {
     <S.StateBox role="alert">
       <CircleAlert size={24} strokeWidth={2} aria-hidden="true" />
       <h3>Could not load this data.</h3>
-      <p>Try again. If it keeps failing, restore the original content in Settings.</p>
+      <p>Try again. If it keeps failing, check your connection and sign in again.</p>
       <S.SecondaryAction type="button" onClick={onRetry}>
         <RotateCw size={16} strokeWidth={2} aria-hidden="true" />
         Try again

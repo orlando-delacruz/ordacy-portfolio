@@ -1,7 +1,7 @@
 import { Layers } from 'lucide-react'
 import { useState } from 'react'
 import type { ServiceRecord } from '@/data'
-import { servicesService } from '@/services'
+import { saveOrder, servicesService } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { FormDialog } from '../components/FormDialog'
 import type { FieldErrors } from '../components/FormDialog'
@@ -33,7 +33,7 @@ export function ServicesAdminPage() {
 
   const reorder = (index: number, delta: number) =>
     mutate(
-      () => servicesService.replaceAll(move(services, index, delta)),
+      () => saveOrder(servicesService, services, move(services, index, delta)),
       'Service order updated.',
     )
 

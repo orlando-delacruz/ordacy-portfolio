@@ -1,5 +1,6 @@
 import {
   ExternalLink,
+  LogOut,
   Menu,
   Moon,
   Settings,
@@ -7,8 +8,9 @@ import {
   UserRound,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAppTheme } from '@/app/theme-context'
+import { getSupabase } from '@/services/supabase'
 import { navItemForPath } from '../navigation'
 import * as S from './styles/admin-layout.styled'
 
@@ -62,11 +64,27 @@ export function AdminTopBar({ onOpenMenu }: AdminTopBarProps) {
   )
 }
 
-/** Profile menu. Sign-in is not configured, so it says so plainly. */
+/** Profile menu: the signed-in account and the sign-out action. */
 function ProfileMenu() {
   const [open, setOpen] = useState(false)
+  const [email, setEmail] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    let active = true
+    void getSupabase()
+      .then((supabase) => supabase.auth.getSession())
+      .then(({ data }) => {
+        if (active) setEmail(data.session?.user.email ?? null)
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -87,6 +105,16 @@ function ProfileMenu() {
     }
   }, [open])
 
+  const signOut = async () => {
+    setBusy(true)
+    try {
+      const supabase = await getSupabase()
+      await supabase.auth.signOut()
+    } finally {
+      navigate('/admin/login', { replace: true })
+    }
+  }
+
   return (
     <S.Profile ref={rootRef}>
       <S.ProfileButton
@@ -105,8 +133,8 @@ function ProfileMenu() {
       {open && (
         <S.ProfileMenu id="admin-profile-menu">
           <S.ProfileInfo>
-            <strong>Administrator</strong>
-            <span>Sign-in is not configured.</span>
+            <strong>{email ?? 'Administrator'}</strong>
+            <span>Signed in with two-factor authentication.</span>
           </S.ProfileInfo>
           <S.ProfileLink to="/admin/settings" onClick={() => setOpen(false)}>
             <Settings size={16} strokeWidth={2} aria-hidden="true" />
@@ -116,6 +144,10 @@ function ProfileMenu() {
             <ExternalLink size={16} strokeWidth={2} aria-hidden="true" />
             View public site
           </S.ProfileAnchor>
+          <S.ProfileAction type="button" onClick={signOut} disabled={busy}>
+            <LogOut size={16} strokeWidth={2} aria-hidden="true" />
+            {busy ? 'Signing out…' : 'Sign out'}
+          </S.ProfileAction>
         </S.ProfileMenu>
       )}
     </S.Profile>

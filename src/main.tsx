@@ -17,10 +17,10 @@ try {
 const root = createRoot(document.getElementById('root')!)
 
 /**
- * The app mounts only after the content API settles. Each page module reads
- * content at module scope (Home stats and guards, the Projects count), so
- * importing App dynamically is what makes those reads see database values
- * instead of the build-time JSON seed.
+ * The admin bundle must load even when the public content API is down: the
+ * admin reads its data through its own authenticated services, and blocking on
+ * `loadPublicContent()` would make sign-in impossible during an outage. Public
+ * pages keep the seed until the live payload arrives.
  */
 async function bootstrap() {
   root.render(
@@ -31,7 +31,9 @@ async function bootstrap() {
   )
 
   try {
-    await loadPublicContent()
+    if (!window.location.pathname.startsWith('/admin')) {
+      await loadPublicContent()
+    }
     const { App } = await import('@/app/App')
     root.render(
       <StrictMode>

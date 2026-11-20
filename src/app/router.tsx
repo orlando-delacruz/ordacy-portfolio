@@ -7,9 +7,20 @@ import { RouteLoading } from './RouteLoading'
 
 // Every page except Home loads on demand to keep the first bundle small.
 export const router = createBrowserRouter([
-  // Admin CMS frontend (no auth yet): its own shell, loaded on demand.
+  // Login is a sibling of the guarded admin shell, never inside it.
+  {
+    path: '/admin/login',
+    HydrateFallback: RouteLoading,
+    errorElement: <RouteErrorPage />,
+    lazy: async () => ({
+      Component: (await import('@/features/admin/login/LoginPage')).LoginPage,
+    }),
+  },
+  // Authenticated admin CMS: its own shell, loaded on demand.
   {
     path: '/admin',
+    HydrateFallback: RouteLoading,
+    errorElement: <RouteErrorPage />,
     lazy: async () => ({
       Component: (await import('@/features/admin/layout/AdminLayout')).AdminLayout,
     }),

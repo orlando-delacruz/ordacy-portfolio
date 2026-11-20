@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-# Demo admin interface; no public content.
+# Authenticated admin interface; no public content.
 Disallow: /admin
 
 # TODO before launch: replace with the confirmed production domain.

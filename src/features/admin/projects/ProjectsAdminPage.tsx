@@ -1,7 +1,7 @@
 import { FolderKanban, Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { ProjectRecord, ProjectShot, ProjectType } from '@/data'
-import { projectsService } from '@/services'
+import { projectsService, saveOrder } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { FormDialog } from '../components/FormDialog'
@@ -11,7 +11,7 @@ import { EmptyState, ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { TextField } from '../components/TextField'
-import { byOrder, formatDate, isHttpUrl, lines, move, renumber, slugify, text } from '../format'
+import { byOrder, formatDate, isHttpUrl, lines, move, nextOrder, slugify, text } from '../format'
 import { useCollection } from '../hooks/useCollection'
 
 type Dialog =
@@ -88,7 +88,7 @@ export function ProjectsAdminPage() {
             projectsService.create({
               id: slug,
               ...fields,
-              displayOrder: projects.length + 1,
+              displayOrder: nextOrder(projects),
               createdAt: now,
             }),
           'Project added.',
@@ -178,7 +178,10 @@ export function ProjectsAdminPage() {
                         index={index}
                         count={projects.length}
                         onMove={(delta) =>
-                          mutate(() => projectsService.replaceAll(move(projects, index, delta)), 'Project order updated.')
+                          mutate(
+                            () => saveOrder(projectsService, projects, move(projects, index, delta)),
+                            'Project order updated.',
+                          )
                         }
                       />
                       <EditDeleteButtons
@@ -222,10 +225,7 @@ export function ProjectsAdminPage() {
           message={`${dialog.record.title} will be permanently removed from the site and the admin.`}
           onConfirm={() =>
             mutate(
-              () =>
-                projectsService.replaceAll(
-                  renumber(projects.filter((project) => project.id !== dialog.record.id)),
-                ),
+              () => projectsService.remove(dialog.record.id),
               'Project deleted.',
             )
           }

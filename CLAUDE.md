@@ -1,8 +1,8 @@
 # CLAUDE.md
 
-Ordacy portfolio and client-acquisition site (lead generation). Frontend-only SPA: React 19, TypeScript 6 (strict), Vite 8, React Router 7, styled-components 6, `lucide-react` (+ `@phosphor-icons/react` for the mobile bottom nav only). npm only.
+Front-end SPA plus Vercel functions: React 19, TypeScript 6 (strict), Vite 8, React Router 7, styled-components 6, `lucide-react` (+ `@phosphor-icons/react` for the mobile bottom nav only), Supabase Postgres and Auth. npm only.
 
-Not implemented: backend, database, auth, real CMS persistence, analytics, API/contact-form delivery, env vars, tests. The `/admin` CMS frontend exists, with browser-local edits and no sign-in (see Admin).
+Not implemented: analytics, EmailJS delivery, image uploads, CI config. The `/admin` CMS is authenticated with Supabase Auth (password + TOTP) and writes through the serverless API (see Admin).
 
 `AGENTS.md` holds the same conventions in more detail. If the two ever conflict, follow `AGENTS.md`. `README.md` status sections are stale (it claims no git repo and all pages are placeholders). Trust `src/` and `package.json`.
 
@@ -10,15 +10,15 @@ Not implemented: backend, database, auth, real CMS persistence, analytics, API/c
 
 ```
 npm run dev | build | preview | lint | typecheck
+npm test
 ```
 
-- Fast check: `lint` + `typecheck`. Full check: `build` (`tsc -b && vite build`).
-- No test runner. Don't add one unless asked.
+- Fast check: `lint` + `typecheck`. Full check: `build` (`tsc -b && vite build`). API rules and map round-trips: `npm test`.
 - Visual check when UI changes: desktop and mobile, both themes, and reduced motion if animation is touched.
 
 ## Status
 
-- Built: all routes (Home, Projects, Testimonials, Pricing, Contact, About Us, Privacy, Terms) plus a custom `NotFoundPage`. Non-home pages are lazy-loaded in `router.tsx`. Frontend only: the contact form submits to a stub (`submitInquiry`, `// BACKEND: replace`).
+- Built: all routes (Home, Projects, Testimonials, Pricing, Contact, About Us, Privacy, Terms) plus a custom `NotFoundPage`. Non-home pages are lazy-loaded in `router.tsx`. The contact form calls `submitInquiry`, which stores a browser-local draft until phase 04 adds the inquiries endpoint; a storage failure shows the form's failure panel.
 - Shell: fixed desktop sidebar (`lg`+, collapsible from TopBar), mobile bottom nav, skip link. Light and dark themes.
 - Team: compact strip inside the homepage hero (`id="team"`, no section title), with `/team/:slug` resume-style profile pages whose hero mirrors the homepage hero. There is no `/team` index and no Team nav item.
 - Admin: `/admin` (Dashboard, Inquiries, Website Content, Projects, Testimonials, Services, Pricing, FAQs, Gallery, SEO, Settings), own shell, lazy-loaded, noindex, `Disallow: /admin` in robots.txt.
@@ -27,10 +27,10 @@ npm run dev | build | preview | lint | typecheck
 
 - `src/app/` router, App, ThemeProvider, `theme-context.ts` (`useAppTheme()`), ThemeTransition, NotFoundPage
 - `src/components/{common,layout,navigation,ui}/` shell, nav, `PageHeader`; `ui/` holds shared `Section`, `Lightbox`, `ProfileCoverArt` (`brand` | `member` cover art) + `ui/styles/profile-hero.styled.ts` (shared homepage/member hero layout), and `ui/styles/` (`buttons`, `card`, `icon-badge`, `empty-state`, `section`, `lightbox`)
-- `data/database/*.json` is the single source of content and mock records (site, pages, seo, services, plans, faqs, projects, testimonials, team, gallery, inquiries, settings, admin-navigation, legal...). Records are CMS-shaped (stable `id`, `displayOrder`, `isPublished`/`status`, ISO timestamps). `src/data` (`@/data`) exposes `seed` (raw records) plus published, ordered, icon-resolved exports for the public site; types in `src/data/types.ts` (`*Record` = stored shape). JSON stores Lucide icon names, mapped in `src/data/icons.ts`. `@data/*` aliases the JSON folder. Pending business facts (email, phone, domain) are `pending: true` and hidden until set.
+- `data/database/*.json` is the seed and the source for static content (site, pages, seo, services, plans, faqs, projects, testimonials, team, gallery, inquiries, settings, admin-navigation, legal...). Records are CMS-shaped (stable `id`, `displayOrder`, `isPublished`/`status`, ISO timestamps). `src/data` (`@/data`) exposes `seed` (raw records) plus published, ordered, icon-resolved exports for the public site; types in `src/data/types.ts` (`*Record` = stored shape). JSON stores Lucide icon names, mapped in `src/data/icons.ts`; the API validates against `data/icons.json`. `@data/*` aliases the JSON folder. Pending business facts (email, phone, domain) are `pending: true` and hidden until set.
 - Public page copy (headers, section headings/intros, item lists like principles, expectations, pricing notes, contact steps, 404) lives in `pages.json`, read via `pageHeader()`, `sectionCopy()`, `getSection()`; item lists render with `components/ui/ContentItems` (`numbered` | `ruled` | `checklist`). Don't put copy back in JSX.
-- Public and admin share one data source: `src/data/storage.ts` (`readStored`, prefix `ordacy-cms:v2:`) overlays saved admin edits onto the seed when the public site loads. Bump the prefix version whenever a stored record shape changes.
-- `src/services/` data access layer: `local-store.ts` (async collections/documents seeded from `/data`, persisted to localStorage) and `index.ts` (typed services, `queryInquiries`, `getInquiryStats`, `submitInquiry`). UI never touches storage directly; swap this layer for API calls later.
+- Public and admin content lives in Supabase Postgres. Public pages read `GET /api/content` through `@/data`; admin reads and writes go through `src/services` → `/api/admin` and require a Supabase session with the owner allowlist plus the pinned TOTP factor. `data/database/*.json` is the seed and the source for static content.
+- `src/services/` data access layer: `index.ts` (typed services, `queryInquiries`, `getInquiryStats`, `submitInquiry`, `saveOrder`) and `supabase.ts` (lazy browser client + token). UI never touches storage or Supabase directly. Inquiry drafts in `ordacy-cms:v3:inquiries` are the only browser-local content path until phase 04.
 - `src/features/admin/`: `layout/` shell, `components/` shared admin UI (`AdminPage`, `FormDialog`, `TextField`, `ConfirmDialog`, `Pagination`, `Tabs`, `States` including `TableSkeleton`, toasts), `hooks/useCollection`, one folder per admin page. Website Content uses a split view (page list + editor).
 - `src/features/<route>/` one folder per page. Page sections and sub-components stay inside it, not in `src/components`.
 - `src/features/team/`: `TeamMemberPage` (`/team/:slug`), `components/TeamStrip` (hero strip), `sections/TeamHero` + `TeamResume`. The `team` copy group in `pages.json` holds only profile resume headings (admin preview at `/#team`).
@@ -84,22 +84,28 @@ npm run dev | build | preview | lint | typecheck
 ## Content integrity
 
 - Never invent clients, projects, testimonials, names, results, or business claims.
-- The home Testimonials section and /testimonials show `sampleTestimonials` (visible `Sample` badge, sample-specific copy) until approved genuine testimonials exist; then the real marquee/grid replaces them, and the trust content (working principles, project journey) always renders below on /testimonials.
+- The home Testimonials section renders the published approved testimonials and stays
+  hidden when none exist; `/testimonials` shows its page-level empty state instead,
+  with the trust content (working principles, project journey) always rendered below.
+  Never invent quotes or client results.
 - Hero stats come from `site.profileStats` (Views, Projects, Likes), edited in Settings. The like button toggles the visitor's own like state (stored as `ordacy-hero-liked` in this browser) with `aria-pressed`; the Likes stat stays the content value.
 - Process, payment terms (50/50), ownership, hosting, optional maintenance, and the 30-day warranty from `README.md` are now published (FAQs, About, Pricing notes, Terms). Keep every page consistent with those terms; don't invent new commitments.
 
 ## Admin
 
-- No "Demo mode" wording anywhere in the UI. Be honest instead: no authentication exists (anyone who opens `/admin` sees it, so it must never hold real client data until a backend with server-side auth exists; frontend route guards are not security), and Settings → Integrations lists Authentication, Database, Email and File storage as "Not configured". Never claim any of them is connected.
-- Admin edits persist only in the current browser's localStorage (`ordacy-cms:v2:*`) and appear on the public site in that browser after a reload; other visitors never see them. Settings → "Restore original content" clears them. The contact form writes to the same store, so submissions show in admin Inquiries on that device only; nothing is emailed or sent.
-- Sample content: illustrative inquiries, testimonials, and gallery images have `isSample: true`, show a "Sample" badge in admin, and can never be approved or published as real (controls locked; admin notice explains the public fallback). Sample testimonials have `rating: null` and appear publicly only through `sampleTestimonials` with a visible `Sample` badge and sample-specific copy. Public real testimonials still require `status: approved` + `isPublished` + not sample.
-- Projects are six published concept projects (`type: concept-demo`, `isSample: false`) built on fictional scenarios, labeled "Concept" on the site, with generated SVG screens in `public/projects/<slug>/`. Never present them as client work or attach results.
-- Every admin view must have content on first load; empty states are only for searches/filters that return nothing. Dashboard figures are derived from records, never hardcoded.
+- No "Demo mode" wording anywhere in the UI. The admin is authenticated by Supabase Auth (password + TOTP) and every API request is server-checked against `ADMIN_USER_ID` and `ADMIN_TOTP_FACTOR_ID`; never claim Email or File storage is connected until their phases land (Settings lists both as "Not configured").
+- Admin edits persist in Supabase through `/api/admin` and appear on the public site after the content cache refreshes. Inquiry drafts are the only browser-local content path: the contact form writes `ordacy-cms:v3:inquiries` until phase 04, and a storage failure throws so the form shows its failure panel.
+- There are no sample records: only real client feedback and permissioned client
+  projects are stored. Public testimonials require `status: approved` +
+  `isPublished`; with none, the public empty states are the honest fallback.
+- Projects are stored only for permissioned client work. Never present a project as
+  client work without permission or attach results that were not provided.
+- Every admin view must have content on first load; empty collections show their empty states, and search/filter no-results use the local empty state. Dashboard figures are derived from records, never hardcoded.
 - Gallery has no upload storage: images are added by URL; the UI says so.
 
 ## Known limitations
 
-- No backend: the contact form is a stub and nothing is sent or stored.
+- Email delivery and image uploads are not connected; inquiries are saved to the database (or browser drafts) but nothing is emailed yet.
 - `vercel.json` rewrites all paths to `/index.html` (untested on a live deploy). `robots.txt`/`sitemap.xml` assume `https://ordacy.com`.
-- Legal pages reference the Philippine Data Privacy Act of 2012 but have not been reviewed by a lawyer (no in-page notice). The contact success message implies receipt, but nothing is delivered until a backend exists: a launch blocker. No OG image yet.
+- Legal pages reference the Philippine Data Privacy Act of 2012 but have not been reviewed by a lawyer (no in-page notice). The contact success message correctly says the inquiry is saved in the browser and no message has been sent; email delivery is not live: a launch blocker. No OG image yet.
 - `terser-brunch` in devDependencies looks unused (nothing in the repo references it) but its purpose is unconfirmed. Don't remove it without investigating and justifying.

@@ -445,3 +445,19 @@ export const ProfileLink = styled(Link)`
 export const ProfileAnchor = styled.a`
   ${profileLinkStyles}
 `
+
+/** Sign-out: a button with the menu link's look, without the navigation. */
+export const ProfileAction = styled.button`
+  ${profileLinkStyles}
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.7;
+  }
+`

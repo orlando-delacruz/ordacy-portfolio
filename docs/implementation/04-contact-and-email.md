@@ -40,6 +40,16 @@ loses a lead or shows the visitor an error.
   success panel, compact failure panel, retained values, and focus behavior from the
   state system — no UI changes beyond the hidden honeypot field in `ContactForm.tsx`
   (`tabIndex={-1}`, `autoComplete="off"`, `aria-hidden="true"`, visually hidden).
+  A draft that cannot be stored now throws, so the failure panel appears instead of a
+  false success.
+
+- [ ] **2a. One-time draft drain (before removing the local path).** On the first
+  load after this phase, read `ordacy-cms:v3:inquiries`. If any drafts exist, POST each
+  to `/api/inquiries` (the endpoint is idempotent by draft id: an existing id returns
+  success without a duplicate row or email) and remove each draft only after its POST
+  succeeds. Leave failures in place and retry on the next load. This preserves
+  inquiries submitted before the switch. Remove this drain in phase 05 together with
+  the local draft code.
 
 - [ ] **3. Tests** (`tests/`), extending the phase 03 suite:
   - payload validation accepts/rejects the documented cases;

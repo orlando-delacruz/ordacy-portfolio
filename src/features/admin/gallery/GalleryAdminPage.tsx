@@ -1,7 +1,7 @@
 import { CloudUpload, Images, Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { GalleryImageRecord } from '@/data'
-import { createId, galleryService } from '@/services'
+import { createId, galleryService, saveOrder } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { FormDialog } from '../components/FormDialog'
@@ -11,7 +11,7 @@ import { EmptyState, ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { TextField } from '../components/TextField'
-import { byOrder, isHttpUrl, move, renumber, text } from '../format'
+import { byOrder, isHttpUrl, move, nextOrder, text } from '../format'
 import { useCollection } from '../hooks/useCollection'
 import * as S from './styles/gallery.styled'
 
@@ -48,7 +48,7 @@ export function GalleryAdminPage() {
             galleryService.create({
               id: createId('image'),
               ...fields,
-              displayOrder: images.length + 1,
+              displayOrder: nextOrder(images),
               createdAt: new Date().toISOString(),
             }),
           'Image added.',
@@ -121,7 +121,10 @@ export function GalleryAdminPage() {
                   index={index}
                   count={images.length}
                   onMove={(delta) =>
-                    mutate(() => galleryService.replaceAll(move(images, index, delta)), 'Image order updated.')
+                    mutate(
+                      () => saveOrder(galleryService, images, move(images, index, delta)),
+                      'Image order updated.',
+                    )
                   }
                 />
                 <EditDeleteButtons
@@ -185,7 +188,7 @@ export function GalleryAdminPage() {
           message={`"${dialog.record.title}" will be permanently removed from the gallery.`}
           onConfirm={() =>
             mutate(
-              () => galleryService.replaceAll(renumber(images.filter((image) => image.id !== dialog.record.id))),
+              () => galleryService.remove(dialog.record.id),
               'Image deleted.',
             )
           }

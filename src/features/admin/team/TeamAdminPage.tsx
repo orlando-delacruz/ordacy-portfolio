@@ -8,7 +8,7 @@ import type {
   TeamMemberRecord,
   TeamSkillGroup,
 } from '@/data'
-import { createId, teamService } from '@/services'
+import { createId, saveOrder, teamService } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { FormDialog } from '../components/FormDialog'
@@ -18,7 +18,7 @@ import { EmptyState, ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { TextField } from '../components/TextField'
-import { byOrder, formatDate, isHttpUrl, lines, move, renumber, slugify, text } from '../format'
+import { byOrder, formatDate, isHttpUrl, lines, move, nextOrder, slugify, text } from '../format'
 import { useCollection } from '../hooks/useCollection'
 
 type Dialog =
@@ -209,7 +209,7 @@ export function TeamAdminPage() {
             teamService.create({
               id: createId('member'),
               ...fields,
-              displayOrder: members.length + 1,
+              displayOrder: nextOrder(members),
               createdAt: now,
             }),
           'Team member added.',
@@ -298,7 +298,10 @@ export function TeamAdminPage() {
                         index={index}
                         count={members.length}
                         onMove={(delta) =>
-                          mutate(() => teamService.replaceAll(move(members, index, delta)), 'Team order updated.')
+                          mutate(
+                            () => saveOrder(teamService, members, move(members, index, delta)),
+                            'Team order updated.',
+                          )
                         }
                       />
                       <EditDeleteButtons
@@ -338,10 +341,7 @@ export function TeamAdminPage() {
           message={`${dialog.record.name} will be permanently removed from the site and the admin.`}
           onConfirm={() =>
             mutate(
-              () =>
-                teamService.replaceAll(
-                  renumber(members.filter((member) => member.id !== dialog.record.id)),
-                ),
+              () => teamService.remove(dialog.record.id),
               'Team member deleted.',
             )
           }

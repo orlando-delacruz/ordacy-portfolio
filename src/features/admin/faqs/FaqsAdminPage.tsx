@@ -1,7 +1,7 @@
 import { CircleHelp, Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { FaqRecord } from '@/data'
-import { createId, faqsService } from '@/services'
+import { createId, faqsService, saveOrder } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { FormDialog } from '../components/FormDialog'
@@ -11,7 +11,7 @@ import { EmptyState, ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { TextField } from '../components/TextField'
-import { byOrder, move, renumber, text } from '../format'
+import { byOrder, move, nextOrder, text } from '../format'
 import { useCollection } from '../hooks/useCollection'
 
 type Dialog =
@@ -51,7 +51,7 @@ export function FaqsAdminPage() {
             faqsService.create({
               id: createId('faq'),
               ...fields,
-              displayOrder: faqs.length + 1,
+              displayOrder: nextOrder(faqs),
             }),
           'FAQ added.',
         )
@@ -124,7 +124,10 @@ export function FaqsAdminPage() {
                     index={index}
                     count={faqs.length}
                     onMove={(delta) =>
-                      mutate(() => faqsService.replaceAll(move(faqs, index, delta)), 'FAQ order updated.')
+                      mutate(
+                        () => saveOrder(faqsService, faqs, move(faqs, index, delta)),
+                        'FAQ order updated.',
+                      )
                     }
                   />
                   <EditDeleteButtons
@@ -208,10 +211,7 @@ export function FaqsAdminPage() {
           message={`"${dialog.record.question}" will be permanently removed.`}
           onConfirm={() =>
             mutate(
-              () =>
-                faqsService.replaceAll(
-                  renumber(faqs.filter((faq) => faq.id !== dialog.record.id)),
-                ),
+              () => faqsService.remove(dialog.record.id),
               'FAQ deleted.',
             )
           }

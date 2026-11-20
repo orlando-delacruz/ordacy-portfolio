@@ -1,6 +1,7 @@
 // Single import surface for site content.
 //
-// - `seed`: the raw stored records, used by the admin services layer.
+// - `seed`: the JSON records used by static admin navigation and as the
+//   initial public fallback before the API payload arrives.
 // - `loadPublicContent`: one API read that fills the live bindings below.
 //   Pages are imported only after it settles, so their module-scope reads
 //   (Home stats and guards, Projects count) see the database values.
@@ -63,46 +64,7 @@ export { iconNames, resolveIcon } from './icons'
 
 type SeoKey = keyof typeof seoJson
 
-/**
- * Stored pages can predate sections added to the JSON seed. Keep every saved
- * edit, but append any seed section the stored page does not have yet, so new
- * content blocks appear without wiping browser-local edits. Used only by the
- * admin services until they move to the API in phase 03.
- */
-export function mergePageSections(
-  seedPages: readonly PageRecord[],
-  storedPages: readonly PageRecord[],
-): PageRecord[] {
-  const storedById = new Map(storedPages.map((page) => [page.id, page]))
-  return seedPages.map((seedPage) => {
-    const storedPage = storedById.get(seedPage.id)
-    if (!storedPage) return seedPage
-    const storedIds = new Set(storedPage.sections.map((section) => section.id))
-    const seedSections = new Map(
-      seedPage.sections.map((section) => [section.id, section]),
-    )
-    return {
-      ...storedPage,
-      header: storedPage.header ?? seedPage.header,
-      sections: [
-        ...storedPage.sections.map((section) => {
-          const seedSection = seedSections.get(section.id)
-          // Saved pages predate the mobile copy and CTA actions; fill them
-          // without losing edits.
-          const mobile = section.mobile ?? seedSection?.mobile
-          const actions = section.actions ?? seedSection?.actions
-          if (mobile === section.mobile && actions === section.actions) {
-            return section
-          }
-          return { ...section, mobile, actions }
-        }),
-        ...seedPage.sections.filter((section) => !storedIds.has(section.id)),
-      ],
-    }
-  })
-}
-
-/** Raw stored records: the seed for the admin data layer. */
+/** Raw stored records: the development seed and static-page source. */
 export const seed = {
   site: siteJson as SiteRecord,
   pages: pagesJson as PageRecord[],

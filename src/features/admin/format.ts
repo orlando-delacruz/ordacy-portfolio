@@ -26,6 +26,20 @@ export const isHttpUrl = (value: string) => {
   }
 }
 
+/** Settings siteUrl is stored only as an absolute https URL. */
+export const isHttpsUrl = (value: string) => {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' && url.hostname !== ''
+  } catch {
+    return false
+  }
+}
+
+/** Next displayOrder after the highest existing value, so deletes never collide. */
+export const nextOrder = (items: { displayOrder: number }[]) =>
+  Math.max(0, ...items.map((item) => item.displayOrder)) + 1
+
 /** Splits a textarea into trimmed, non-empty lines. */
 export const lines = (text: string) =>
   text

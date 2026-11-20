@@ -39,9 +39,11 @@ import {
   Wrench,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import iconNamesJson from '../../data/icons.json'
 
 // JSON can't hold components, so data files store these names. The admin
-// icon picker offers exactly this list.
+// icon picker offers exactly this list. data/icons.json is the same list for
+// the API validator; the guard below catches drift between the two.
 const icons = {
   BarChart3,
   Briefcase,
@@ -85,7 +87,23 @@ const icons = {
 
 export type IconName = keyof typeof icons
 
-export const iconNames = Object.keys(icons) as IconName[]
+const missingIcons = iconNamesJson.filter((name) => !(name in icons))
+if (missingIcons.length > 0) {
+  throw new Error(
+    `Unknown icon names in data/icons.json: ${missingIcons.join(', ')}`,
+  )
+}
+
+const unusedIcons = Object.keys(icons).filter(
+  (name) => !iconNamesJson.includes(name),
+)
+if (unusedIcons.length > 0) {
+  throw new Error(
+    `Icon names missing from data/icons.json: ${unusedIcons.join(', ')}`,
+  )
+}
+
+export const iconNames = iconNamesJson as IconName[]
 
 export function resolveIcon(name: string): LucideIcon {
   const icon = icons[name as IconName]

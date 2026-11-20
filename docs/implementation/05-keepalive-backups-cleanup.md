@@ -31,16 +31,15 @@ documents tell the truth, and the whole system passes a final sweep.
   `CRON_SECRET` env var checked by both cron endpoints so they cannot be triggered by
   strangers.
 
-- [ ] **3. Retire the localStorage service layer.**
-  - Delete `src/services/local-store.ts`; remove `restoreOriginalContent`, `save`,
-    `load`, and the seed-based collection instances. `createId` moves to
-    `src/services/id.ts` (unchanged behavior).
-  - Remove `src/data/storage.ts` (`readStored`, `STORAGE_PREFIX`) — no code reads it
-    anymore. The last-good content cache keeps its own key in `src/data/index.ts`.
+- [x] **3. Retire the localStorage service layer.** Done in phase 03.
+  - `src/services/local-store.ts` and `src/data/storage.ts` are deleted; `createId`
+    lives in `src/services/index.ts`.
+  - The only remaining content-adjacent browser key is the last-good public cache
+    (`ordacy-content:v1`) plus phase 03's local inquiry drafts, which phase 04
+    replaces with the real inquiries endpoint.
   - Remove the now-unused `seed` export from `src/data/index.ts` if nothing imports it
     (`grep` first; the seed script reads JSON directly).
-  - Settings page: “Restore original content” is already gone from phase 03; confirm
-    no dead copy remains.
+  - Settings page: “Restore original content” is gone; confirm no dead copy remains.
 
 - [ ] **4. Documents.**
   - `AGENTS.md`: replace “no backend, env vars, tests” with the real stack (Supabase,

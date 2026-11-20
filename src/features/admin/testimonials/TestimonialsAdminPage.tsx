@@ -1,7 +1,7 @@
 import { MessagesSquare, Plus, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import type { TestimonialRecord, TestimonialStatus } from '@/data'
-import { createId, testimonialsService } from '@/services'
+import { createId, saveOrder, testimonialsService } from '@/services'
 import { AdminPage } from '../components/AdminPage'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { FormDialog } from '../components/FormDialog'
@@ -11,7 +11,7 @@ import { EmptyState, ErrorState, LoadingState } from '../components/States'
 import * as F from '../components/styles/form.styled'
 import * as U from '../components/styles/admin-ui.styled'
 import { TextField } from '../components/TextField'
-import { byOrder, formatDate, move, text } from '../format'
+import { byOrder, formatDate, move, nextOrder, text } from '../format'
 import { useCollection } from '../hooks/useCollection'
 
 type Dialog =
@@ -67,7 +67,7 @@ export function TestimonialsAdminPage() {
             testimonialsService.create({
               id: createId('testimonial'),
               ...fields,
-              displayOrder: testimonials.length + 1,
+              displayOrder: nextOrder(testimonials),
               createdAt: new Date().toISOString(),
             }),
           'Testimonial added.',
@@ -151,7 +151,15 @@ export function TestimonialsAdminPage() {
                           index={index}
                           count={testimonials.length}
                           onMove={(delta) =>
-                            mutate(() => testimonialsService.replaceAll(move(testimonials, index, delta)), 'Testimonial order updated.')
+                            mutate(
+                              () =>
+                                saveOrder(
+                                  testimonialsService,
+                                  testimonials,
+                                  move(testimonials, index, delta),
+                                ),
+                              'Testimonial order updated.',
+                            )
                           }
                         />
                         <EditDeleteButtons

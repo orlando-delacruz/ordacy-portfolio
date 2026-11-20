@@ -1,21 +1,33 @@
 # AGENTS.md
 
-Marketing/portfolio SPA for Ordacy. React 19 + Vite 8 + React Router 7 + TypeScript 6 + styled-components 6. npm only; no backend, env vars, tests, or CI config.
+Marketing/portfolio SPA for Ordacy. React 19 + Vite 8 + React Router 7 + TypeScript 6 + styled-components 6 front end, with Node serverless functions in `api/`, Supabase Postgres for content, and Supabase Auth (password + TOTP) for the owner. npm only.
 
 ## Commands
 
-- `npm run dev` — Vite dev server
+- `npm run dev` — Vite dev server, including the real `api/*.mjs` handlers
 - `npm run lint` and `npm run typecheck` — fast verification
 - `npm run build` — full verification (`tsc -b && vite build` → `dist/`)
 - `npm run preview` — serve the production build
+- `npm test` — pure API rules and data-mapping tests (`node --test`)
 
-There is no test script or test framework. Verify changes with lint, typecheck, build, and a browser check; don't add a test runner unless asked.
+Verify changes with lint, typecheck, build, and a browser check; run `npm test` when the API rules, record shapes, or map layers change.
+
+## Environment
+
+`npm run dev` loads `.env.local` (gitignored by `*.local`); copy `.env.example`. Vercel needs the same names in project settings.
+
+- Client (public by design): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
+- Server only: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USER_ID`, `ADMIN_TOTP_FACTOR_ID`; phase 04 adds the `EMAILJS_*` keys, phase 05 adds `CRON_SECRET`.
+- `ADMIN_USER_ID` and `ADMIN_TOTP_FACTOR_ID` are the owner allowlist and the pinned verified TOTP factor. Both fail closed: unset means the admin API denies every request. `node --env-file=.env.local scripts/auth-info.mjs` prints them after enrollment; re-record the factor id after any reset.
+- Never put a server variable behind a `VITE_` name or in client code.
 
 ## Where things live
 
 - `src/app/router.tsx` — all routes; `src/app/App.tsx` wires providers.
 - `src/components/navigation/navigation.ts` — single source of truth for nav labels, paths, icons, and Top Bar page titles.
-- `src/features/<route>/` — one folder per page. All pages are built; Home lives under `src/features/home/` (`sections/`, shared `components/`, copy/data in `home.data.ts`); content comes from `data/database/*.json` via `@/data`; shared UI is in `src/components/ui`.
+- `src/features/<route>/` — one folder per page. All pages are built; Home lives under `src/features/home/` (`sections/`, shared `components/`, copy/data in `home.data.ts`); public content arrives from `GET /api/content` through `@/data` (JSON in `data/database/` is the seed and static-page source); shared UI is in `src/components/ui`.
+- `api/` — Vercel functions: `content.mjs` (public payload), `admin.mjs` (authenticated CRUD), and `_lib/` (`auth.mjs`, `rules.mjs`, `map.mjs`, `http.mjs`). `data/icons.json` is the icon allowlist shared by `src/data/icons.ts` and `api/_lib/rules.mjs`; keep them in step.
+- `src/services/` — the admin and contact data layer. Admin calls go through `/api/admin` with a Supabase bearer token; `scripts/seed-supabase.mjs` re-seeds from JSON; `scripts/auth-info.mjs` prints the owner auth ids.
 - `src/styles/theme.ts` — design tokens; `src/types/styled.d.ts` — styled-components theme typing.
 - `RootLayout` owns the shell (sidebar, Top Bar, mobile bottom nav, skip link, content width). Pages render content only.
 - Shared surfaces: `src/components/ui/CtaBanner.tsx` is the teal closing banner used by Home and Projects; `src/features/projects/components/ProjectCard.tsx` is the image-led card used by the Home 3D carousel (`ProjectsCarousel.tsx`), the Projects desktop white-card grid, and the Projects mobile horizontal row list (below `md`, with segmented filter bar + pagination).
@@ -23,12 +35,15 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 
 `README.md`'s status sections predate the homepage build: it still claims all pages are placeholders and that there is no Git repository. Trust `src/` and `package.json` over it.
 
-## Admin (CMS frontend, no backend yet)
+## Admin (authenticated CMS)
 
 - `/admin/*` lives in `src/features/admin/` with its own shell (not `RootLayout`); routes are lazy children in `router.tsx`, nav config in `data/database/admin-navigation.json`.
-- All content and records live in `data/database/*.json`. Admin UI reads and writes only through `src/services` (async; local store persisted to localStorage). Public pages read `@/data`, which overlays the same saved edits (`src/data/storage.ts`), so both views share one data model. Never put content or mock records in JSX.
-- No auth exists: keep noindex and robots `Disallow: /admin`; no "Demo mode" wording, but never claim authentication, a database, email, or uploads are connected (Settings lists them as "Not configured"). Edits are browser-local only.
-- Empty collections show their empty states in the admin and on the public site. There are no sample or placeholder records, badges, locks, or fallbacks; only real client feedback, permissioned client projects, and clearly labeled concept demos are stored.
+- **Authenticated.** Supabase Auth (password + TOTP) gates `/admin`; `api/_lib/auth.mjs` additionally enforces the owner allowlist (`ADMIN_USER_ID`), the pinned verified TOTP factor (`ADMIN_TOTP_FACTOR_ID`), and AAL2 on every request. Both variables fail closed. An admin shell that renders is not proof of data access: the API is the security boundary.
+- Admin UI reads and writes only through `src/services` → `/api/admin` → Supabase Postgres. Public pages read the published payload from `/api/content` via `@/data`. Never put content or mock records in JSX.
+- Keep noindex and robots `Disallow: /admin`. Settings lists Email notifications and File storage as "Not configured" until their phases land; never claim either is connected.
+- Inquiry drafts in localStorage (`ordacy-cms:v3:inquiries`) are the only browser-local content path. Every other record lives in the database. Draft storage failures throw so the contact form shows its failure panel.
+- Deletes use `remove(id)` and moves use one `update(id, { displayOrder })` per changed record; `replaceAll` (HTTP `PUT`) is import-only, so a stale device cannot overwrite another device's changes.
+- Empty collections show their empty states in the admin and on the public site. There are no sample or placeholder records, badges, locks, or fallbacks; only real client feedback and permissioned client projects are stored.
 
 ## Routing and content
 
@@ -42,7 +57,7 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 - Public pages wrap the hero and content in `PageState` (`src/components/state/`); page-specific skeletons live in `src/features/<route>/skeletons/` and compose the shared primitives in `src/components/skeletons/`.
 - Empty, error, and success copy lives in `data/database/states.json` and is read through `@/data`. Never hardcode page-level state copy in JSX.
 - Empty policy: primary collections (Projects, Pricing, FAQs, Testimonials, About services, legal sections) show a page-level empty state; optional Home sections hide instead.
-- The contact submit is the only real public request today, so it is the only public spinner. Everything else stays instant.
+- The contact submit is the only real public write request today, so it is the only public spinner. Public content is read from `/api/content` with the loading skeleton; everything else stays instant.
 - Dev preview: append `?state=loading|empty|error|success` while the dev server runs (`success` is contact-only). Production ignores the query and never adds artificial latency.
 - Route boundaries: `HydrateFallback` and `errorElement` live on the public route in `src/app/router.tsx`; `PublicThemeProvider` supplies the fluid public type to route states rendered outside `RootLayout`.
 
