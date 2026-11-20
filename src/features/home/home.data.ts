@@ -6,8 +6,8 @@ export {
   faqs,
   plans,
   problems,
+  projects as showcaseProjects,
   services,
-  showcaseProjects,
   steps,
   testimonials,
 } from '@/data'

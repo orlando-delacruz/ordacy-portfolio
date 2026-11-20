@@ -7,18 +7,10 @@ documents tell the truth, and the whole system passes a final sweep.
 
 ## Steps
 
-- [ ] **1. Keep-alive.** `api/keepalive.ts`: `GET` → one lightweight Supabase REST
+- [ ] **1. Keep-alive.** `api/keepalive.mjs`: `GET` → one lightweight Supabase REST
   request (`GET /rest/v1/?select=count&limit=1` with the anon key, which resets the
-  7-day inactivity timer); `Cache-Control: no-store`; return `204`. Add to
-  `vercel.json`:
-
-  ```json
-  { "crons": [{ "path": "/api/keepalive", "schedule": "0 9 * * *" }] }
-  ```
-
-  Hobby allows one run per day — this schedule is exactly at that limit.
-
-- [ ] **2. Fix `vercel.json` routing** so functions survive the SPA rewrite:
+  7-day inactivity timer); `Cache-Control: no-store`; return `204`. Add the cron to
+  `vercel.json` (the API rewrite exclusion already exists from phase 02):
 
   ```json
   {
@@ -27,10 +19,9 @@ documents tell the truth, and the whole system passes a final sweep.
   }
   ```
 
-  Verify a deployed preview: `/api/content` returns JSON, `/projects` still serves the
-  SPA, `/admin/whatever` still boots the app.
+  Hobby allows one run per day — this schedule is exactly at that limit.
 
-- [ ] **3. Backups.** `api/backup.ts` on a weekly cron
+- [ ] **2. Backups.** `api/backup.mjs` on a weekly cron
   (`0 3 * * 1`, Mondays 03:00): dump every editable table plus the two documents as one
   JSON file and upload to a private Supabase Storage bucket `backups`
   (`backups/YYYY-MM-DD.json`); list the bucket and delete all but the newest 8 files.
@@ -40,19 +31,18 @@ documents tell the truth, and the whole system passes a final sweep.
   `CRON_SECRET` env var checked by both cron endpoints so they cannot be triggered by
   strangers.
 
-- [ ] **4. Retire the localStorage service layer.**
+- [ ] **3. Retire the localStorage service layer.**
   - Delete `src/services/local-store.ts`; remove `restoreOriginalContent`, `save`,
     `load`, and the seed-based collection instances. `createId` moves to
     `src/services/id.ts` (unchanged behavior).
   - Remove `src/data/storage.ts` (`readStored`, `STORAGE_PREFIX`) — no code reads it
-    anymore. The last-good content cache keeps its own key in
-    `src/data/content-store.ts`.
+    anymore. The last-good content cache keeps its own key in `src/data/index.ts`.
   - Remove the now-unused `seed` export from `src/data/index.ts` if nothing imports it
     (`grep` first; the seed script reads JSON directly).
   - Settings page: “Restore original content” is already gone from phase 03; confirm
     no dead copy remains.
 
-- [ ] **5. Documents.**
+- [ ] **4. Documents.**
   - `AGENTS.md`: replace “no backend, env vars, tests” with the real stack (Supabase,
     Vercel functions, EmailJS, env var names, `npm test`); document `docs/implementation/`
     as the plan home; remove sample-machinery bullets; keep design language, controls,
@@ -61,9 +51,14 @@ documents tell the truth, and the whole system passes a final sweep.
     (the stale claims AGENTS already warns about).
   - These phase files: mark completed phases with their commit hash.
 
-- [ ] **6. Final QA sweep.**
+- [ ] **5. Final QA sweep.**
+  - Harden icon resolution during hydration: an unknown icon name in the database
+    must not fail the whole payload — fall back per item, like the state layer does.
   - All 11 public routes at 320/380/768/1440 in a production build served by
-    `npx vercel dev` (or a preview deployment), ready + dev preview states.
+    `npx vercel dev` (or a preview deployment), ready + dev preview states. Note:
+    `npm run preview` has no API; record that in AGENTS.md/README.
+  - The "one `h1`" check counts visible headings. Legal pages keep their print-only
+    `h1` inside `display: none` (intentional print semantics, not a defect).
   - Admin: every page, one create/edit/delete/reorder, sign-out, signed-out redirect.
   - Contact: real submission end-to-end; honeypot and throttle spot checks.
   - Both themes on Home, Contact, one legal page; reduced motion on a skeleton; keyboard

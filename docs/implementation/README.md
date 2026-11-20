@@ -89,9 +89,10 @@ Server only (Vercel env vars + local `.env.local`, which `.gitignore`'s `*.local
 
 ## Local development
 
-Vite alone does not run `api/` functions. From phase 01 onward use `npx vercel dev`
-(free, no login required for local) or keep `npm run dev` for UI-only work and point the
-data layer at a deployed preview API. The four checks stay:
+`npm run dev` runs the app and the real `api/*.mjs` handlers: `scripts/api-dev.mjs` is a
+Vite plugin that loads `.env.local` (server variables included) and dispatches
+`/api/<name>` to `api/<name>.mjs`. Use `npx vercel dev` when you need to reproduce
+Vercel's own function runtime. The four checks stay:
 
 ```bash
 npm run typecheck

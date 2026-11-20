@@ -1,10 +1,11 @@
-// Single import surface for site content. Reads static JSON from
-// /data/database (a stand-in for the future backend database).
+// Single import surface for site content.
 //
 // - `seed`: the raw stored records, used by the admin services layer.
-// - Everything else: what the public site renders (published only, in
-//   display order, icons resolved). Swap these for API calls later and
-//   pages stay unchanged.
+// - `loadPublicContent`: one API read that fills the live bindings below.
+//   Pages are imported only after it settles, so their module-scope reads
+//   (Home stats and guards, Projects count) see the database values.
+// - `problems`, `process`, `legal`, `states`, `admin-navigation`: static
+//   build-time JSON that the admin never edits.
 import adminNavigationJson from '@data/admin-navigation.json'
 import faqsJson from '@data/faqs.json'
 import galleryJson from '@data/gallery.json'
@@ -24,7 +25,6 @@ import teamJson from '@data/team.json'
 import testimonialsJson from '@data/testimonials.json'
 import type { LucideIcon } from 'lucide-react'
 import { resolveIcon } from './icons'
-import { readStored } from './storage'
 import type {
   AdminNavGroup,
   ClosingCtaData,
@@ -60,14 +60,14 @@ import type {
 
 export type * from './types'
 export { iconNames, resolveIcon } from './icons'
-export { readStored, STORAGE_PREFIX } from './storage'
 
 type SeoKey = keyof typeof seoJson
 
 /**
  * Stored pages can predate sections added to the JSON seed. Keep every saved
  * edit, but append any seed section the stored page does not have yet, so new
- * content blocks appear without wiping browser-local edits.
+ * content blocks appear without wiping browser-local edits. Used only by the
+ * admin services until they move to the API in phase 03.
  */
 export function mergePageSections(
   seedPages: readonly PageRecord[],
@@ -121,36 +121,25 @@ export const seed = {
   adminNavigation: adminNavigationJson as AdminNavGroup[],
 }
 
-/*
- * What the public site renders: the seed, overlaid with any edits saved from
- * the admin in this browser (read once at load, so edits show after a reload).
- * Same records and models as the admin; swap readStored for an API later.
- */
-const storedSeo = readStored<(PageSeo & { id: string })[] | null>('seo', null)
-const storedSite = readStored('site', seed.site)
-const storedPages = readStored('pages', seed.pages)
-const current = {
-  // Older saved edits may lack newer fields; fill them from the seed.
-  site: {
-    ...seed.site,
-    ...storedSite,
-    profileStats: {
-      ...seed.site.profileStats,
-      ...(storedSite.profileStats ?? {}),
-    },
-  },
-  pages: mergePageSections(seed.pages, storedPages),
-  services: readStored('services', seed.services),
-  plans: readStored('plans', seed.plans),
-  faqs: readStored('faqs', seed.faqs),
-  projects: readStored('projects', seed.projects),
-  testimonials: readStored('testimonials', seed.testimonials),
-  team: readStored('team', seed.team),
-  gallery: readStored('gallery', seed.gallery),
-  seo: storedSeo
-    ? (Object.fromEntries(storedSeo.map(({ id, ...page }) => [id, page])) as Record<SeoKey, PageSeo>)
-    : seed.seo,
+/* ---------- Public content: the API payload and its live bindings ---------- */
+
+/** Exactly what GET /api/content returns: published rows, mapped and ordered. */
+type PublicContent = {
+  site: SiteRecord
+  pages: PageRecord[]
+  services: ServiceRecord[]
+  plans: PlanRecord[]
+  faqs: FaqRecord[]
+  projects: ProjectRecord[]
+  testimonials: TestimonialRecord[]
+  team: TeamMemberRecord[]
+  gallery: GalleryImageRecord[]
+  seo: Record<SeoKey, PageSeo>
 }
+
+const CONTENT_ENDPOINT = '/api/content'
+const CONTENT_CACHE_KEY = 'ordacy-content:v1'
+const CONTENT_TIMEOUT_MS = 8000
 
 const withIcon = <T extends { icon: string }>(item: T) => ({
   ...item,
@@ -160,10 +149,110 @@ const withIcon = <T extends { icon: string }>(item: T) => ({
 const ordered = <T extends { displayOrder: number }>(items: readonly T[]) =>
   [...items].sort((a, b) => a.displayOrder - b.displayOrder)
 
-const published = <T extends { isPublished: boolean }>(items: readonly T[]) =>
-  items.filter((item) => item.isPublished)
+export let site: SiteRecord = seed.site
+export let pages: readonly PageRecord[] = seed.pages
+export let services: readonly Service[] = []
+export let plans: readonly Plan[] = []
+export let faqs: readonly Faq[] = []
+export let projects: readonly ShowcaseProject[] = []
+export let testimonials: readonly Testimonial[] = []
+export let team: readonly TeamMember[] = []
+export let gallery: readonly GalleryImageRecord[] = []
+export let seo: Record<SeoKey, PageSeo> = seed.seo
 
-export const site = current.site
+/**
+ * Applies one content payload: ordering and icon resolution happen here,
+ * once, for every collection. The API already filtered to published rows.
+ */
+function hydratePublicContent(content: PublicContent) {
+  site = content.site
+  pages = content.pages
+  services = ordered(content.services).map(withIcon)
+  plans = ordered(content.plans).map((plan) => ({
+    ...plan,
+    icon: resolveIcon(plan.icon),
+    ctaIcon: resolveIcon(plan.ctaIcon),
+  }))
+  faqs = ordered(content.faqs).map(withIcon)
+  projects = ordered(content.projects).map(withIcon)
+  testimonials = ordered(content.testimonials)
+  team = ordered(content.team)
+  gallery = ordered(content.gallery)
+  seo = content.seo
+}
+
+// Start from the local seed so the standalone loading screen and any import
+// that runs before the API settles still see the app's models. The API call
+// replaces this before App (and every page module) is imported.
+hydratePublicContent({
+  site: seed.site,
+  pages: seed.pages,
+  services: seed.services,
+  plans: seed.plans,
+  faqs: seed.faqs,
+  projects: seed.projects,
+  testimonials: seed.testimonials,
+  team: seed.team,
+  gallery: seed.gallery,
+  seo: seed.seo,
+})
+
+function readCachedContent(): PublicContent | null {
+  try {
+    const raw = localStorage.getItem(CONTENT_CACHE_KEY)
+    return raw ? (JSON.parse(raw) as PublicContent) : null
+  } catch {
+    // Storage unavailable or corrupt: behave as if there were no cache.
+    return null
+  }
+}
+
+function writeCachedContent(content: PublicContent) {
+  try {
+    localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(content))
+  } catch {
+    // Quota or private mode: the in-memory copy still renders this visit.
+  }
+}
+
+/**
+ * Loads the public content once, before the app mounts.
+ *
+ * Success: hydrate from the API and keep the payload as the last-good copy.
+ * Failure: hydrate from that copy and warn; with no copy, rethrow so the
+ * entry point can show the error page instead of a blank site.
+ */
+export async function loadPublicContent(): Promise<void> {
+  const controller = new AbortController()
+  const timer = window.setTimeout(() => controller.abort(), CONTENT_TIMEOUT_MS)
+
+  try {
+    const response = await fetch(CONTENT_ENDPOINT, {
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    })
+    if (!response.ok) {
+      throw new Error(
+        `GET ${CONTENT_ENDPOINT} failed with status ${response.status}`,
+      )
+    }
+    const content = (await response.json()) as PublicContent
+    hydratePublicContent(content)
+    writeCachedContent(content)
+  } catch (error) {
+    const cached = readCachedContent()
+    if (!cached) throw error
+    console.warn(
+      'Content API unavailable; using the last saved copy.',
+      error,
+    )
+    hydratePublicContent(cached)
+  } finally {
+    window.clearTimeout(timer)
+  }
+}
+
+/* ---------- Static build-time content (never edited by the admin) ---------- */
 
 const withLegalCta = (document: LegalDocumentRecord): LegalDocument => ({
   ...document,
@@ -186,13 +275,9 @@ export const legal: Record<'privacy' | 'terms', LegalDocument> = {
   terms: withLegalCta(legalSeed.terms),
 }
 
-export const seo: Record<SeoKey, PageSeo> = current.seo
-
-const pagesById = new Map(current.pages.map((page) => [page.id, page]))
-
 /** Copy for one public page. Throws on unknown ids so typos surface in dev. */
 export function getPage(id: string): PageRecord {
-  const page = pagesById.get(id)
+  const page = pages.find((candidate) => candidate.id === id)
   if (!page) throw new Error(`Unknown page "${id}" in data/database/pages.json`)
   return page
 }
@@ -238,39 +323,12 @@ export function pageHeader(pageId: string) {
 
 export const problems: readonly Problem[] = ordered(seed.problems).map(withIcon)
 
-export const services: readonly Service[] = ordered(
-  published(current.services),
-).map(withIcon)
-
-export const plans: readonly Plan[] = ordered(published(current.plans)).map((plan) => ({
-  ...plan,
-  icon: resolveIcon(plan.icon),
-  ctaIcon: resolveIcon(plan.ctaIcon),
-}))
-
 export const steps: readonly Step[] = ordered(seed.process).map(withIcon)
-
-export const faqs: readonly Faq[] = ordered(published(current.faqs)).map(withIcon)
-
-export const showcaseProjects: readonly ShowcaseProject[] = ordered(
-  published(current.projects),
-).map(withIcon)
-
-// Only approved, published testimonials are shown.
-export const testimonials: readonly Testimonial[] = ordered(
-  current.testimonials,
-).filter((t) => t.status === 'approved' && t.isPublished)
-
-export const team: readonly TeamMember[] = ordered(
-  published(current.team),
-)
 
 /** Published member by URL slug, or undefined for unknown slugs. */
 export function teamMemberBySlug(slug: string): TeamMember | undefined {
   return team.find((member) => member.slug === slug)
 }
-
-export const gallery = ordered(published(current.gallery))
 
 /* ---------- Public page states ---------- */
 

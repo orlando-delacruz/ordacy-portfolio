@@ -40,16 +40,19 @@ export function SkeletonPageHero({ showActions = true }: SkeletonPageHeroProps) 
   )
 }
 
-const homeStats = [
-  { id: 'views', value: site.profileStats.views },
-  { id: 'projects', value: site.profileStats.projects },
-  { id: 'likes', value: site.profileStats.likes },
-].filter((stat) => stat.value.trim() !== '')
 const homeTeam = ['founder', 'member']
 const homeTeamPills = ['7rem', '6rem']
 
 /** The home profile hero: cover, avatar, identity, stats, actions, team strip. */
 export function SkeletonHomeHero() {
+  // Read at render time: the app hydrates content before page modules load,
+  // so the skeleton mirrors the live stats rather than the seed.
+  const homeStats = [
+    { id: 'views', value: site.profileStats.views },
+    { id: 'projects', value: site.profileStats.projects },
+    { id: 'likes', value: site.profileStats.likes },
+  ].filter((stat) => stat.value.trim() !== '')
+
   return (
     <S.HomeHero>
       <S.HomeCover />
