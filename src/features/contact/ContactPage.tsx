@@ -10,6 +10,8 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
+import { PageState } from '@/components/state/PageState'
+import { usePublicPreviewState } from '@/components/state/usePublicPreviewState'
 import { PageHero } from '@/components/ui/PageHero'
 import { SectionHead } from '@/components/ui/SectionHead'
 import { ClosingCta } from '@/components/ui/ClosingCta'
@@ -19,6 +21,7 @@ import { closingCta, getSection, pageHeader, seo } from '@/data'
 import { usePageMeta } from '@/hooks/usePageMeta'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { ContactForm } from './ContactForm'
+import { ContactSkeleton } from './skeletons/ContactSkeleton'
 import * as S from './styles/contact.styled'
 
 const header = pageHeader('contact')
@@ -37,33 +40,40 @@ const assuranceIcons = [ShieldCheck, Zap, Users]
 export function ContactPage() {
   usePageMeta(seo.contact)
   useScrollReveal()
+  const preview = usePublicPreviewState()
+  const previewSuccess = preview === 'success'
+  const hideInquiryAction = preview === 'empty' || preview === 'error'
 
-  return (
-    <>
-      <PageHero
-        titleId="contact-title"
-        eyebrow={header.eyebrow}
-        badgeIcon={Phone}
-        title={header.title}
-        accent={ACCENT_PHRASE}
-        description={header.description}
-        actions={
-          <>
+  const hero = (
+    <PageHero
+      titleId="contact-title"
+      eyebrow={header.eyebrow}
+      badgeIcon={Phone}
+      title={header.title}
+      accent={ACCENT_PHRASE}
+      description={header.description}
+      actions={
+        <>
+          {!hideInquiryAction && (
             <PrimaryAnchor href="#inquiry-form">
               <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
               Send inquiry
             </PrimaryAnchor>
-            <Hero.GhostButton to="/pricing">
-              <Tag size={18} strokeWidth={2} aria-hidden="true" />
-              View pricing
-            </Hero.GhostButton>
-          </>
-        }
-      />
+          )}
+          <Hero.GhostButton to="/pricing">
+            <Tag size={18} strokeWidth={2} aria-hidden="true" />
+            View pricing
+          </Hero.GhostButton>
+        </>
+      }
+    />
+  )
 
+  return (
+    <PageState page="contact" hero={hero} skeleton={<ContactSkeleton />}>
       <S.Layout>
         <S.FormColumn id="inquiry-form" data-reveal="1">
-          <ContactForm />
+          <ContactForm previewSuccess={previewSuccess} />
         </S.FormColumn>
 
         <S.Aside data-reveal="2" aria-labelledby="contact-next-title">
@@ -116,6 +126,6 @@ export function ContactPage() {
       </S.Layout>
 
       <ClosingCta id="cta" titleId="contact-cta-title" {...cta} />
-    </>
+    </PageState>
   )
 }

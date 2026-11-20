@@ -2,10 +2,8 @@ import {
   AlertCircle,
   Building2,
   CalendarDays,
-  CheckCircle2,
   CircleHelp,
   Layers,
-  Loader2,
   Lock,
   Mail,
   PencilLine,
@@ -16,7 +14,15 @@ import {
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { plans, sectionCopy, services } from '@/data'
+import {
+  contactSuccessCopy,
+  plans,
+  sectionCopy,
+  services,
+  sharedStateCopy,
+} from '@/data'
+import { Spinner } from '@/components/state/Spinner'
+import { StatePanel } from '@/components/state/StatePanel'
 import { SelectField } from '@/components/ui/SelectField'
 import { submitInquiry } from '@/services'
 import type { InquiryInput } from '@/services'
@@ -30,6 +36,8 @@ type Status = 'idle' | 'sending' | 'sent' | 'failed'
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const fieldOrder: Field[] = ['name', 'email', 'message']
 const formCopy = sectionCopy('contact', 'form')
+const successCopy = contactSuccessCopy()
+const submitErrorCopy = sharedStateCopy('submitError')
 
 // Budget ranges come from the approved plan prices; nothing is converted.
 const budgetOptions = plans.map((plan) =>
@@ -80,15 +88,24 @@ function FieldError({ id, children }: { id: string; children: string }) {
   )
 }
 
-export function ContactForm() {
+type ContactFormProps = {
+  /** Dev preview only: opens on the completed-action panel. */
+  previewSuccess?: boolean
+}
+
+export function ContactForm({ previewSuccess = false }: ContactFormProps) {
   const [errors, setErrors] = useState<Errors>({})
-  const [status, setStatus] = useState<Status>('idle')
+  const [status, setStatus] = useState<Status>(
+    previewSuccess ? 'sent' : 'idle',
+  )
   const successRef = useRef<HTMLDivElement>(null)
-  const failureRef = useRef<HTMLParagraphElement>(null)
+  const failureRef = useRef<HTMLDivElement>(null)
+  // Guards against a second submit before React commits the disabled state.
+  const submittingRef = useRef(false)
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (status === 'sending') return
+    if (submittingRef.current) return
 
     const form = event.currentTarget
     const data = new FormData(form)
@@ -108,6 +125,7 @@ export function ContactForm() {
       return
     }
 
+    submittingRef.current = true
     setStatus('sending')
     const value = (key: string) => String(data.get(key)).trim()
     const inquiry: InquiryInput = {
@@ -129,6 +147,8 @@ export function ContactForm() {
       setStatus('failed')
       // The submit button was disabled mid-send; move focus to the alert.
       requestAnimationFrame(() => failureRef.current?.focus())
+    } finally {
+      submittingRef.current = false
     }
   }
 
@@ -150,26 +170,29 @@ export function ContactForm() {
     return (
       <S.FormCard>
         {cardHeader}
-        <S.Success ref={successRef} tabIndex={-1} role="status">
-          <CheckCircle2 size={32} strokeWidth={2} aria-hidden="true" />
-          <h2>Thank you for sharing your project details.</h2>
-          <p>
-            Your inquiry is saved in this browser. No message has been sent.
-          </p>
-          <S.SecondaryAction
-            type="button"
-            onClick={() => {
-              setErrors({})
-              setStatus('idle')
-              requestAnimationFrame(() =>
-                document.getElementById('contact-name')?.focus(),
-              )
-            }}
-          >
-            <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
-            Send again
-          </S.SecondaryAction>
-        </S.Success>
+        <S.PanelFocus ref={successRef} tabIndex={-1}>
+          <StatePanel
+            tone="success"
+            headingLevel={2}
+            title={successCopy.title}
+            description={successCopy.description}
+            actions={
+              <S.SecondaryAction
+                type="button"
+                onClick={() => {
+                  setErrors({})
+                  setStatus('idle')
+                  requestAnimationFrame(() =>
+                    document.getElementById('contact-name')?.focus(),
+                  )
+                }}
+              >
+                <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
+                Send again
+              </S.SecondaryAction>
+            }
+          />
+        </S.PanelFocus>
       </S.FormCard>
     )
   }
@@ -312,15 +335,24 @@ export function ContactForm() {
         </S.Trap>
 
         {status === 'failed' && (
-          <S.ErrorText ref={failureRef} tabIndex={-1} role="alert">
-            <AlertCircle size={16} strokeWidth={2.25} aria-hidden="true" />
-            Something went wrong while sending. Please try again.
-          </S.ErrorText>
+          <S.PanelFocus ref={failureRef} tabIndex={-1}>
+            <StatePanel
+              tone="error"
+              headingLevel={2}
+              compact
+              title={submitErrorCopy.title}
+              description={submitErrorCopy.description}
+            />
+          </S.PanelFocus>
         )}
 
-        <S.Submit type="submit" disabled={status === 'sending'}>
+        <S.Submit
+          type="submit"
+          disabled={status === 'sending'}
+          aria-busy={status === 'sending'}
+        >
           {status === 'sending' ? (
-            <Loader2 size={18} strokeWidth={2} aria-hidden="true" />
+            <Spinner size={18} />
           ) : (
             <Send size={18} strokeWidth={2} aria-hidden="true" />
           )}

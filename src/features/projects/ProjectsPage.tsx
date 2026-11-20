@@ -12,11 +12,12 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import type { KeyboardEvent, MouseEvent } from 'react'
+import { PageState } from '@/components/state/PageState'
 import { PageHero } from '@/components/ui/PageHero'
 import { Section } from '@/components/ui/Section'
 import { ClosingCta } from '@/components/ui/ClosingCta'
 import * as Hero from '@/components/ui/styles/page-hero.styled'
-import { closingCta, getSection, pageHeader, sectionCopy, seo } from '@/data'
+import { closingCta, pageHeader, sectionCopy, seo } from '@/data'
 import { showcaseProjects } from '@/features/home/home.data'
 import type { ShowcaseProject } from '@/features/home/home.data'
 import { ProjectDetails } from '@/features/home/sections/ProjectDetails'
@@ -25,13 +26,13 @@ import { usePageMeta } from '@/hooks/usePageMeta'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { ProjectCard } from './components/ProjectCard'
 import { ProjectsCarousel } from './components/ProjectsCarousel'
+import { ProjectsSkeleton } from './skeletons/ProjectsSkeleton'
 import * as S from './styles/projects-page.styled'
 
 const ALL = 'All'
 const count = showcaseProjects.length
 const header = pageHeader('projects')
 const startCta = closingCta('projects', 'start')
-const empty = getSection('projects', 'empty')
 
 // The H1's second line renders in teal; everything before it stays white.
 const TEAL_PHRASE = 'real business needs.'
@@ -159,47 +160,36 @@ export function ProjectsPage() {
 
   return (
     <>
-      <PageHero
-        titleId="projects-title"
-        eyebrow={header.eyebrow}
-        badgeIcon={FolderKanban}
-        title={header.title}
-        accent={TEAL_PHRASE}
-        description={header.description}
-        actions={
-          <>
-            <Hero.PrimaryButton to="/contact">
-              <Rocket size={18} strokeWidth={2} aria-hidden="true" />
-              Get started
-            </Hero.PrimaryButton>
-            <Hero.GhostButton to="/about-us#services">
-              <Layers size={18} strokeWidth={2} aria-hidden="true" />
-              View services
-            </Hero.GhostButton>
-          </>
+      <PageState
+        page="projects"
+        empty={count === 0}
+        hero={
+          <PageHero
+            titleId="projects-title"
+            eyebrow={header.eyebrow}
+            badgeIcon={FolderKanban}
+            title={header.title}
+            accent={TEAL_PHRASE}
+            description={header.description}
+            actions={
+              <>
+                <Hero.PrimaryButton to="/contact">
+                  <Rocket size={18} strokeWidth={2} aria-hidden="true" />
+                  Get started
+                </Hero.PrimaryButton>
+                <Hero.GhostButton to="/about-us#services">
+                  <Layers size={18} strokeWidth={2} aria-hidden="true" />
+                  View services
+                </Hero.GhostButton>
+              </>
+            }
+          />
         }
-      />
-
-      <Section
-        id="work"
-        {...sectionCopy('projects', 'work')}
+        skeleton={<ProjectsSkeleton />}
       >
-        {count === 0 ? (
-          <S.EmptyState>
-            <S.EmptyTitle>{empty.title}</S.EmptyTitle>
-            <S.EmptyText>{empty.description}</S.EmptyText>
-            <S.PrimaryButton to="/contact">
-              <FolderKanban size={18} strokeWidth={2} aria-hidden="true" />
-              Let's talk
-            </S.PrimaryButton>
-          </S.EmptyState>
-        ) : (
-          <>
-            {isMobile ? (
-              <S.Segmented
-              ref={barRef}
-              onKeyDown={closeMenu}
-            >
+        <Section id="work" {...sectionCopy('projects', 'work')}>
+          {isMobile ? (
+            <S.Segmented ref={barRef} onKeyDown={closeMenu}>
               <S.SegmentAll
                 type="button"
                 $active={category === ALL}
@@ -240,114 +230,118 @@ export function ProjectsPage() {
                   ))}
                 </S.FilterMenu>
               )}
-              </S.Segmented>
-            ) : (
-              <S.Filters
-                role="group"
-                aria-label="Filter projects by category"
-              >
-                <S.FilterTop>
-                  <S.FilterLabel>
-                    <SlidersHorizontal
-                      size={16}
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
-                    Category
-                  </S.FilterLabel>
-                  {viewToggle}
-                </S.FilterTop>
-                <S.FilterChips>
-                  {filters.map(([name, Icon, total]) => (
-                    <S.Chip
-                      key={name}
-                      type="button"
-                      $selected={category === name}
-                      aria-pressed={category === name}
-                      onClick={() => selectCategory(name)}
-                    >
-                      <Icon size={16} strokeWidth={2} aria-hidden="true" />
-                      {name}
-                      <S.ChipCount>{total}</S.ChipCount>
-                    </S.Chip>
-                  ))}
-                </S.FilterChips>
-              </S.Filters>
-            )}
-            <S.SrOnly aria-live="polite">{announcement}</S.SrOnly>
-
-            <S.View key={viewKey} id="projects-view">
-              {!expanded ? (
-                <ProjectsCarousel
-                  projects={visible}
-                  label="Concept projects carousel"
-                />
-              ) : isMobile ? (
-                <>
-                  <S.RowList aria-label="Projects">
-              {paged.map((project) => (
-                <li key={project.id}>
-                  <ProjectCard
-                    project={project}
-                    layout="row"
-                    onDetails={openDetails(project)}
+            </S.Segmented>
+          ) : (
+            <S.Filters role="group" aria-label="Filter projects by category">
+              <S.FilterTop>
+                <S.FilterLabel>
+                  <SlidersHorizontal
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
                   />
-                </li>
-              ))}
-            </S.RowList>
+                  Category
+                </S.FilterLabel>
+                {viewToggle}
+              </S.FilterTop>
+              <S.FilterChips>
+                {filters.map(([name, Icon, total]) => (
+                  <S.Chip
+                    key={name}
+                    type="button"
+                    $selected={category === name}
+                    aria-pressed={category === name}
+                    onClick={() => selectCategory(name)}
+                  >
+                    <Icon size={16} strokeWidth={2} aria-hidden="true" />
+                    {name}
+                    <S.ChipCount>{total}</S.ChipCount>
+                  </S.Chip>
+                ))}
+              </S.FilterChips>
+            </S.Filters>
+          )}
+          <S.SrOnly aria-live="polite">{announcement}</S.SrOnly>
 
-            <S.Pagination aria-label="Projects pages">
-              <S.PageButton
-                type="button"
-                aria-label="Previous page"
-                disabled={currentPage === 1}
-                aria-disabled={currentPage === 1}
-                onClick={() => goToPage(currentPage - 1)}
-              >
-                <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
-              </S.PageButton>
-              {pageNumbers.map((number) => (
-                <S.PageButton
-                  key={number}
-                  type="button"
-                  aria-label={`Page ${number}`}
-                  aria-current={number === currentPage ? 'page' : undefined}
-                  $active={number === currentPage}
-                  onClick={() => goToPage(number)}
-                >
-                  {number}
-                </S.PageButton>
-              ))}
-              <S.PageButton
-                type="button"
-                aria-label="Next page"
-                disabled={currentPage === totalPages}
-                aria-disabled={currentPage === totalPages}
-                onClick={() => goToPage(currentPage + 1)}
-              >
-                <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
-              </S.PageButton>
-                </S.Pagination>
-                </>
-              ) : (
-                    <S.Grid aria-label="Projects">
-                  {visible.map((project) => (
+          <S.View key={viewKey} id="projects-view">
+            {!expanded ? (
+              <ProjectsCarousel
+                projects={visible}
+                label="Concept projects carousel"
+              />
+            ) : isMobile ? (
+              <>
+                <S.RowList aria-label="Projects">
+                  {paged.map((project) => (
                     <li key={project.id}>
                       <ProjectCard
                         project={project}
-                        layout="grid"
+                        layout="row"
                         onDetails={openDetails(project)}
                       />
                     </li>
                   ))}
-                </S.Grid>
-              )}
-            </S.View>
-          </>
-        )}
-      </Section>
+                </S.RowList>
 
-      <ClosingCta id="start" titleId="start-title" {...startCta} />
+                <S.Pagination aria-label="Projects pages">
+                  <S.PageButton
+                    type="button"
+                    aria-label="Previous page"
+                    disabled={currentPage === 1}
+                    aria-disabled={currentPage === 1}
+                    onClick={() => goToPage(currentPage - 1)}
+                  >
+                    <ChevronLeft
+                      size={18}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  </S.PageButton>
+                  {pageNumbers.map((number) => (
+                    <S.PageButton
+                      key={number}
+                      type="button"
+                      aria-label={`Page ${number}`}
+                      aria-current={number === currentPage ? 'page' : undefined}
+                      $active={number === currentPage}
+                      onClick={() => goToPage(number)}
+                    >
+                      {number}
+                    </S.PageButton>
+                  ))}
+                  <S.PageButton
+                    type="button"
+                    aria-label="Next page"
+                    disabled={currentPage === totalPages}
+                    aria-disabled={currentPage === totalPages}
+                    onClick={() => goToPage(currentPage + 1)}
+                  >
+                    <ChevronRight
+                      size={18}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  </S.PageButton>
+                </S.Pagination>
+              </>
+            ) : (
+              <S.Grid aria-label="Projects">
+                {visible.map((project) => (
+                  <li key={project.id}>
+                    <ProjectCard
+                      project={project}
+                      layout="grid"
+                      onDetails={openDetails(project)}
+                    />
+                  </li>
+                ))}
+              </S.Grid>
+            )}
+          </S.View>
+        </Section>
+
+        <ClosingCta id="start" titleId="start-title" {...startCta} />
+      </PageState>
 
       {details && (
         <ProjectDetails

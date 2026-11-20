@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
+import { PageState } from '@/components/state/PageState'
 import { ClosingCta } from '@/components/ui/ClosingCta'
 import { Section } from '@/components/ui/Section'
 import {
@@ -16,6 +17,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { Journey } from './components/Journey'
 import { TestimonialCard } from './components/TestimonialCard'
 import { TestimonialsHero } from './components/TestimonialsHero'
+import { TestimonialsSkeleton } from './skeletons/TestimonialsSkeleton'
 import * as S from './styles/testimonials-page.styled'
 
 // Real, approved testimonials when they exist; clearly labeled sample cards
@@ -49,13 +51,19 @@ export function TestimonialsPage() {
 
   return (
     <S.Page>
-      <TestimonialsHero
-        eyebrow={header.eyebrow}
-        title={header.title}
-        description={header.description}
-      />
-
-      {items.length > 0 && (
+      <PageState
+        page="testimonials"
+        empty={items.length === 0}
+        hero={
+          <TestimonialsHero
+            eyebrow={header.eyebrow}
+            title={header.title}
+            description={header.description}
+          />
+        }
+        skeleton={<TestimonialsSkeleton />}
+      >
+        {items.length > 0 && (
           <Section
             id="feedback"
             {...(hasReal
@@ -111,14 +119,12 @@ export function TestimonialsPage() {
           </Section>
         )}
 
-        <Section
-          id="journey"
-          {...sectionCopy('testimonials', 'journey')}
-        >
+        <Section id="journey" {...sectionCopy('testimonials', 'journey')}>
           <Journey steps={steps} />
         </Section>
 
         <ClosingCta id="cta" titleId="cta-title" {...cta} />
+      </PageState>
     </S.Page>
   )
 }

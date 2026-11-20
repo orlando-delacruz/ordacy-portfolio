@@ -1,6 +1,6 @@
 import { FolderKanban, MessagesSquare } from 'lucide-react'
 import { Section } from '@/components/ui/Section'
-import * as E from '@/components/ui/styles/empty-state.styled'
+import { StatePanel } from '@/components/state/StatePanel'
 import { showcaseProjects } from '../home.data'
 import { ProjectsCarousel } from '@/features/projects/components/ProjectsCarousel'
 import * as S from './styles/projects.styled'
@@ -15,14 +15,17 @@ export function Projects() {
   if (count === 0) {
     return (
       <Section id="work" {...sectionCopy('home', 'work')}>
-        <E.EmptyState>
-          <E.EmptyTitle>{empty.title}</E.EmptyTitle>
-          <E.EmptyText>{empty.description}</E.EmptyText>
-          <S.SecondaryButton to="/contact">
-            <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
-            Discuss your project
-          </S.SecondaryButton>
-        </E.EmptyState>
+        <StatePanel
+          tone="empty"
+          title={empty.title}
+          description={empty.description ?? ''}
+          actions={
+            <S.SecondaryButton to="/contact">
+              <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
+              Discuss your project
+            </S.SecondaryButton>
+          }
+        />
       </Section>
     )
   }

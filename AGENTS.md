@@ -37,6 +37,15 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 - Every page calls `usePageMeta(seo.<page>)` for title, description, OG, canonical and noindex.
 - Content integrity: only genuine testimonials and permissioned projects; never invent quotes, client results, or case studies. The home Projects carousel and Testimonials marquee still run on placeholder data marked as such in `home.data.ts` (picsum screenshots included — swap in real assets before launch).
 
+## Public state system
+
+- Public pages wrap the hero and content in `PageState` (`src/components/state/`); page-specific skeletons live in `src/features/<route>/skeletons/` and compose the shared primitives in `src/components/skeletons/`.
+- Empty, error, and success copy lives in `data/database/states.json` and is read through `@/data`. Never hardcode page-level state copy in JSX.
+- Empty policy: primary collections (Projects, Pricing, FAQs, Testimonials, About services, legal sections) show a page-level empty state; optional Home sections hide instead.
+- The contact submit is the only real public request today, so it is the only public spinner. Everything else stays instant.
+- Dev preview: append `?state=loading|empty|error|success` while the dev server runs (`success` is contact-only). Production ignores the query and never adds artificial latency.
+- Route boundaries: `HydrateFallback` and `errorElement` live on the public route in `src/app/router.tsx`; `PublicThemeProvider` supplies the fluid public type to route states rendered outside `RootLayout`.
+
 ## Buttons and labels (user mandates — don't regress these)
 
 - Every button carries an icon: text buttons, nav/sidebar/footer links, toggles, and tabs. Only pure image buttons (hero cover/avatar) are exempt.
@@ -48,7 +57,7 @@ There is no test script or test framework. Verify changes with lint, typecheck, 
 
 - Whitespace first: public sections use fluid vertical rhythm (`clamp(3.5rem, 8vw, 5.5rem)`); separate sections with rhythm, not nested cards.
 - Neutral surfaces; teal is reserved for actions, active states, and small highlights. Static cards are border-only with no shadow; hover elevation only on clickable elements.
-- Motion only for state change: entrances, dialogs, drawers, tabs, toasts, route fades (200ms). No ambient loops except the testimonial marquee. Every animation respects `prefers-reduced-motion`.
+- Motion only for state change: entrances, dialogs, drawers, tabs, toasts, route fades (200ms). No ambient loops except the testimonial marquee and the skeleton pulse (the state system's approved exception, static under `prefers-reduced-motion`). Every animation respects `prefers-reduced-motion`.
 - Controls are 44px public / 40px admin, 44px on coarse pointers. Icon-only buttons always carry `aria-label`.
 - In-page anchors (`/#id`) clear sticky bars via the global `scroll-margin-top` — no per-section offset hacks.
 - Scroll contract (`usePageScrollRestoration`, mounted in both shells): PUSH/REPLACE without a hash starts at the top; with a hash it jumps to the element; browser back/forward restores the exact saved position. `#more` is menu UI state, never an anchor — the manager ignores it. Never add per-page scroll effects or render `<ScrollRestoration />`.

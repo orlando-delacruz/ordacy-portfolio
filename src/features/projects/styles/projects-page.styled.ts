@@ -1,14 +1,7 @@
 import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
-
-export {
-  EmptyState,
-  EmptyText,
-  EmptyTitle,
-} from '@/components/ui/styles/empty-state.styled'
 import { PrimaryAction } from '@/components/ui/styles/buttons.styled'
 
-export { PrimaryButton } from '@/components/ui/styles/buttons.styled'
 export { SrOnly } from '@/features/home/sections/styles/projects.styled'
 
 /* ---------- Hero: navy band with laptop visual ---------- */

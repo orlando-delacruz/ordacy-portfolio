@@ -786,33 +786,13 @@ export const Note = styled.p`
   }
 `
 
-export const Success = styled.div`
-  display: grid;
-  gap: ${({ theme }) => theme.spacing.md};
-  justify-items: start;
-  padding-top: ${({ theme }) => theme.spacing.sm};
+// Focus host for the form's success/failure panels. The panel itself owns the
+// live region; this wrapper exists so focus can land on it after a submit.
+export const PanelFocus = styled.div`
+  border-radius: ${({ theme }) => theme.radii.lg};
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.border.focus};
-    outline-offset: 2px;
-  }
-
-  h2,
-  p {
-    margin: 0;
-  }
-
-  h2 {
-    color: ${({ theme }) => theme.colors.text.primary};
-    font-size: ${({ theme }) => theme.typography.fontSizes.xl};
-  }
-
-  p {
-    color: ${({ theme }) => theme.colors.text.secondary};
-    line-height: ${({ theme }) => theme.typography.lineHeights.relaxed};
-  }
-
-  svg {
-    color: ${({ theme }) => theme.colors.text.accent};
+    outline-offset: ${({ theme }) => theme.spacing.xs};
   }
 `

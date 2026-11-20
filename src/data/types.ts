@@ -367,6 +367,43 @@ export type PageSeo = {
 
 export type SeoRecord = PageSeo & { id: string }
 
+/* ---------- Public page states ---------- */
+
+export type PageStateKey =
+  | 'home'
+  | 'projects'
+  | 'pricing'
+  | 'faqs'
+  | 'testimonials'
+  | 'about'
+  | 'contact'
+  | 'privacy-policy'
+  | 'terms-of-service'
+  | 'team-profile'
+
+export type PageStateActionRecord = {
+  label: string
+  to: string
+  icon: string
+}
+
+export type PageStateCopyRecord = {
+  title: string
+  description: string
+  actions: readonly PageStateActionRecord[]
+}
+
+export type PageStatesRecord = {
+  shared: {
+    error: PageStateCopyRecord
+    submitError: PageStateCopyRecord
+  }
+  pages: Record<
+    PageStateKey,
+    { empty: PageStateCopyRecord; success?: PageStateCopyRecord }
+  >
+}
+
 export type LegalSection = {
   id: string
   title: string

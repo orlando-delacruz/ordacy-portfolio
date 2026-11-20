@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import * as S from './styles/no-results.styled'
+import { StatePanel } from '@/components/state/StatePanel'
 
 type EmptyStateProps = {
   icon: LucideIcon
@@ -9,21 +9,23 @@ type EmptyStateProps = {
   children?: ReactNode
 }
 
-/** Centered no-results block with an optional action. */
+/**
+ * Compatibility wrapper for local no-result blocks (FAQ search and filters).
+ * Page-level empty states belong to `PageState`, not this component.
+ */
 export function EmptyState({
-  icon: Icon,
+  icon,
   title,
   description,
   children,
 }: EmptyStateProps) {
   return (
-    <S.Wrapper>
-      <S.Icon aria-hidden="true">
-        <Icon size={24} strokeWidth={2} />
-      </S.Icon>
-      <S.Title>{title}</S.Title>
-      <S.Description>{description}</S.Description>
-      {children && <S.Actions>{children}</S.Actions>}
-    </S.Wrapper>
+    <StatePanel
+      tone="empty"
+      icon={icon}
+      title={title}
+      description={description}
+      actions={children}
+    />
   )
 }

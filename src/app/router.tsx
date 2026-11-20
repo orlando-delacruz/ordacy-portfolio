@@ -2,6 +2,8 @@ import { createBrowserRouter } from 'react-router-dom'
 import { RootLayout } from '@/components/layout/RootLayout'
 import { HomePage } from '@/features/home/HomePage'
 import { NotFoundPage } from './NotFoundPage'
+import { RouteErrorPage } from './RouteErrorPage'
+import { RouteLoading } from './RouteLoading'
 
 // Every page except Home loads on demand to keep the first bundle small.
 export const router = createBrowserRouter([
@@ -30,6 +32,8 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    HydrateFallback: RouteLoading,
+    errorElement: <RouteErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       {

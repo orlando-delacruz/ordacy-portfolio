@@ -1,5 +1,6 @@
 import { FileText, Home, MessagesSquare, ShieldCheck } from 'lucide-react'
 import { useMemo } from 'react'
+import { PageState } from '@/components/state/PageState'
 import { ClosingCta } from '@/components/ui/ClosingCta'
 import { PageHero } from '@/components/ui/PageHero'
 import * as Hero from '@/components/ui/styles/page-hero.styled'
@@ -10,6 +11,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { LegalMeta } from './components/LegalMeta'
 import { LegalSection } from './components/LegalSection'
 import { LegalToc } from './components/LegalToc'
+import { LegalSkeleton } from './skeletons/LegalSkeleton'
 import * as S from './styles/legal.styled'
 
 type LegalPageProps = {
@@ -29,34 +31,45 @@ export function LegalPage({ seo, document }: LegalPageProps) {
   usePageMeta(seo)
   useScrollReveal()
 
+  // The privacy route is the only legal path that differs from terms.
+  const page =
+    seo.path === '/privacy-policy' ? 'privacy-policy' : 'terms-of-service'
   const sectionIds = useMemo(
     () => document.sections.map((section) => section.id),
     [document],
   )
+  // Safe with an empty list: no observer is created when no sections render.
   const activeId = useActiveSection(sectionIds)
 
-  return (
-    <>
-      <PageHero
-        titleId="legal-title"
-        eyebrow={`Last updated ${formatDate(document.updated)}`}
-        badgeIcon={seo.path === '/privacy-policy' ? ShieldCheck : FileText}
-        title={document.title}
-        description={document.heroDescription}
-        actions={
-          <>
-            <Hero.PrimaryButton to="/contact">
-              <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
-              Contact us
-            </Hero.PrimaryButton>
-            <Hero.GhostButton to="/">
-              <Home size={18} strokeWidth={2} aria-hidden="true" />
-              Go home
-            </Hero.GhostButton>
-          </>
-        }
-      />
+  const hero = (
+    <PageHero
+      titleId="legal-title"
+      eyebrow={`Last updated ${formatDate(document.updated)}`}
+      badgeIcon={seo.path === '/privacy-policy' ? ShieldCheck : FileText}
+      title={document.title}
+      description={document.heroDescription}
+      actions={
+        <>
+          <Hero.PrimaryButton to="/contact">
+            <MessagesSquare size={18} strokeWidth={2} aria-hidden="true" />
+            Contact us
+          </Hero.PrimaryButton>
+          <Hero.GhostButton to="/">
+            <Home size={18} strokeWidth={2} aria-hidden="true" />
+            Go home
+          </Hero.GhostButton>
+        </>
+      }
+    />
+  )
 
+  return (
+    <PageState
+      page={page}
+      hero={hero}
+      skeleton={<LegalSkeleton />}
+      empty={document.sections.length === 0}
+    >
       <S.Doc>
         <LegalMeta document={document} />
 
@@ -85,6 +98,6 @@ export function LegalPage({ seo, document }: LegalPageProps) {
       </S.Doc>
 
       <ClosingCta titleId="legal-cta-title" {...document.cta} />
-    </>
+    </PageState>
   )
 }

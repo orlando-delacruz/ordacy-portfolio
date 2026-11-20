@@ -19,8 +19,10 @@ import seoJson from '@data/seo.json'
 import servicesJson from '@data/services.json'
 import settingsJson from '@data/settings.json'
 import siteJson from '@data/site.json'
+import statesJson from '@data/states.json'
 import teamJson from '@data/team.json'
 import testimonialsJson from '@data/testimonials.json'
+import type { LucideIcon } from 'lucide-react'
 import { resolveIcon } from './icons'
 import { readStored } from './storage'
 import type {
@@ -34,6 +36,10 @@ import type {
   LegalDocumentRecord,
   PageRecord,
   PageSeo,
+  PageStateActionRecord,
+  PageStateCopyRecord,
+  PageStateKey,
+  PageStatesRecord,
   Plan,
   PlanRecord,
   Problem,
@@ -273,3 +279,63 @@ export function teamMemberBySlug(slug: string): TeamMember | undefined {
 export const gallery = ordered(published(current.gallery)).filter(
   (image) => !image.isSample,
 )
+
+/* ---------- Public page states ---------- */
+
+export type StateAction = {
+  label: string
+  to: string
+  icon: LucideIcon
+}
+
+export type StateCopy = {
+  title: string
+  description: string
+  actions: readonly StateAction[]
+}
+
+const states = statesJson as PageStatesRecord
+
+// Defensive copy: the public state layer must never throw or render blank.
+const fallbackStateCopy: StateCopy = {
+  title: 'This content is unavailable.',
+  description: 'It has not been published yet. Please try again later.',
+  actions: [],
+}
+
+const fallbackStateIcon = resolveIcon('MessagesSquare')
+
+function toStateAction(action: PageStateActionRecord): StateAction {
+  let icon = fallbackStateIcon
+  try {
+    icon = resolveIcon(action.icon)
+  } catch {
+    // A bad icon name in saved data must not break a public page.
+  }
+  return { label: action.label, to: action.to, icon }
+}
+
+function toStateCopy(record: PageStateCopyRecord | undefined): StateCopy {
+  if (!record) return fallbackStateCopy
+  const actions = Array.isArray(record.actions) ? record.actions : []
+  return {
+    title: record.title || fallbackStateCopy.title,
+    description: record.description || fallbackStateCopy.description,
+    actions: actions.map(toStateAction),
+  }
+}
+
+/** Empty-state copy for one public page, with a safe fallback. */
+export function pageStateCopy(page: PageStateKey): StateCopy {
+  return toStateCopy(states.pages?.[page]?.empty)
+}
+
+/** Shared system error copy for the public state layer. */
+export function sharedStateCopy(state: 'error' | 'submitError'): StateCopy {
+  return toStateCopy(states.shared?.[state])
+}
+
+/** The contact form's completed-action copy. */
+export function contactSuccessCopy(): StateCopy {
+  return toStateCopy(states.pages?.contact?.success)
+}

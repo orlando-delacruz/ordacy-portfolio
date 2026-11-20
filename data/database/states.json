@@ -1,0 +1,114 @@
+{
+  "shared": {
+    "error": {
+      "title": "We couldn't load this page.",
+      "description": "Something went wrong. Try again, or go back home.",
+      "actions": [
+        { "label": "Back home", "to": "/", "icon": "Home" }
+      ]
+    },
+    "submitError": {
+      "title": "We couldn't save your inquiry.",
+      "description": "Try sending it again. Your details are still in the form.",
+      "actions": []
+    }
+  },
+  "pages": {
+    "home": {
+      "empty": {
+        "title": "Nothing published yet.",
+        "description": "The site is being prepared. Tell us what you need in the meantime.",
+        "actions": [
+          { "label": "Contact us", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "projects": {
+      "empty": {
+        "title": "Projects are on the way.",
+        "description": "Permissioned case studies are on the way. Tell us what you need in the meantime.",
+        "actions": [
+          { "label": "Discuss your project", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "pricing": {
+      "empty": {
+        "title": "Plans are being prepared.",
+        "description": "Pricing will be published soon. Tell us about your project for a scoped quote.",
+        "actions": [
+          { "label": "Contact us", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "faqs": {
+      "empty": {
+        "title": "No questions yet.",
+        "description": "Answers will appear here once they are published. Ask us directly in the meantime.",
+        "actions": [
+          { "label": "Ask a question", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "testimonials": {
+      "empty": {
+        "title": "No testimonials yet.",
+        "description": "Client feedback will appear here once it is approved for publishing.",
+        "actions": [
+          { "label": "Start a project", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "about": {
+      "empty": {
+        "title": "More about Ordacy is on the way.",
+        "description": "The full story is being prepared. Tell us what you need in the meantime.",
+        "actions": [
+          { "label": "Contact us", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "contact": {
+      "empty": {
+        "title": "The inquiry form is unavailable.",
+        "description": "The form can't be shown right now. Please try again later.",
+        "actions": [
+          { "label": "Back home", "to": "/", "icon": "Home" }
+        ]
+      },
+      "success": {
+        "title": "Thank you for sharing your project details.",
+        "description": "Your inquiry is saved in this browser. No message has been sent.",
+        "actions": []
+      }
+    },
+    "privacy-policy": {
+      "empty": {
+        "title": "This policy is being prepared.",
+        "description": "The full policy will be published here. Contact us if you need the details now.",
+        "actions": [
+          { "label": "Contact us", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "terms-of-service": {
+      "empty": {
+        "title": "These terms are being prepared.",
+        "description": "The full terms will be published here. Contact us if you need the details now.",
+        "actions": [
+          { "label": "Contact us", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    },
+    "team-profile": {
+      "empty": {
+        "title": "This profile is being prepared.",
+        "description": "The team member's details will appear here soon. Meet the rest of the team in the meantime.",
+        "actions": [
+          { "label": "Back to team", "to": "/#team", "icon": "UsersRound" },
+          { "label": "Contact", "to": "/contact", "icon": "MessagesSquare" }
+        ]
+      }
+    }
+  }
+}
