@@ -88,14 +88,16 @@ export function Hero() {
             </S.Name>
             <S.Bio>{getSection('home', 'hero').title}</S.Bio>
           </S.Intro>
-          <S.Stats $row>
-            {stats.map((stat) => (
-              <S.Stat key={stat.label}>
-                <S.StatLabel>{stat.label}</S.StatLabel>
-                <S.StatCount>{stat.value}</S.StatCount>
-              </S.Stat>
-            ))}
-          </S.Stats>
+          {stats.length > 0 && (
+            <S.Stats $row>
+              {stats.map((stat) => (
+                <S.Stat key={stat.label}>
+                  <S.StatLabel>{stat.label}</S.StatLabel>
+                  <S.StatCount>{stat.value}</S.StatCount>
+                </S.Stat>
+              ))}
+            </S.Stats>
+          )}
         </S.Identity>
         <S.Actions>
           <S.ContactButton to="/contact">

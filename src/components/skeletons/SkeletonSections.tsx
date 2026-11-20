@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { site } from '@/data'
 import {
   SkeletonBlock,
   SkeletonButton,
@@ -39,7 +40,11 @@ export function SkeletonPageHero({ showActions = true }: SkeletonPageHeroProps) 
   )
 }
 
-const homeStats = ['views', 'projects', 'likes']
+const homeStats = [
+  { id: 'views', value: site.profileStats.views },
+  { id: 'projects', value: site.profileStats.projects },
+  { id: 'likes', value: site.profileStats.likes },
+].filter((stat) => stat.value.trim() !== '')
 const homeTeam = ['founder', 'member']
 const homeTeamPills = ['7rem', '6rem']
 
@@ -54,14 +59,16 @@ export function SkeletonHomeHero() {
           <SkeletonLine $w="55%" $h="1.75rem" />
           <SkeletonLine $w="90%" />
           <SkeletonLine $w="70%" />
-          <S.HomeStats>
-            {homeStats.map((stat) => (
-              <S.HomeStat key={stat}>
-                <SkeletonLine $w="60%" $h="0.75rem" />
-                <SkeletonLine $w="45%" $h="1rem" />
-              </S.HomeStat>
-            ))}
-          </S.HomeStats>
+          {homeStats.length > 0 && (
+            <S.HomeStats>
+              {homeStats.map((stat) => (
+                <S.HomeStat key={stat.id}>
+                  <SkeletonLine $w="60%" $h="0.75rem" />
+                  <SkeletonLine $w="45%" $h="1rem" />
+                </S.HomeStat>
+              ))}
+            </S.HomeStats>
+          )}
         </S.HomeIdentity>
         <S.HomeActions>
           <SkeletonButton />

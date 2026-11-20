@@ -17,6 +17,7 @@ type WithIcon<T extends { icon: string }> = Omit<T, 'icon'> & {
 export type PendingValue = { value: string | null; pending: boolean }
 
 export type ProfileStats = {
+  /** Homepage hero figures; a blank value hides that stat. */
   views: string
   projects: string
   likes: string

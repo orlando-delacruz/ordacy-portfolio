@@ -172,9 +172,9 @@ function ProfileStatsForm({ site, onSave }: { site: SiteRecord; onSave: (next: S
     void onSave({
       ...site,
       profileStats: {
-        views: text(data, 'profileViews') || site.profileStats.views,
-        projects: text(data, 'profileProjects') || site.profileStats.projects,
-        likes: text(data, 'profileLikes') || site.profileStats.likes,
+        views: text(data, 'profileViews').trim(),
+        projects: text(data, 'profileProjects').trim(),
+        likes: text(data, 'profileLikes').trim(),
       },
     }).finally(() => setBusy(false))
   }
@@ -185,7 +185,8 @@ function ProfileStatsForm({ site, onSave }: { site: SiteRecord; onSave: (next: S
         <U.PanelTitle id="settings-profile-stats">Profile stats</U.PanelTitle>
       </U.PanelHeader>
       <U.PanelText>
-        The three figures in the homepage hero. Keep them short.
+        The three figures in the homepage hero. Keep them short; leave a
+        field blank to hide it.
       </U.PanelText>
       <F.Form onSubmit={submit} noValidate>
         <F.Grid>

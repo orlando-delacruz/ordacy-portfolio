@@ -1,14 +1,14 @@
 {
-  "_note": "Static stand-in for a future backend. Fields marked pending are unconfirmed business facts: the UI must not render them until a real value is set.",
+  "_note": "Static stand-in for a future backend. Fields marked pending are unconfirmed business facts: the UI must not render them until a real value is set. Blank profile stats are hidden in the hero.",
   "name": "Ordacy",
   "tagline": "Build Better. Grow Further.",
   "description": "Ordacy builds custom systems that help businesses run operations, serve customers, and grow with clarity.",
   "siteUrl": "https://ordacy.com",
   "siteUrlPending": true,
   "profileStats": {
-    "views": "1k",
-    "projects": "20",
-    "likes": "1k"
+    "views": "",
+    "projects": "",
+    "likes": ""
   },
   "contact": {
     "email": {
