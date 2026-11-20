@@ -39,9 +39,9 @@ const integrations: {
   {
     icon: Mail,
     name: 'Email notifications',
-    status: 'Not configured',
-    connected: false,
-    text: 'Inquiries are saved to the database first. Add the EmailJS keys to the server environment to send the owner an email for each new inquiry.',
+    status: 'Connected (EmailJS)',
+    connected: true,
+    text: 'Inquiries are saved to the database first, then emailed through EmailJS. Sends are verified server-side; a failed notification never loses the inquiry.',
   },
   {
     icon: HardDrive,

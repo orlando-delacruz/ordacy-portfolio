@@ -89,6 +89,18 @@ async function responseMessage(response) {
   }
 }
 
+async function responseError(response) {
+  try {
+    const body = await response.json()
+    return {
+      code: typeof body?.code === 'string' ? body.code : '',
+      message: typeof body?.message === 'string' ? body.message : '',
+    }
+  } catch {
+    return { code: '', message: '' }
+  }
+}
+
 const encodeKey = (key) =>
   key
     .split('/')
@@ -125,9 +137,13 @@ async function ensureBucket(url, serviceRoleKey) {
   }
 
   // Supabase Storage reports a missing bucket as HTTP 400 with a
-  // `NoSuchBucket` body, so the body decides, not just the status.
-  const message = await responseMessage(existing)
-  if (existing.status !== 404 && !/not found/i.test(message)) {
+  // `NoSuchBucket` body, so the stable `code` field decides, not the status.
+  const missing = await responseError(existing)
+  if (
+    existing.status !== 404 &&
+    missing.code !== 'NoSuchBucket' &&
+    !/not found/i.test(missing.message)
+  ) {
     throw new Error(
       `reading the ${BACKUP_BUCKET} bucket failed (${existing.status})`,
     )

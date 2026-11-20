@@ -4,8 +4,10 @@
 EmailJS. The inquiry is saved before the email is attempted; an email failure never
 loses a lead or shows the visitor an error.
 
-**Status:** completed — commit `30c5ff5`. The EmailJS account setup and the real-inbox
-send were verified in the phase 05 sweep.
+**Status:** implemented — commit `30c5ff5`. The owner enabled EmailJS's “API access
+from non-browser environments”; a direct send returned `200 OK` and a real submission
+through `/api/inquiries` returned `201` with no email-failure log. The checkpoint is
+complete and Settings shows “Connected (EmailJS)”.
 
 **Prerequisites:** Phase 03 committed (admin can read the Inquiries page); the
 `inquiry_throttle` table from phase 01 (no schema change in this phase);
@@ -122,12 +124,9 @@ reach client code or `dist/`.
 
 - `data/database/states.json` contact success: **Inquiry received.** /
   **Thanks — we'll get back to you shortly.** The browser-only wording is gone.
-- Settings → Email notifications stays **Not configured** until the owner's EmailJS
-  setup produces a real send. Its text now says inquiries are saved to the database
-  first and EmailJS adds the owner email. At the checkpoint, after the test email
-  arrives, change the row to `Connected (EmailJS)` with a matching description in
-  `src/features/admin/settings/SettingsAdminPage.tsx`. File storage remains
-  `Not configured`.
+- Settings → Email notifications is **Connected (EmailJS)** — verified by a real
+  server-side send — with copy stating that inquiries save first and a failed
+  notification never loses the inquiry. File storage remains `Not configured`.
 
 ### 5. Tests
 
@@ -147,21 +146,23 @@ reach client code or `dist/`.
 
 ## Owner setup checklist
 
-- [ ] Create an EmailJS account (free: 200 emails/month, no card).
-- [ ] Email Services → connect your Gmail (or Outlook) account; note the **Service ID**.
-- [ ] Email Templates → new template. Recipient: your email. Variables:
+- [x] Create an EmailJS account (free: 200 emails/month, no card).
+- [x] Email Services → connect your Gmail (or Outlook) account; note the **Service ID**.
+- [x] Email Templates → new template. Recipient: your email. Variables:
   `{{name}}`, `{{email}}`, `{{business}}`, `{{service}}`, `{{plan}}`,
   `{{message}}`, `{{launch_date}}`, `{{submitted_at}}`. Note the **Template ID**.
   Suggested body: `New inquiry from {{name}} ({{email}})`, the optional fields, then
   `{{message}}`.
-- [ ] Account → copy the **Public Key** and **Private Key**.
-- [ ] Add `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`,
-  `EMAILJS_PRIVATE_KEY`, and `INQUIRY_IP_SALT` (any long random string) to `.env.local`
-  and the Vercel environment variables; restart the dev server / redeploy.
-- [ ] Send one test inquiry after the code lands, confirm the email, and mark it
-  “not spam” once.
-- [ ] Only after that send succeeds, set Settings → Email notifications to
-  `Connected (EmailJS)`.
+- [x] Account → copy the **Public Key** and **Private Key**.
+- [x] Add `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`,
+  `EMAILJS_PRIVATE_KEY`, and `INQUIRY_IP_SALT` (any long random string) to `.env.local`.
+  The same names still need to be added to the Vercel environment variables.
+- [x] **Enable “API access from non-browser environments” in EmailJS → Account →
+  Security.** Done; a direct REST send then returned `200 OK`.
+- [x] Send verified: the direct send succeeded, and a real submission through
+  `/api/inquiries` returned `201` with no email-failure log in the server output.
+- [x] Settings → Email notifications is `Connected (EmailJS)` with matching copy,
+  committed with phase 05.
 
 ## Verification
 
@@ -173,10 +174,9 @@ reach client code or `dist/`.
   repeat id leaves one row.
 - [x] Draft drain: a seeded `ordacy-cms:v3:inquiries` record is POSTed with its id on a
   public load and the key is cleared.
-- [x] Settings copy remains truthful while EmailJS is unconfigured (the `Connected`
-  change above is the checkpoint step).
+- [x] Settings copy is truthful after the verified send: `Connected (EmailJS)`.
 - [x] Verification inquiries deleted; `inquiries` empty again; test throttle rows
-  removed.
+  removed. The final end-to-end send was also cleaned up, so the inbox starts empty.
 - [x] Contact form at 320 and 768: honeypot invisible to keyboard and assistive tech,
   failure panel with retained values when the API is unreachable, no console errors,
   no overflow.
@@ -186,9 +186,11 @@ reach client code or `dist/`.
 
 ## Checkpoint (owner)
 
-Send a real inquiry from your phone: it arrives by email and appears in admin. Reply in
-your head — this is the production path now. Then flip Settings → Email notifications
-to `Connected (EmailJS)` and commit that with the phase.
+Enable “API access from non-browser environments” in EmailJS → Account → Security,
+then send a real inquiry from your phone: it arrives by email and appears in admin.
+Only then flip Settings → Email notifications to `Connected (EmailJS)`. The phase 05
+sweep exercised the form end to end; the row and this checkpoint stay open until that
+send succeeds.
 
 ## Review criteria
 

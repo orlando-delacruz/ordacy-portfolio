@@ -12,7 +12,8 @@ no database, no auth.
 ## Target architecture
 
 - **Host:** Vercel Hobby (existing). Static SPA + serverless functions in `api/` + one
-  daily cron. Hobby is personal, non-commercial use only; this project qualifies as the
+  daily keep-alive cron and one weekly backup cron (Hobby's schedule limits allow both).
+  Hobby is personal, non-commercial use only; this project qualifies as the
   owner's own portfolio. Handing a client's business site to this plan would require
   Vercel Pro or a free commercial host (Cloudflare Pages/Workers, Netlify) — the app is
   a static SPA plus standard fetch handlers, so that move stays a function-layer port.
@@ -58,8 +59,8 @@ no database, no auth.
 5. **Contact form:** honeypot field plus per-IP-hash throttle (own DB, no third party).
    EmailJS template configured in their dashboard; variables listed in phase 04.
 6. **Minimal tests:** `node --test` for the API rules — auth gate, published filtering,
-   inquiry validation, throttle, save-before-email order. The repo gains a `test`
-   script; AGENTS.md's "no tests" rule is amended in phase 05.
+   inquiry validation, throttle, save-before-email order. The repo gained a `test`
+   script in phase 03; phase 05 added backup-retention and icon-fallback tests.
 7. **Git cadence:** each phase ends with the four checks, an independent review, the
    owner's checkpoint, and its own commit.
 8. **Docs live here.** Every changed decision updates the matching phase file the same
@@ -88,7 +89,7 @@ Server only (Vercel env vars + local `.env.local`, which `.gitignore`'s `*.local
 | `EMAILJS_PUBLIC_KEY` | EmailJS → Account |
 | `EMAILJS_PRIVATE_KEY` | EmailJS → Account (server-side sending) |
 | `INQUIRY_IP_SALT` | Any long random string; salts the contact form's IP hashes. Unset = `/api/inquiries` fails closed with `500` |
-| `CRON_SECRET` | Any long random string; protects the phase 05 cron endpoints |
+| `CRON_SECRET` | Any long random string; protects the phase 05 cron endpoints. Vercel sends it automatically on cron runs; both endpoints fail closed with `401` when it is unset |
 
 ## Local development
 
@@ -98,7 +99,8 @@ Vite plugin that loads `.env.local` (server variables included) and dispatches
 Vercel's own function runtime. `.env.local` is gitignored by `.gitignore`'s `*.local`;
 copy `.env.example` and fill both client and server values. The two owner values are
 server-only: `node --env-file=.env.local scripts/auth-info.mjs` prints `ADMIN_USER_ID`
-and the verified TOTP factor id after enrollment. The four checks stay:
+and the verified TOTP factor id after enrollment. `npm run preview` serves the built SPA
+without the API handlers, so use it only for presentation checks. The four checks stay:
 
 ```bash
 npm run typecheck
@@ -111,14 +113,14 @@ From phase 03 onward add `npm test`.
 
 ## Phase index
 
-| Phase | File | Outcome |
-| --- | --- | --- |
-| 00 | [00-content-cleanup.md](00-content-cleanup.md) | Honest site: samples and concept projects removed, machinery deleted |
-| 01 | [01-database-and-seed.md](01-database-and-seed.md) | Supabase project, schema, seeded content |
-| 02 | [02-public-live-reads.md](02-public-live-reads.md) | Public site reads the cached API; last-good fallback |
-| 03 | [03-auth-and-admin-crud.md](03-auth-and-admin-crud.md) | Owner login with TOTP; admin persists through the API |
-| 04 | [04-contact-and-email.md](04-contact-and-email.md) | Real inquiries + EmailJS notification; spam protection |
-| 05 | [05-keepalive-backups-cleanup.md](05-keepalive-backups-cleanup.md) | Keep-alive, backups, localStorage retired, final QA |
+| Phase | File | Outcome | Status |
+| --- | --- | --- | --- |
+| 00 | [00-content-cleanup.md](00-content-cleanup.md) | Honest site: samples and concept projects removed, machinery deleted | Completed (`5a05023`) |
+| 01 | [01-database-and-seed.md](01-database-and-seed.md) | Supabase project, schema, seeded content | Completed (`007ff22`) |
+| 02 | [02-public-live-reads.md](02-public-live-reads.md) | Public site reads the cached API; last-good fallback | Completed (`d9069a9`) |
+| 03 | [03-auth-and-admin-crud.md](03-auth-and-admin-crud.md) | Owner login with TOTP; admin persists through the API | Completed (`1bd1d92`) |
+| 04 | [04-contact-and-email.md](04-contact-and-email.md) | Real inquiries + EmailJS notification; spam protection | Completed (`30c5ff5`); server-side EmailJS send verified |
+| 05 | [05-keepalive-backups-cleanup.md](05-keepalive-backups-cleanup.md) | Keep-alive, backups, localStorage retired, final QA | Completed (`d128a99`) |
 
 Each phase file ends with **Checkpoint** (what the owner verifies) and **Commit** (the
 message for that phase's single commit).

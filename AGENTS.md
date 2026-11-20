@@ -7,8 +7,8 @@ Marketing/portfolio SPA for Ordacy. React 19 + Vite 8 + React Router 7 + TypeScr
 - `npm run dev` — Vite dev server, including the real `api/*.mjs` handlers
 - `npm run lint` and `npm run typecheck` — fast verification
 - `npm run build` — full verification (`tsc -b && vite build` → `dist/`)
-- `npm run preview` — serve the production build
-- `npm test` — pure API rules and data-mapping tests (`node --test`)
+- `npm run preview` — serve the production build (`dist/`); it has no `api/` handlers, so public content comes from the last-good browser cache or the error page. Use `npm run dev` for API work.
+- `npm test` — pure API rules, backup retention, icon fallback, and data-mapping tests (`node --test`)
 
 Verify changes with lint, typecheck, build, and a browser check; run `npm test` when the API rules, record shapes, or map layers change.
 
@@ -17,9 +17,10 @@ Verify changes with lint, typecheck, build, and a browser check; run `npm test` 
 `npm run dev` loads `.env.local` (gitignored by `*.local`); copy `.env.example`. Vercel needs the same names in project settings.
 
 - Client (public by design): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
-- Server only: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USER_ID`, `ADMIN_TOTP_FACTOR_ID`, `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`, `EMAILJS_PRIVATE_KEY`, `INQUIRY_IP_SALT`; phase 05 adds `CRON_SECRET`.
+- Server only: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USER_ID`, `ADMIN_TOTP_FACTOR_ID`, `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`, `EMAILJS_PRIVATE_KEY`, `INQUIRY_IP_SALT`, `CRON_SECRET`.
 - `ADMIN_USER_ID` and `ADMIN_TOTP_FACTOR_ID` are the owner allowlist and the pinned verified TOTP factor. Both fail closed: unset means the admin API denies every request. `node --env-file=.env.local scripts/auth-info.mjs` prints them after enrollment; re-record the factor id after any reset.
 - `INQUIRY_IP_SALT` salts the contact form's per-IP throttle hashes and fails closed: unset means `/api/inquiries` returns `500`.
+- `CRON_SECRET` protects `/api/keepalive` and `/api/backup`; both fail closed with `401` when it is unset or wrong. Vercel cron requests carry it automatically once the variable is set. The weekly backup lands in the private Supabase Storage bucket `backups`; `api/backup.mjs` creates it on first run, forces it private, and keeps the newest 8 files.
 - Never put a server variable behind a `VITE_` name or in client code.
 
 ## Where things live
@@ -27,22 +28,20 @@ Verify changes with lint, typecheck, build, and a browser check; run `npm test` 
 - `src/app/router.tsx` — all routes; `src/app/App.tsx` wires providers.
 - `src/components/navigation/navigation.ts` — single source of truth for nav labels, paths, icons, and Top Bar page titles.
 - `src/features/<route>/` — one folder per page. All pages are built; Home lives under `src/features/home/` (`sections/`, shared `components/`, copy/data in `home.data.ts`); public content arrives from `GET /api/content` through `@/data` (JSON in `data/database/` is the seed and static-page source); shared UI is in `src/components/ui`.
-- `api/` — Vercel functions: `content.mjs` (public payload), `admin.mjs` (authenticated CRUD), `inquiries.mjs` (public contact submit + EmailJS), and `_lib/` (`auth.mjs`, `rules.mjs`, `inquiries.mjs`, `map.mjs`, `http.mjs`). `data/icons.json` is the icon allowlist shared by `src/data/icons.ts` and `api/_lib/rules.mjs`; keep them in step.
+- `api/` — Vercel functions: `content.mjs` (public payload), `admin.mjs` (authenticated CRUD), `inquiries.mjs` (public contact submit + EmailJS), `keepalive.mjs` (daily Supabase activity ping), `backup.mjs` (weekly JSON dump), and `_lib/` (`auth.mjs`, `cron.mjs`, `backup.mjs`, `rules.mjs`, `inquiries.mjs`, `map.mjs`, `http.mjs`). `data/icons.json` is the icon allowlist shared by `src/data/icons.ts` and `api/_lib/rules.mjs`; keep them in step.
 - `src/services/` — the admin and contact data layer. Admin calls go through `/api/admin` with a Supabase bearer token; `inquiries.ts` posts the public contact form and drains pre-phase-04 drafts; `scripts/seed-supabase.mjs` re-seeds from JSON; `scripts/auth-info.mjs` prints the owner auth ids.
 - `src/styles/theme.ts` — design tokens; `src/types/styled.d.ts` — styled-components theme typing.
 - `RootLayout` owns the shell (sidebar, Top Bar, mobile bottom nav, skip link, content width). Pages render content only.
 - Shared surfaces: `src/components/ui/CtaBanner.tsx` is the teal closing banner used by Home and Projects; `src/features/projects/components/ProjectCard.tsx` is the image-led card used by the Home 3D carousel (`ProjectsCarousel.tsx`), the Projects desktop white-card grid, and the Projects mobile horizontal row list (below `md`, with segmented filter bar + pagination).
 - Shared logic: `src/hooks` (`useDialogFocusTrap` for any modal dialog, `useMediaQuery`, `useScrollDirection`), `useHomePageMeta` (`src/features/home`). Theme state lives in `src/app/ThemeProvider.tsx` (always starts light, see below).
 
-`README.md`'s status sections predate the homepage build: it still claims all pages are placeholders and that there is no Git repository. Trust `src/` and `package.json` over it.
-
 ## Admin (authenticated CMS)
 
 - `/admin/*` lives in `src/features/admin/` with its own shell (not `RootLayout`); routes are lazy children in `router.tsx`, nav config in `data/database/admin-navigation.json`.
 - **Authenticated.** Supabase Auth (password + TOTP) gates `/admin`; `api/_lib/auth.mjs` additionally enforces the owner allowlist (`ADMIN_USER_ID`), the pinned verified TOTP factor (`ADMIN_TOTP_FACTOR_ID`), and AAL2 on every request. Both variables fail closed. An admin shell that renders is not proof of data access: the API is the security boundary.
 - Admin UI reads and writes only through `src/services` → `/api/admin` → Supabase Postgres. Public pages read the published payload from `/api/content` via `@/data`. Never put content or mock records in JSX.
-- Keep noindex and robots `Disallow: /admin`. Settings lists Email notifications as "Not configured" until the owner's EmailJS send is verified at the phase 04 checkpoint, and File storage until uploads land; never claim either is connected early.
-- Inquiries are real records: the contact form posts to `/api/inquiries`, which saves before emailing. Browser-local drafts are retired; `drainInquiryDrafts()` delivers any records left in `ordacy-cms:v3:inquiries` from before phase 04 and clears each only after the API confirms it. `inquiriesService` reads and writes the database only, with no draft merge.
+- Keep noindex and robots `Disallow: /admin`. Settings lists Email notifications as "Connected (EmailJS)" — a real server-side send was verified — and File storage as "Not configured" until uploads land. Never claim a service is connected before a real send or upload proves it.
+- Inquiries are real records: the contact form posts to `/api/inquiries`, which saves before emailing. Browser-local drafts are retired; `drainInquiryDrafts()` delivers any records left in `ordacy-cms:v3:inquiries` from before phase 04 and clears each only after the API confirms it. `inquiriesService` reads and writes the database only, with no draft merge. The drain is legacy-only and can be removed one release after phase 04.
 - Deletes use `remove(id)` and moves use one `update(id, { displayOrder })` per changed record; `replaceAll` (HTTP `PUT`) is import-only, so a stale device cannot overwrite another device's changes.
 - Empty collections show their empty states in the admin and on the public site. There are no sample or placeholder records, badges, locks, or fallbacks; only real client feedback and permissioned client projects are stored.
 
@@ -116,4 +115,4 @@ Theme is the saved manual choice, else the OS theme (followed live). `index.html
 
 ## Deployment
 
-`vercel.json` rewrites all paths to `/index.html`.
+`vercel.json` rewrites all paths except `/api/*` to `/index.html` and schedules two Hobby-compatible crons: `/api/keepalive` daily at 09:00 and `/api/backup` Mondays at 03:00 (both UTC). Vercel adds `Authorization: Bearer <CRON_SECRET>` to those invocations. Verify the crons in the Vercel dashboard after deploy, and that the private `backups` bucket receives one file per week.

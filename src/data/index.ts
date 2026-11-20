@@ -299,7 +299,10 @@ export function closingCta(
     description: section.description,
     actions: (section.actions ?? []).map((action) => ({
       ...action,
-      icon: resolveIcon(action.icon),
+      icon: contentIcon(
+        action.icon,
+        `pages.${pageId}.${sectionId}.actions.icon`,
+      ),
     })),
   }
 }

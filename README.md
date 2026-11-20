@@ -22,8 +22,11 @@ Verified against `package.json` and the source code:
 | Lucide React | 1.66+ | Icons (most UI) |
 | Phosphor Icons | 2.1+ | Bottom-nav regular/fill icon pairs |
 | Plus Jakarta Sans | Google Fonts | Primary typeface (loaded in `index.html`) |
+| Supabase | — | Postgres content, inquiries, owner Auth (password + TOTP), private Storage backups |
+| EmailJS | — | Server-side owner notification from `/api/inquiries` |
+| Vercel Functions | — | Node handlers in `api/` (content, admin, inquiries, keepalive, backup) |
 
-Package manager: **npm** (`package-lock.json` is committed). No UI library, animation library, state management library, backend SDK, or analytics package is installed.
+Package manager: **npm** (`package-lock.json` is committed). No UI library, animation library, state management library, or analytics package is installed.
 
 ### Architecture principles
 
@@ -35,6 +38,10 @@ Package manager: **npm** (`package-lock.json` is committed). No UI library, anim
 - Shared application layout and navigation (`RootLayout`, `TopBar`, sidebar / bottom nav).
 - TypeScript throughout, including a typed Styled Components theme (`src/types/styled.d.ts`).
 - Responsive, mobile-first implementation.
+- Public content is read from `GET /api/content` and cached at the edge; the browser keeps the last good payload for outages.
+- The `/admin` CMS writes through authenticated `POST/PATCH/DELETE /api/admin` calls; Supabase Auth (password + TOTP) is the gate.
+- Contact submissions save to Postgres before the EmailJS notification is attempted; failures keep the lead.
+- Two Vercel Hobby crons keep the free Supabase project awake and write weekly private backups.
 
 ## Project structure
 
@@ -43,55 +50,41 @@ Actual directory layout (abridged to meaningful entries):
 ```text
 ordacy-portfolio/
 ├── index.html                 # entry HTML: title, meta, fonts, theme pre-hydration script
-├── public/
-│   └── favicon.svg            # static files served as-is
+├── vercel.json                # SPA rewrite + keepalive/backup crons
+├── api/                       # Vercel Node functions
+│   ├── content.mjs            # public published payload (edge cached)
+│   ├── admin.mjs              # authenticated CRUD + documents
+│   ├── inquiries.mjs          # public contact submit, then EmailJS
+│   ├── keepalive.mjs          # daily Supabase activity ping
+│   ├── backup.mjs             # weekly private Storage dump
+│   └── _lib/                  # auth, rules, maps, HTTP, cron, backup helpers
+├── data/
+│   ├── database/              # JSON seed and static-page source
+│   └── icons.json             # icon allowlist shared with the API
+├── docs/implementation/       # backend phase plans, status, and commits
+├── supabase/schema.sql        # tables, RLS, grants
+├── scripts/                   # dev API bridge, seed, auth-info, grid check
+├── public/                    # favicons, robots.txt, sitemap.xml, documents
+├── tests/                     # node --test rules, maps, retention, icon fallback
 ├── src/
-│   ├── main.tsx               # React entry point
-│   ├── app/
-│   │   ├── App.tsx            # wires theme provider + router
-│   │   ├── router.tsx         # route definitions
-│   │   ├── ThemeProvider.tsx  # theme state, persistence, animated switching
-│   │   ├── ThemeTransition.tsx# full-screen sun/moon theme-switch overlay
-│   │   ├── theme-context.ts   # useAppTheme() hook
-│   │   └── NotFoundPage.tsx   # 404 page
+│   ├── main.tsx               # bootstrap: content fetch, draft drain, app mount
+│   ├── app/                   # App, router, ThemeProvider, route states
 │   ├── components/
-│   │   ├── layout/
-│   │   │   ├── RootLayout.tsx # shell: skip link, sidebar, Top Bar, content
-│   │   │   └── TopBar.tsx     # responsive Top Bar + mobile More button
-│   │   ├── navigation/
-│   │   │   ├── navigation.ts  # single source of truth for nav items/routes
-│   │   │   ├── DesktopSidebar.tsx
-│   │   │   ├── MobileBottomNav.tsx
-│   │   │   ├── MobileMoreMenu.tsx  # full-screen secondary navigation
-│   │   │   ├── Wordmark.tsx   # theme-aware logo (BrandLogo) + wordmark
-│   │   │   └── navigation.styled.ts # shared nav item styles
-│   │   └── common/
-│   │       └── PagePlaceholder.tsx  # temporary page scaffold
-│   ├── features/              # one folder per route
-│   │   ├── home/HomePage.tsx
-│   │   ├── projects/ProjectsPage.tsx
-│   │   ├── testimonials/TestimonialsPage.tsx
-│   │   ├── pricing/PricingPage.tsx
-│   │   ├── contact/ContactPage.tsx
-│   │   ├── about/AboutUsPage.tsx
-│   │   └── legal/             # PrivacyPolicyPage, TermsOfServicePage
-│   ├── hooks/
-│   │   └── useScrollDirection.ts # hides bottom nav on scroll down
-│   ├── styles/
-│   │   ├── theme.ts           # light/dark tokens + layout widths
-│   │   ├── GlobalStyles.ts    # global CSS, reduced-motion handling
-│   │   ├── breakpoints.ts     # sm/md/lg/xl
-│   │   └── typography.ts      # font family, sizes, weights
-│   ├── types/
-│   │   └── styled.d.ts        # DefaultTheme typing
-│   └── assets/
-│       ├── images/            # ordacy-logo.png (light), ordacy-logo-dark-mode.png (dark)
-│       ├── icons/             # reserved, currently empty
-│       └── fonts/             # reserved, currently empty (webfont via Google Fonts)
+│   │   ├── layout/            # RootLayout, TopBar
+│   │   ├── navigation/        # nav config, sidebar, bottom nav, More menu
+│   │   ├── state/             # PageState, StatePanel, dev previews
+│   │   ├── skeletons/         # shared skeleton primitives
+│   │   └── ui/                # Section, cards, buttons, lightbox, CTA banner
+│   ├── features/              # one folder per public route, plus admin/
+│   ├── hooks/                 # scroll, media query, focus trap, reveal
+│   ├── services/              # admin + contact HTTP layer, Supabase client
+│   ├── styles/                # tokens, global styles, typography
+│   ├── types/                 # styled-components theme typing
+│   └── assets/                # logo images
 └── package.json
 ```
 
-There is no `utils/` directory, no `.env` files, no Vercel config, and no test setup in the repository.
+The repository has `.env.example` (copy to gitignored `.env.local`), a Vercel config, and a Node test suite; there is no `utils/` directory.
 
 ### Code organization
 
@@ -99,27 +92,30 @@ Components keep their Styled Components in `styles/` folders next to their compo
 
 ## Pages and routes
 
-All routes are implemented in `src/app/router.tsx`. Every page currently renders through the shared `PagePlaceholder` component — **routes exist, but final page content does not**.
+All routes are implemented in `src/app/router.tsx` and rendered from published Supabase content.
 
 | Page | Route | Status |
 | --- | --- | --- |
-| Home | `/` | Placeholder |
-| Projects | `/projects` | Placeholder |
-| Testimonials | `/testimonials` | Placeholder — states genuine testimonials will be published when available |
-| Pricing | `/pricing` | Placeholder |
-| Contact | `/contact` | Placeholder |
-| About Us | `/about-us` | Placeholder — one-line positioning statement, no invented history |
-| Privacy Policy | `/privacy-policy` | Placeholder |
-| Terms and Conditions | `/terms-of-service` | Placeholder (URL slug is `terms-of-service`) |
-| Not Found | `*` | Implemented 404 page |
+| Home | `/` | Built |
+| Projects | `/projects` | Built; shows its honest empty state until a permissioned project is published |
+| Testimonials | `/testimonials` | Built; shows its empty state until approved client feedback is published |
+| Pricing | `/pricing` | Built; prices are business intent and should be verified before launch |
+| FAQs | `/faqs` | Built |
+| Contact | `/contact` | Built; real inquiry form |
+| About Us | `/about-us` | Built |
+| Privacy Policy | `/privacy-policy` | Built; not lawyer-reviewed |
+| Terms and Conditions | `/terms-of-service` | Built; URL slug is `terms-of-service` |
+| Team profile | `/team/:slug` | Built per published member |
+| Admin | `/admin/*` | Built; password + TOTP, noindex |
+| Not Found | `*` | Built 404 page |
 
 ### Implementation notes per page
 
-- **Homepage:** intended conversion-focused sections (hero, problems, pricing, projects, testimonials, how it works, FAQs, final CTA, footer) are **planned, not built**. Current page is a placeholder.
-- **Projects:** portfolio rules (client permission, clearly labeled concept demos, no fabricated results, details in a modal) are **planned conventions, not enforced or implemented**.
-- **Testimonials:** only genuine testimonials may ever be published; fabrication is prohibited. The page currently publishes none.
-- **Pricing:** tiers (Starter / Growth / Custom), PHP/USD toggle, and contact-form CTAs are **planned, not built**. Treat any future prices as subject to verification.
-- **Contact:** the inquiry form (fields, validation, spam protection, submission, confirmation) is built; submissions save through `POST /api/inquiries` (database first, then EmailJS).
+- **Homepage:** hero, services, pricing, projects carousel, testimonials, process, FAQs, final CTA, and footer are built. Optional sections hide when they have no published records.
+- **Projects:** image-led cards with a details dialog; the grid and mobile row show an empty state while no permissioned projects exist.
+- **Testimonials:** only genuine, approved testimonials are published. With none, the page shows its empty state and the trust content below it.
+- **Pricing:** Starter / Growth / Custom tiers with a PHP/USD toggle; the toggle has an accessible name only. No recommended badge or tinted panel.
+- **Contact:** validation and throttle run server-side; a honeypot absorbs bots; the inquiry is saved before EmailJS is attempted. The visible success panel says "Inquiry received." Email delivery is verified server-side.
 
 ## Navigation system
 
@@ -182,21 +178,22 @@ Toggling the theme plays a ~950ms full-screen overlay in the destination theme c
 
 The business offers these service categories: Custom Business Management Systems; Booking and Scheduling Systems; Internal Dashboards and Admin Tools; Inventory and Sales Systems; Custom Websites and Web Applications; CRM and Customer Management Systems.
 
-Process, timelines, payment terms, ownership, hosting, maintenance, and warranty details are **not yet published anywhere in the codebase** — all content pages are placeholders. Do not present the following as live website copy; they are recorded here as stated business intent only:
+Process, timelines, payment terms, ownership, hosting, maintenance, and warranty details are published in the FAQ, About, Pricing notes, and Terms content (`data/database/faqs.json`, `pages.json`, `legal.json`). Keep every page consistent with these terms and do not invent new commitments:
 
 - Process: Discovery → Proposal and Scope → Design and Development → Testing and Handover.
 - Timelines confirmed individually per scope; no universal completion promise.
 - Payments: standard 50% upfront, 50% before final handover; larger projects may differ in writing.
 - Ownership: client owns agreed custom deliverables after full payment; source code as specified in the agreement; third-party/pre-existing components keep original licensing.
 - Hosting: client-owned hosting, domain, and accounts preferred; Ordacy assists with setup; recurring costs are the client's unless agreed otherwise.
-- Maintenance optional and quoted separately; standard warranty intent is 30 days post-launch/handover covering reproducible spec failures (excluding new features, scope changes, client modifications, misuse, third-party outages).
+- Maintenance optional and quoted separately; standard warranty is 30 days post-launch/handover covering reproducible spec failures (excluding new features, scope changes, client modifications, misuse, third-party outages).
 
 ## SEO and performance
 
 Actual state (verified in `index.html`, `public/`, and source):
 
-- Present: page `<title>`, meta description, `theme-color`, Google Fonts preconnects, semantic landmarks/headings, bundled optimized logo PNGs.
-- **Missing / not implemented:** Open Graph tags, canonical URLs, `robots.txt`, sitemap, structured data, route-level code splitting (`React.lazy`), image lazy loading / responsive images, and any Vercel SPA-rewrite configuration (no `vercel.json` exists).
+- Present: per-page `<title>`, description, canonical, and Open Graph tags via `usePageMeta`; `robots.txt` (with `Disallow: /admin`) and `sitemap.xml`; `theme-color`; semantic landmarks and one visible `h1` per page; route-level code splitting for non-home pages; bundled optimized logo PNGs.
+- **Missing / not implemented:** Open Graph image, structured data, image lazy loading / responsive images, and an auto-generated sitemap (the file is static).
+- `robots.txt` and `sitemap.xml` assume `https://ordacy.com`; `siteUrl` in `site.json` is unconfirmed.
 
 Do not describe SEO as complete.
 
@@ -204,6 +201,7 @@ Do not describe SEO as complete.
 
 - Node.js 20+ and npm (npm is the package manager; `package-lock.json` is committed).
 - Supabase and EmailJS values for the live backend, admin, and inquiry email; copy `.env.example` to `.env.local` and see [Environment configuration](#environment-configuration).
+- For live email, enable "API access from non-browser environments" in EmailJS → Account → Security; without it, server-side sends return 403.
 
 ## Installation
 
@@ -214,13 +212,15 @@ npm run dev
 
 ## Development commands
 
-All from `package.json` (verified — no other scripts exist):
+All from `package.json` (verified):
 
-- `npm run dev` — start the development server
+- `npm run dev` — Vite dev server with the real `api/*.mjs` handlers
 - `npm run build` — type-check (`tsc -b`) and create a production build (`vite build` → `dist/`)
-- `npm run preview` — preview the production build
+- `npm run preview` — preview `dist/`. It has no API handlers, so public content uses the last-good browser cache or shows the error page; use `npm run dev` for backend work
 - `npm run lint` — run ESLint
 - `npm run typecheck` — run the TypeScript compiler
+- `npm run check:grid` — verify spacing/radius/icon sizes against the 4/8-point grid
+- `npm test` — Node test runner for API rules, map round-trips, backup retention, and icon fallback
 
 ## Environment configuration
 
@@ -242,17 +242,23 @@ Never put a server-only value behind a `VITE_` name.
 | `EMAILJS_PUBLIC_KEY` | Server only | EmailJS → Account |
 | `EMAILJS_PRIVATE_KEY` | Server only | EmailJS → Account |
 | `INQUIRY_IP_SALT` | Server only | Any long random string; unset makes `/api/inquiries` fail closed |
-| `CRON_SECRET` | Server only | Phase 05 keep-alive and backup protection |
+| `CRON_SECRET` | Server only | Any long random string; `api/keepalive.mjs` and `api/backup.mjs` fail closed with `401` without it. Vercel cron requests carry it automatically |
+
+Vercel needs every server name in Production, Preview, and Development, then a redeploy. The owner also needs to enable EmailJS's "API access from non-browser environments" setting and confirm the private Supabase Storage bucket `backups` exists. `api/backup.mjs` creates the bucket on first run, forces it private, uploads `backups/YYYY-MM-DD.json`, and keeps the newest 8 dated files.
 
 ## Deployment
 
-Intended platform is Vercel, but **no deployment configuration exists yet** (no `vercel.json`, no rewrites). For a Vite SPA on Vercel, direct access/refresh of nested routes (e.g. `/pricing`) requires a rewrite of all paths to `/index.html`; until that is configured, only root-path serving is guaranteed. Build output is `dist/` via `npm run build`. Verify deployment claims against live configuration before documenting them as working.
+The app deploys to Vercel as a static SPA plus Node functions in `api/`. `vercel.json` rewrites every non-API path to `/index.html` and schedules two Hobby-compatible crons:
+
+- `/api/keepalive` — `0 9 * * *` (daily) resets the Supabase free-tier inactivity timer.
+- `/api/backup` — `0 3 * * 1` (Mondays 03:00 UTC) writes the weekly private backup.
+
+Verify the cron entries appear in the Vercel dashboard after deploying, then run one manual backup with `Authorization: Bearer <CRON_SECRET>` and confirm a file appears in the `backups` bucket. Build output is `dist/` via `npm run build`. Do not claim a live deployment or email delivery until it has been verified.
 
 ## Development workflow
 
-- Iterative, page-by-page: public website first. Intended page order: Homepage → Projects → Pricing → Contact → legal pages → 404. Testimonials and About Us routes already exist as placeholders.
-- A private admin dashboard is planned for a later phase and is **not present** in the codebase — do not document or build it as part of the public site.
-- Rules: implement incrementally with review per page; prefer simple, maintainable solutions; no unnecessary dependencies; no overengineering; preserve shared-component behavior; avoid unrelated refactoring; test by impact.
+- Public pages, the state system, and the authenticated admin are built. Treat `docs/implementation/` as the record of the backend phases; each phase file carries its status and commit.
+- Rules: implement incrementally with review; prefer simple, maintainable solutions; no unnecessary dependencies; no overengineering; preserve shared-component behavior; avoid unrelated refactoring; test by impact. Run `npm test` when the API rules, backups, or data maps change.
 
 ## Project status
 
@@ -262,14 +268,16 @@ Intended platform is Vercel, but **no deployment configuration exists yet** (no 
 | Light/dark themes, persistence, animated transition | Implemented |
 | Brand logo (light/dark), wordmark styling | Implemented |
 | Width constraints (1440 content / 1680 app) | Implemented |
-| All 8 public routes + 404 | Implemented (routes only) |
-| Page content (hero, pricing tiers, forms, copy) | Planned — all pages are placeholders |
-| Contact form + backend/email/spam protection | Implemented (EmailJS send pending owner setup) |
-| Pricing tiers, PHP/USD toggle | Planned |
-| Project modals, testimonials content | Planned (genuine content only) |
-| SEO (OG, sitemap, robots, structured data) | Missing |
-| Vercel deployment config + SPA rewrites | Missing |
-| Admin dashboard | Planned, later phase |
+| Public routes, team profiles, 404 | Implemented |
+| Public page content and state system | Implemented; empty collections show their honest empty states |
+| Contact form, database save, spam protection | Implemented |
+| EmailJS notification | Implemented; server-side sends verified (EmailJS) |
+| Pricing tiers, PHP/USD toggle | Implemented; verify prices before launch |
+| Project cards/modal, testimonials | Implemented; publish genuine content only |
+| Admin CMS (password + TOTP, CRUD) | Implemented |
+| Keep-alive and weekly backups | Implemented; bucket created and one local backup written; Vercel env/cron confirmation pending |
+| SEO (page tags, robots, sitemap) | Implemented; OG image and structured data missing |
+| Vercel config (SPA rewrite + crons) | Implemented; live cron verification pending |
 
 ## Repository safety
 
